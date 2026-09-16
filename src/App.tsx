@@ -79,7 +79,7 @@ function AppMain() {
 
   // When user logs out, redirect to marketing Home page
   useEffect(() => {
-    if (!loading && !user && ['dashboard', 'profile', 'settings', 'tests'].includes(currentRoute)) {
+    if (!loading && !user && ['dashboard', 'settings', 'tests'].includes(currentRoute)) {
       setCurrentRoute('home');
     }
   }, [user, loading, currentRoute]);
@@ -116,6 +116,14 @@ function AppMain() {
   };
 
   const handleNavigate = (route: string) => {
+    if (route === 'login' || route === 'signin' || route === 'auth') {
+      setAuthModal({ open: true, mode: 'login' });
+      return;
+    }
+    if (route === 'signup' || route === 'register') {
+      setAuthModal({ open: true, mode: 'signup' });
+      return;
+    }
     setCurrentRoute(route);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -532,10 +540,11 @@ function AppMain() {
         onInstalled={() => showToast('OMRWallah App added to device!', 'success')}
       />
 
-      {/* Mobile Bottom Navigation Bar (Home, Create, Practice, Results, Profile) */}
+      {/* Mobile Bottom Navigation Bar (Home, Create, Practice, Results, Profile / Sign In) */}
       <MobileBottomNav
         currentRoute={currentRoute}
         onNavigate={handleNavigate}
+        onOpenAuth={(mode) => setAuthModal({ open: true, mode })}
       />
 
     </div>

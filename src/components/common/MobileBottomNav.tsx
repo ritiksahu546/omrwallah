@@ -5,11 +5,13 @@ import { useAuth } from '../../context/AuthContext';
 interface MobileBottomNavProps {
   currentRoute: string;
   onNavigate: (route: string) => void;
+  onOpenAuth?: (mode: 'login' | 'signup') => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   currentRoute,
   onNavigate,
+  onOpenAuth,
 }) => {
   const { user } = useAuth();
 
@@ -126,19 +128,27 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         {/* 5. Profile or Sign In */}
         <button
           type="button"
-          onClick={() => onNavigate('profile')}
+          onClick={() => {
+            if (user) {
+              onNavigate('profile');
+            } else if (onOpenAuth) {
+              onOpenAuth('login');
+            } else {
+              onNavigate('login');
+            }
+          }}
           className="flex flex-col items-center justify-center py-1 cursor-pointer transition-colors group"
         >
           <div
             className={`p-1 transition-transform group-active:scale-90 ${
-              isProfile ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+              (user && isProfile) ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
             }`}
           >
             <User className="w-5 h-5 stroke-[2.2]" />
           </div>
           <span
             className={`text-[11px] tracking-tight transition-colors ${
-              isProfile ? 'text-blue-600 font-bold' : 'text-slate-500 font-medium'
+              (user && isProfile) ? 'text-blue-600 font-bold' : 'text-slate-500 font-medium'
             }`}
           >
             {user ? 'Profile' : 'Sign In'}
