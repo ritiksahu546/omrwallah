@@ -219,6 +219,8 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
       style={{
         width: '210mm',
         minHeight: '297mm',
+        backgroundColor: '#ffffff',
+        color: isMono ? '#000000' : '#0f172a',
         padding: `${config.page.marginTop || 7}mm ${config.page.marginRight || 7}mm ${config.page.marginBottom || 7}mm ${config.page.marginLeft || 7}mm`,
         boxSizing: 'border-box',
       }}

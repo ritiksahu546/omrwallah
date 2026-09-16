@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Save,
   Download,
@@ -46,9 +46,67 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
 }) => {
   const [config, setConfig] = useState<OMRConfig>(initialConfig || DEFAULT_OMR_CONFIG);
   const [activeTab, setActiveTab] = useState<'basic' | 'fields' | 'design' | 'page' | 'header' | 'instructions' | 'advanced'>('basic');
-  const [zoomLevel, setZoomLevel] = useState<number>(0.85);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Calculate exact scale required to fit width or full page without horizontal overflow
+  const calculateFitScale = useCallback((mode: 'width' | 'page' = 'width') => {
+    if (scrollContainerRef.current) {
+      const containerWidth = scrollContainerRef.current.clientWidth;
+      const containerHeight = scrollContainerRef.current.clientHeight;
+      const isMobile = window.innerWidth < 768;
+      const padX = isMobile ? 16 : 40;
+      const padY = isMobile ? 16 : 40;
+
+      const availW = Math.max(260, containerWidth - padX);
+      const availH = Math.max(260, containerHeight - padY);
+
+      // Base unscaled dimensions of A4 at 96 DPI: 794px × 1123px
+      const scaleW = Number((availW / 794).toFixed(2));
+      const scaleH = Number((availH / 1123).toFixed(2));
+
+      if (mode === 'page') {
+        return Math.min(1.0, Math.max(0.2, Math.min(scaleW, scaleH)));
+      }
+      return Math.min(1.1, Math.max(0.2, scaleW));
+    }
+
+    if (typeof window !== 'undefined') {
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        const availW = window.innerWidth - 20;
+        return Math.min(0.55, Math.max(0.25, Number((availW / 794).toFixed(2))));
+      }
+    }
+    return 0.85;
+  }, []);
+
+  const [zoomLevel, setZoomLevel] = useState<number>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      // Responsive initial scale on mobile screen width
+      return Math.min(0.52, Math.max(0.28, Number(((window.innerWidth - 20) / 794).toFixed(2))));
+    }
+    return 0.85;
+  });
+
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
+
+  // Auto-fit to mobile screen width when preview opens or window resizes
+  useEffect(() => {
+    const handleAutoFit = () => {
+      if (typeof window !== 'undefined' && window.innerWidth < 768) {
+        const fit = calculateFitScale('width');
+        setZoomLevel(fit);
+      }
+    };
+
+    const timer = setTimeout(handleAutoFit, 60);
+    window.addEventListener('resize', handleAutoFit);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleAutoFit);
+    };
+  }, [mobilePreviewOpen, calculateFitScale]);
 
   const handleConfigUpdate = (updates: Partial<OMRConfig>) => {
     setConfig((prev) => ({
@@ -67,16 +125,26 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
     setIsDownloadingPdf(true);
     showToast('Preparing high-resolution A4 PDF...', 'info');
 
-    const success = await downloadOMRPdf(
-      'printable-omr-container',
-      `${config.header.schoolName || 'OMR'}-${config.questionsCount}Q.pdf`
-    );
+    // On mobile devices, ensure the live preview DOM container is unhidden before capturing
+    const wasHidden = !mobilePreviewOpen;
+    if (wasHidden) {
+      setMobilePreviewOpen(true);
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    }
 
-    setIsDownloadingPdf(false);
-    if (success) {
-      showToast('PDF downloaded successfully!', 'success');
-    } else {
-      showToast('Could not generate PDF. Please try the Print option.', 'error');
+    try {
+      const success = await downloadOMRPdf(
+        'printable-omr-container',
+        `${config.header.schoolName || 'OMR'}-${config.questionsCount}Q.pdf`
+      );
+
+      if (success) {
+        showToast('PDF downloaded successfully!', 'success');
+      } else {
+        showToast('Could not generate PDF. Please try the Print option.', 'error');
+      }
+    } finally {
+      setIsDownloadingPdf(false);
     }
   };
 
@@ -250,35 +318,35 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
           }`}
         >
           {/* Canvas Top Bar: Zoom Controls */}
-          <div className="bg-white/80 backdrop-blur-xs border-b border-slate-300 px-4 py-2 flex items-center justify-between text-xs text-slate-700">
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-slate-900 flex items-center gap-1.5">
+          <div className="bg-white/80 backdrop-blur-xs border-b border-slate-300 px-3 sm:px-4 py-2 flex items-center justify-between text-xs text-slate-700">
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+              <span className="font-extrabold text-slate-900 flex items-center gap-1.5 shrink-0">
                 <FileText className="w-4 h-4 text-blue-600" />
-                <span>Live Preview (A4 Size)</span>
+                <span className="text-[11px] sm:text-xs font-bold">Live Preview</span>
               </span>
-              <span className="text-[11px] text-slate-500 hidden sm:inline">
+              <span className="text-[10px] text-slate-500 hidden sm:inline">
                 • 210 × 297 mm
               </span>
             </div>
 
             {/* Zoom tool buttons */}
-            <div className="flex items-center gap-1.5 bg-slate-100 rounded-lg p-1 border border-slate-300">
+            <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5 sm:p-1 border border-slate-300 shrink-0">
               <button
                 type="button"
-                onClick={() => setZoomLevel(Math.max(0.4, zoomLevel - 0.1))}
+                onClick={() => setZoomLevel((prev) => Math.max(0.2, Number((prev - 0.05).toFixed(2))))}
                 className="p-1 hover:bg-white rounded text-slate-700 cursor-pointer"
                 title="Zoom Out"
               >
                 <ZoomOut className="w-3.5 h-3.5" />
               </button>
 
-              <span className="px-2 font-mono font-bold text-[11px] min-w-[42px] text-center">
+              <span className="px-1.5 font-mono font-bold text-[11px] min-w-[38px] text-center">
                 {Math.round(zoomLevel * 100)}%
               </span>
 
               <button
                 type="button"
-                onClick={() => setZoomLevel(Math.min(1.4, zoomLevel + 0.1))}
+                onClick={() => setZoomLevel((prev) => Math.min(1.5, Number((prev + 0.05).toFixed(2))))}
                 className="p-1 hover:bg-white rounded text-slate-700 cursor-pointer"
                 title="Zoom In"
               >
@@ -287,17 +355,29 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
 
               <button
                 type="button"
-                onClick={() => setZoomLevel(0.85)}
-                className="px-1.5 py-0.5 text-[10px] font-bold text-slate-600 hover:bg-white rounded cursor-pointer"
-                title="Reset zoom to 85%"
+                onClick={() => setZoomLevel(calculateFitScale('width'))}
+                className="px-2 py-0.5 text-[10px] font-bold text-blue-700 bg-white hover:bg-blue-50 border border-slate-200 rounded cursor-pointer shadow-2xs whitespace-nowrap"
+                title="Fit sheet width horizontally to screen without scrolling"
               >
-                Fit
+                Fit Width
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setZoomLevel(calculateFitScale('page'))}
+                className="px-1.5 sm:px-2 py-0.5 text-[10px] font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded cursor-pointer shadow-2xs whitespace-nowrap hidden xs:inline"
+                title="Fit whole A4 sheet on screen"
+              >
+                Full Page
               </button>
             </div>
           </div>
 
           {/* Canvas Scroll Area */}
-          <div className="flex-1 overflow-auto p-4 sm:p-8 flex justify-center items-start">
+          <div
+            ref={scrollContainerRef}
+            className="flex-1 overflow-auto p-2 sm:p-8 flex justify-center items-start"
+          >
             <div className="origin-top transition-transform duration-150">
               <OMRSheetRenderer config={config} scale={zoomLevel} />
             </div>
