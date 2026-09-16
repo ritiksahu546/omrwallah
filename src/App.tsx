@@ -9,6 +9,7 @@ import {
 
 import { Navbar } from './components/common/Navbar';
 import { Sidebar } from './components/common/Sidebar';
+import { MobileBottomNav } from './components/common/MobileBottomNav';
 import { Footer } from './components/common/Footer';
 import { AuthModal } from './components/common/AuthModal';
 import { ProUpgradeModal } from './components/common/ProUpgradeModal';
@@ -275,7 +276,11 @@ function AppMain() {
         )}
 
         {/* Dynamic Page Content */}
-        <main className="flex-1 overflow-y-auto bg-slate-50 flex flex-col">
+        <main
+          className={`flex-1 overflow-y-auto bg-slate-50 flex flex-col ${
+            currentRoute !== 'creator' ? 'pb-20 md:pb-0' : ''
+          }`}
+        >
           {currentRoute === 'home' && (
             <HomePage
               onNavigate={handleNavigate}
@@ -375,6 +380,12 @@ function AppMain() {
           )}
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <MobileBottomNav
+        currentRoute={currentRoute}
+        onNavigate={handleNavigate}
+      />
 
       {/* Global Overlays */}
       <AuthModal

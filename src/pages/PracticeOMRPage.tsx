@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, CheckCircle2, AlertCircle, RotateCcw, Send, Sparkles, Trophy } from 'lucide-react';
+import {
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  RotateCcw,
+  Send,
+  Sparkles,
+  Trophy,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+} from 'lucide-react';
 import { OMRSheetRenderer } from '../components/omr/OMRSheetRenderer';
 import { DEFAULT_OMR_CONFIG } from '../data/templates';
 import { OMRConfig } from '../types/omr';
@@ -17,6 +28,19 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
   const [secondsLeft, setSecondsLeft] = useState<number>(45 * 60); // 45 mins
   const [timerRunning, setTimerRunning] = useState<boolean>(true);
   const [selectedSubject, setSelectedSubject] = useState<string>('NEET Full Length Test');
+  const [zoomScale, setZoomScale] = useState<number>(() =>
+    typeof window !== 'undefined' && window.innerWidth < 640 ? 0.44 : 0.85
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setZoomScale((prev) => (prev > 0.65 ? 0.44 : prev));
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // 50 questions test config
   const practiceConfig: OMRConfig = {
@@ -101,17 +125,40 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
         </div>
 
         {/* Timer & Attempt Tracker */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           
+          {/* Zoom Controls */}
+          <div className="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-0.5">
+            <button
+              type="button"
+              onClick={() => setZoomScale((prev) => Math.max(0.35, prev - 0.1))}
+              className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-white transition-colors cursor-pointer"
+              title="Zoom Out"
+            >
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+            <span className="text-[11px] font-mono font-bold text-slate-700 px-1 min-w-[38px] text-center">
+              {Math.round(zoomScale * 100)}%
+            </span>
+            <button
+              type="button"
+              onClick={() => setZoomScale((prev) => Math.min(1.2, prev + 0.1))}
+              className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-white transition-colors cursor-pointer"
+              title="Zoom In"
+            >
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           {/* Countdown Clock */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white rounded-xl font-mono text-sm font-black shadow-xs">
-            <Clock className="w-4 h-4 text-cyan-400" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-900 text-white rounded-xl font-mono text-xs sm:text-sm font-black shadow-xs">
+            <Clock className="w-3.5 h-3.5 text-cyan-400" />
             <span>{formatTimer(secondsLeft)}</span>
           </div>
 
           {/* Attempt counter pill */}
-          <div className="px-3 py-1.5 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-xs font-bold">
-            <span>Attempted: </span>
+          <div className="px-2.5 py-1.5 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-xs font-bold">
+            <span className="hidden sm:inline">Attempted: </span>
             <span className="font-black text-blue-600">{attemptedCount} / 50</span>
           </div>
 
@@ -127,23 +174,23 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>Submit Test</span>
+            <span>Submit</span>
           </button>
         </div>
       </div>
 
       {/* Main Canvas with Interactive OMR Sheet */}
-      <div className="flex-1 overflow-auto p-4 sm:p-8 flex justify-center items-start">
-        <div className="bg-white rounded-xl shadow-xl border border-slate-300 p-2 sm:p-4">
+      <div className="flex-1 overflow-auto p-2 sm:p-8 flex justify-center items-start">
+        <div className="bg-white rounded-xl shadow-xl border border-slate-300 p-1 sm:p-4 max-w-full overflow-x-auto">
           <OMRSheetRenderer
             config={practiceConfig}
             interactive={true}
             markedAnswers={markedAnswers}
             onAnswerChange={handleBubbleClick}
-            scale={0.88}
+            scale={zoomScale}
           />
         </div>
       </div>

@@ -100,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Action Buttons */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-2.5 relative">
                 <button
@@ -222,18 +222,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Mobile hamburger */}
-          <div className="flex sm:hidden items-center gap-2">
+          <div className="flex md:hidden items-center gap-2">
             <button
               type="button"
               onClick={() => onNavigate('creator')}
-              className="px-2.5 py-1.5 text-xs font-bold text-white bg-blue-600 rounded-lg"
+              className="px-2.5 py-1.5 text-xs font-bold text-white bg-blue-600 rounded-lg cursor-pointer"
             >
               Create
             </button>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-600 hover:text-slate-900 rounded-lg focus:outline-none"
+              className="p-2 text-slate-600 hover:text-slate-900 rounded-lg focus:outline-none cursor-pointer"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -244,7 +244,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 shadow-xl">
+        <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 shadow-xl animate-in slide-in-from-top-2 duration-150">
           <div className="grid grid-cols-2 gap-2 mb-3">
             <button
               type="button"
@@ -252,7 +252,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onNavigate('creator');
                 setMobileMenuOpen(false);
               }}
-              className="w-full py-2.5 text-center text-xs font-bold bg-blue-600 text-white rounded-xl"
+              className="w-full py-2.5 text-center text-xs font-bold bg-blue-600 text-white rounded-xl shadow-sm cursor-pointer"
             >
               Create OMR
             </button>
@@ -262,7 +262,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onNavigate('dashboard');
                 setMobileMenuOpen(false);
               }}
-              className="w-full py-2.5 text-center text-xs font-bold bg-slate-900 text-white rounded-xl"
+              className="w-full py-2.5 text-center text-xs font-bold bg-slate-900 text-white rounded-xl shadow-sm cursor-pointer"
             >
               Dashboard
             </button>
@@ -277,7 +277,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onNavigate(link.route);
                   setMobileMenuOpen(false);
                 }}
-                className="w-full text-left py-2 text-xs font-bold text-slate-700 hover:text-blue-600 flex items-center justify-between"
+                className={`w-full text-left py-2.5 text-xs font-bold flex items-center justify-between cursor-pointer ${
+                  currentRoute === link.route ? 'text-blue-600' : 'text-slate-700 hover:text-blue-600'
+                }`}
               >
                 <span>{link.label}</span>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
