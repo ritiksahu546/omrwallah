@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { OMRConfig } from '../../types/omr';
 import { ShieldCheck, QrCode, Check, X } from 'lucide-react';
 
@@ -23,6 +23,9 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
   scale = 1,
   highlightQuestions = {},
 }) => {
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const [measuredHeight, setMeasuredHeight] = useState<number>(1123);
+
   const selectedAnswers = propSelectedAnswers || markedAnswers || {};
   const handleSelect = onSelectAnswer || onAnswerChange;
   const {
@@ -131,6 +134,31 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
     }
   };
 
+  // Measure unscaled rendered sheet height so scaling container never clips questions
+  useEffect(() => {
+    if (!sheetRef.current) return;
+    const updateSize = () => {
+      if (sheetRef.current) {
+        const h = sheetRef.current.scrollHeight || sheetRef.current.offsetHeight;
+        if (h > 100) {
+          setMeasuredHeight(h);
+        }
+      }
+    };
+    updateSize();
+    const timer = setTimeout(updateSize, 80);
+
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver(updateSize);
+      observer.observe(sheetRef.current);
+      return () => {
+        clearTimeout(timer);
+        observer.disconnect();
+      };
+    }
+    return () => clearTimeout(timer);
+  }, [config, questionsCount, optionsCount, selectedAnswers]);
+
   // Bubble dimensions based on question count & density
   const getBubbleDimensions = () => {
     if (gridDensity === 'compact' || questionsCount > 130) {
@@ -147,6 +175,9 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
 
   // Row vertical padding
   const getRowPaddingClass = () => {
+    if (questionsCount >= 180) {
+      return 'py-[1px] px-0.5';
+    }
     if (gridDensity === 'compact' || questionsCount > 130) {
       return 'py-[1.5px] px-1';
     }
@@ -184,7 +215,7 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
   const sheetContent = (
     <div
       id="printable-omr-container"
-      className={`bg-white ${textColor} ${getFontFamilyClass()} select-none transition-all shadow-md relative overflow-hidden shrink-0`}
+      className={`bg-white ${textColor} ${getFontFamilyClass()} select-none transition-all shadow-md relative shrink-0`}
       style={{
         width: '210mm',
         minHeight: '297mm',
@@ -231,7 +262,7 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
       )}
 
       {/* Main OMR Frame Container */}
-      <div className={`w-full h-full flex flex-col justify-between ${header.showBorder ? `border-2 ${strokeColor} p-2.5 sm:p-3` : 'p-1'}`}>
+      <div className={`w-full min-h-full flex-1 flex flex-col justify-between ${header.showBorder ? `border-2 ${strokeColor} p-2.5 sm:p-3` : 'p-1'}`}>
         
         {/* ================= HEADER SECTION ================= */}
         <div className="w-full mb-2">
@@ -693,13 +724,15 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
   if (scale && scale !== 1) {
     return (
       <div
-        className="omr-scale-outer-container mx-auto shrink-0 relative overflow-hidden rounded-lg shadow-md"
+        className="omr-scale-outer-container mx-auto shrink-0 relative rounded-lg shadow-md transition-all"
         style={{
-          width: `calc(210mm * ${scale})`,
-          height: `calc(297mm * ${scale})`,
+          width: Math.round(794 * scale),
+          height: Math.round(measuredHeight * scale),
+          minHeight: Math.round(1123 * scale),
         }}
       >
         <div
+          ref={sheetRef}
           style={{
             width: '210mm',
             minHeight: '297mm',
@@ -717,7 +750,7 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
   }
 
   return (
-    <div className="mx-auto shrink-0 flex justify-center items-start">
+    <div ref={sheetRef} className="mx-auto shrink-0 flex justify-center items-start">
       {sheetContent}
     </div>
   );

@@ -283,6 +283,8 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
       gridDensity: density,
       enableSections: Boolean(sections && sections.length > 0),
       sections,
+      enableRollNumber: questionsCount <= 60,
+      enableInstructions: questionsCount <= 100,
       header: {
         ...DEFAULT_OMR_CONFIG.header,
         schoolName: 'OMRWALLAH SPEED MOCK PORTAL',
