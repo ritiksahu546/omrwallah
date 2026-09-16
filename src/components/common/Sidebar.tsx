@@ -60,32 +60,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
         collapsed ? 'w-20' : 'w-64'
       } min-h-screen`}
     >
-      {/* Top Brand & Toggle */}
+      {/* Top Workspace Header & Collapse Toggle */}
       <div>
         <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/80">
-          <button
-            type="button"
-            onClick={() => onNavigate('home')}
-            className="flex items-center gap-2.5 text-left group overflow-hidden cursor-pointer focus:outline-none"
-          >
-            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-blue-500/30">
-              <FileText className="w-5 h-5" />
-            </div>
-            {!collapsed && (
-              <div>
-                <span className="font-extrabold text-lg text-white tracking-tight">
-                  OMR<span className="text-blue-500">Wallah</span>
+          {!collapsed ? (
+            <div className="flex items-center gap-2.5 overflow-hidden">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50 animate-pulse shrink-0" />
+              <div className="min-w-0">
+                <span className="text-xs font-black tracking-wider uppercase text-slate-300 block truncate">
+                  Student Workspace
+                </span>
+                <span className="text-[10px] text-slate-500 font-medium block truncate">
+                  Portal Navigation
                 </span>
               </div>
-            )}
-          </button>
+            </div>
+          ) : (
+            <div className="w-full flex justify-center">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50" title="Active Workspace" />
+            </div>
+          )}
 
           {onToggleCollapse && (
             <button
               type="button"
               onClick={onToggleCollapse}
-              className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer shrink-0"
               title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+              aria-label={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
             >
               {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             </button>

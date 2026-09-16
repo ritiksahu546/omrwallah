@@ -67,6 +67,8 @@ function AppMain() {
   });
   const [proModalOpen, setProModalOpen] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [practiceZenMode, setPracticeZenMode] = useState<boolean>(false);
 
   // Sync to local storage
   useEffect(() => {
@@ -243,8 +245,9 @@ function AppMain() {
   };
 
   const isAppWorkspaceRoute = [
-    'creator',
     'dashboard',
+    'creator',
+    'templates',
     'saved',
     'tests',
     'practice',
@@ -259,27 +262,33 @@ function AppMain() {
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-blue-500 selection:text-white w-full max-w-full overflow-x-hidden">
       
       {/* Top Header Navbar */}
-      <Navbar
-        currentRoute={currentRoute}
-        onNavigate={handleNavigate}
-        onOpenAuth={(mode) => setAuthModal({ open: true, mode })}
-        onUpgradePro={() => setProModalOpen(true)}
-      />
+      {(!practiceZenMode || currentRoute !== 'practice') && (
+        <Navbar
+          currentRoute={currentRoute}
+          onNavigate={handleNavigate}
+          onOpenAuth={(mode) => setAuthModal({ open: true, mode })}
+          onUpgradePro={() => setProModalOpen(true)}
+        />
+      )}
 
       {/* Main Container */}
       <div className="flex-1 flex w-full max-w-full overflow-x-hidden min-w-0">
         
         {/* Workspace Sidebar (visible in app modes on desktop) */}
-        {isAppWorkspaceRoute && currentRoute !== 'creator' && (
+        {isAppWorkspaceRoute && (!practiceZenMode || currentRoute !== 'practice') && (
           <Sidebar
             currentRoute={currentRoute}
             onNavigate={handleNavigate}
             onOpenProModal={() => setProModalOpen(true)}
+            collapsed={sidebarCollapsed}
+            onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
           />
         )}
 
         {/* Dynamic Page Content */}
-        <main className="flex-1 min-w-0 w-full max-w-full overflow-x-hidden bg-slate-50 flex flex-col pb-28 sm:pb-32 md:pb-8">
+        <main className={`flex-1 min-w-0 w-full max-w-full overflow-x-hidden bg-slate-50 flex flex-col ${
+          practiceZenMode && currentRoute === 'practice' ? 'pb-0' : 'pb-28 sm:pb-32 md:pb-8'
+        }`}>
           {currentRoute === 'home' && (
             <HomePage
               onNavigate={handleNavigate}
@@ -298,7 +307,10 @@ function AppMain() {
           )}
 
           {currentRoute === 'templates' && (
-            <TemplatesPage onSelectTemplate={handleSelectTemplate} />
+            <TemplatesPage
+              onSelectTemplate={handleSelectTemplate}
+              onNavigate={handleNavigate}
+            />
           )}
 
           {currentRoute === 'dashboard' && (
@@ -333,6 +345,8 @@ function AppMain() {
             <PracticeOMRPage
               onCompleteTest={handlePracticeComplete}
               showToast={showToast}
+              isZenMode={practiceZenMode}
+              onToggleZenMode={() => setPracticeZenMode((prev) => !prev)}
             />
           )}
 

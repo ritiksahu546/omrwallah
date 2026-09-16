@@ -34,15 +34,24 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
-  const navLinks = [
-    { label: 'Home', route: 'home' },
-    { label: 'Templates', route: 'templates' },
-    { label: 'Practice', route: 'practice' },
-    { label: 'Scan', route: 'scan' },
-    { label: 'Pricing', route: 'pricing' },
-    { label: 'Blog', route: 'blog' },
-    { label: 'FAQ', route: 'faq' },
-  ];
+  const navLinks = user
+    ? [
+        { label: 'Dashboard', route: 'dashboard' },
+        { label: 'Templates', route: 'templates' },
+        { label: 'Practice', route: 'practice' },
+        { label: 'Scan', route: 'scan' },
+        { label: 'Saved Sheets', route: 'saved' },
+        { label: 'Pricing', route: 'pricing' },
+      ]
+    : [
+        { label: 'Home', route: 'home' },
+        { label: 'Templates', route: 'templates' },
+        { label: 'Practice', route: 'practice' },
+        { label: 'Scan', route: 'scan' },
+        { label: 'Pricing', route: 'pricing' },
+        { label: 'Blog', route: 'blog' },
+        { label: 'FAQ', route: 'faq' },
+      ];
 
   const handleLogOut = async () => {
     setUserDropdownOpen(false);
@@ -52,28 +61,45 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 gap-4">
           
           {/* Logo */}
           <button
             type="button"
-            onClick={() => onNavigate('home')}
-            className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none"
+            onClick={() => onNavigate(user ? 'dashboard' : 'home')}
+            className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none shrink-0"
           >
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-sm shadow-blue-500/30 group-hover:bg-blue-700 transition-colors">
-              <div className="relative flex items-center justify-center">
-                <FileText className="w-5 h-5 stroke-[2.2]" />
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full border-2 border-white" />
-              </div>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-md shadow-blue-500/30 ring-1 ring-white/20 group-hover:scale-105 transition-all">
+              {/* Authentic OMR Sheet with Bubble Matrix SVG */}
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Paper sheet outline */}
+                <rect x="3.5" y="2.5" width="17" height="19" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
+                {/* 4 Optical Corner Timing Marks */}
+                <rect x="5.5" y="4.5" width="2" height="2" rx="0.5" fill="currentColor" />
+                <rect x="16.5" y="4.5" width="2" height="2" rx="0.5" fill="currentColor" />
+                <rect x="5.5" y="17.5" width="2" height="2" rx="0.5" fill="currentColor" />
+                <rect x="16.5" y="17.5" width="2" height="2" rx="0.5" fill="currentColor" />
+                {/* Row 1 Bubbles: A filled, B & C outlined */}
+                <circle cx="9" cy="9.5" r="1.5" fill="currentColor" />
+                <circle cx="13" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+                <circle cx="17" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+                {/* Row 2 Bubbles: A outlined, B cyan-filled, C outlined */}
+                <circle cx="9" cy="14" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+                <circle cx="13" cy="14" r="1.5" fill="#38bdf8" />
+                <circle cx="17" cy="14" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+              </svg>
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 leading-none">
                 <span className="font-black text-xl tracking-tight text-slate-900">
-                  OMR<span className="text-blue-600">Wallah</span>
+                  OMR<span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Wallah</span>
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 hidden sm:inline-block">
+                  AI Suite
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 font-semibold tracking-tight">
+              <p className="text-[10px] text-slate-500 font-semibold tracking-tight mt-0.5">
                 Create • Practice • Scan • Evaluate
               </p>
             </div>

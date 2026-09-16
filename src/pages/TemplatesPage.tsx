@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { TEMPLATES_DATA } from '../data/templates';
 import { OMRSheetRenderer } from '../components/omr/OMRSheetRenderer';
-import { Search, Sparkles, Filter, Layers, ArrowRight } from 'lucide-react';
+import { Search, Sparkles, Filter, Layers, ArrowRight, ArrowLeft } from 'lucide-react';
 
 interface TemplatesPageProps {
   onSelectTemplate: (templateId: string) => void;
+  onNavigate?: (route: string) => void;
 }
 
 export const TemplatesPage: React.FC<TemplatesPageProps> = ({
   onSelectTemplate,
+  onNavigate,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,13 +30,26 @@ export const TemplatesPage: React.FC<TemplatesPageProps> = ({
       
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            Choose a Template
-          </h1>
-          <p className="text-sm text-slate-600 mt-1">
-            Start with a ready-made template and customize it your way
-          </p>
+        <div className="flex items-center gap-3">
+          {onNavigate && (
+            <button
+              type="button"
+              onClick={() => onNavigate('dashboard')}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors cursor-pointer shrink-0 shadow-2xs"
+              title="Return to Dashboard"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Dashboard</span>
+            </button>
+          )}
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Choose a Template
+            </h1>
+            <p className="text-sm text-slate-600 mt-0.5">
+              Start with a ready-made template and customize it your way
+            </p>
+          </div>
         </div>
 
         {/* Search Input */}
