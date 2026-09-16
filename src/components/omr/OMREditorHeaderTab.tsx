@@ -93,24 +93,46 @@ export const OMREditorHeaderTab: React.FC<OMREditorHeaderTabProps> = ({
           </div>
         </div>
 
-        {/* Logo Position */}
-        <div className="mt-2.5 pt-2 border-t border-slate-200 flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-600">Logo Position:</span>
-          <div className="flex gap-1">
-            {(['left', 'right'] as const).map((pos) => (
-              <button
-                key={pos}
-                type="button"
-                onClick={() => updateHeader({ logoPosition: pos })}
-                className={`px-2 py-1 rounded text-xs font-bold capitalize border cursor-pointer ${
-                  header.logoPosition === pos
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {pos}
-              </button>
-            ))}
+        {/* Logo Position & Size */}
+        <div className="mt-2.5 pt-2 border-t border-slate-200 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-600">Logo Position:</span>
+            <div className="flex gap-1">
+              {(['left', 'center', 'right'] as const).map((pos) => (
+                <button
+                  key={pos}
+                  type="button"
+                  onClick={() => updateHeader({ logoPosition: pos })}
+                  className={`px-2 py-1 rounded text-xs font-bold capitalize border cursor-pointer ${
+                    header.logoPosition === pos
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  {pos}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-600">Logo Size:</span>
+            <div className="flex gap-1">
+              {(['small', 'medium', 'large'] as const).map((sz) => (
+                <button
+                  key={sz}
+                  type="button"
+                  onClick={() => updateHeader({ logoSize: sz })}
+                  className={`px-2 py-1 rounded text-xs font-bold capitalize border cursor-pointer ${
+                    (header.logoSize || 'medium') === sz
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  {sz}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -238,6 +260,21 @@ export const OMREditorHeaderTab: React.FC<OMREditorHeaderTabProps> = ({
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Exam Timing & Max Marks / Custom Note */}
+      <div>
+        <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">
+          Exam Details Banner (Time / Max Marks / Instructions)
+        </label>
+        <input
+          type="text"
+          value={header.customNote || ''}
+          onChange={(e) => updateHeader({ customNote: e.target.value })}
+          placeholder="e.g. Time: 3 Hours • Max Marks: 720 • Negative Marking (-1)"
+          className="w-full px-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+        />
+        <p className="text-[10px] text-slate-500 mt-1">Appears right beneath the header title on the printed sheet</p>
       </div>
 
       {/* Text Alignment */}

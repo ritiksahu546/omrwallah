@@ -59,9 +59,14 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ showToast, onOpenAuth 
     e.preventDefault();
     setSaving(true);
     try {
+      if (name?.trim()) {
+        try {
+          localStorage.setItem('omrwallah_user_name', name.trim());
+        } catch (e) {}
+      }
       if (user) {
         await updateProfileData({
-          name,
+          name: name.trim(),
           email,
           targetExam,
           institute,

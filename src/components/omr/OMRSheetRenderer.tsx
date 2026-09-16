@@ -268,8 +268,29 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
         
         {/* ================= HEADER SECTION ================= */}
         <div className="w-full mb-2">
+          {/* Centered logo (if logoPosition === 'center') */}
+          {header.logoPosition === 'center' && (
+            <div className="flex justify-center mb-1.5">
+              {header.logoUrl ? (
+                <img
+                  src={header.logoUrl}
+                  alt="Institute Logo"
+                  referrerPolicy="no-referrer"
+                  className={`${
+                    header.logoSize === 'large' ? 'w-16 h-16' : header.logoSize === 'small' ? 'w-9 h-9' : 'w-12 h-12'
+                  } object-contain border border-black p-0.5`}
+                />
+              ) : (
+                <div className={`${
+                  header.logoSize === 'large' ? 'w-16 h-16' : header.logoSize === 'small' ? 'w-9 h-9' : 'w-12 h-12'
+                } border-2 ${strokeColor} flex items-center justify-center font-black text-sm bg-slate-50`}>
+                  <ShieldCheck className="w-7 h-7 text-black stroke-[2]" />
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex items-start justify-between gap-3">
-            
             {/* Left Logo (if position is left) */}
             {header.logoPosition === 'left' && (
               <div className="flex-shrink-0">
@@ -278,10 +299,14 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
                     src={header.logoUrl}
                     alt="Institute Logo"
                     referrerPolicy="no-referrer"
-                    className="w-12 h-12 object-contain border border-black p-0.5"
+                    className={`${
+                      header.logoSize === 'large' ? 'w-16 h-16' : header.logoSize === 'small' ? 'w-9 h-9' : 'w-12 h-12'
+                    } object-contain border border-black p-0.5`}
                   />
                 ) : (
-                  <div className={`w-12 h-12 border-2 ${strokeColor} flex items-center justify-center font-black text-sm bg-slate-50`}>
+                  <div className={`${
+                    header.logoSize === 'large' ? 'w-16 h-16' : header.logoSize === 'small' ? 'w-9 h-9' : 'w-12 h-12'
+                  } border-2 ${strokeColor} flex items-center justify-center font-black text-sm bg-slate-50`}>
                     <ShieldCheck className="w-7 h-7 text-black stroke-[2]" />
                   </div>
                 )}
@@ -318,6 +343,13 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
                   </span>
                 )}
               </div>
+
+              {/* Custom Note Banner (Time / Max Marks) */}
+              {header.customNote && (
+                <div className="mt-1 text-[9.5px] font-bold text-slate-900 tracking-wide">
+                  {header.customNote}
+                </div>
+              )}
             </div>
 
             {/* Right Logo or Set Box */}
@@ -329,10 +361,14 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
                       src={header.logoUrl}
                       alt="Institute Logo"
                       referrerPolicy="no-referrer"
-                      className="w-12 h-12 object-contain border border-black p-0.5"
+                      className={`${
+                        header.logoSize === 'large' ? 'w-16 h-16' : header.logoSize === 'small' ? 'w-9 h-9' : 'w-12 h-12'
+                      } object-contain border border-black p-0.5`}
                     />
                   ) : (
-                    <div className={`w-12 h-12 border-2 ${strokeColor} flex items-center justify-center font-black text-sm bg-slate-50`}>
+                    <div className={`${
+                      header.logoSize === 'large' ? 'w-16 h-16' : header.logoSize === 'small' ? 'w-9 h-9' : 'w-12 h-12'
+                    } border-2 ${strokeColor} flex items-center justify-center font-black text-sm bg-slate-50`}>
                       <ShieldCheck className="w-7 h-7 text-black stroke-[2]" />
                     </div>
                   )}
@@ -413,10 +449,38 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
             {/* Custom Extra Fields */}
             {customFields.map((cf) => (
               <div key={cf.id} className="col-span-4 flex items-center gap-1 mt-0.5">
-                <span className="text-black font-extrabold flex-shrink-0 uppercase">{cf.label}:</span>
-                <span className="font-normal border-b border-dotted border-black flex-1">
-                  &nbsp;
-                </span>
+                <span className="text-black font-extrabold flex-shrink-0 uppercase text-[9px]">{cf.label}:</span>
+                {cf.type === 'boxes' ? (
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: cf.digits || 5 }).map((_, bIdx) => (
+                      <div
+                        key={bIdx}
+                        className="w-3.5 h-4 border border-black bg-white flex items-center justify-center text-[8px]"
+                      >
+                        &nbsp;
+                      </div>
+                    ))}
+                  </div>
+                ) : cf.type === 'bubbles' ? (
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: cf.digits || 4 }).map((_, cIdx) => (
+                      <div key={cIdx} className="flex flex-col items-center">
+                        <div className="w-3 h-3.5 border border-black text-[7.5px] bg-white mb-0.5">&nbsp;</div>
+                        <div className="flex flex-col gap-[1px]">
+                          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].slice(0, 5).map((d) => (
+                            <div key={d} className="w-2.5 h-2.5 rounded-full border border-black text-[6px] flex items-center justify-center font-bold">
+                              {d}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="font-normal border-b border-dotted border-black flex-1">
+                    &nbsp;
+                  </span>
+                )}
               </div>
             ))}
           </div>

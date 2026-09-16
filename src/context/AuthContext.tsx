@@ -7,6 +7,7 @@ import {
   sendPasswordResetEmail,
   signOut,
   onAuthStateChanged,
+  updateProfile,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { auth, db, googleProvider } from '../lib/firebase';
@@ -128,11 +129,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUpWithEmail = async (email: string, pass: string, name: string) => {
     const cleanEmail = email.trim().toLowerCase();
+    const finalName = name?.trim() || cleanEmail.split('@')[0];
     const res = await createUserWithEmailAndPassword(auth, cleanEmail, pass.trim());
     if (res.user) {
+      try {
+        await updateProfile(res.user, { displayName: finalName });
+        localStorage.setItem('omrwallah_user_name', finalName);
+      } catch (e) {
+        console.warn('Could not set displayName on user object:', e);
+      }
       const newProfile: UserProfile = {
         userId: res.user.uid,
-        name: name?.trim() || cleanEmail.split('@')[0],
+        name: finalName,
         email: res.user.email || cleanEmail,
         role: 'student',
         institute: '',
@@ -161,6 +169,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateProfileData = async (data: Partial<UserProfile>) => {
     if (!user) return;
     const userDocRef = doc(db, 'users', user.uid);
+    if (data.name && data.name.trim()) {
+      try {
+        localStorage.setItem('omrwallah_user_name', data.name.trim());
+        await updateProfile(user, { displayName: data.name.trim() });
+      } catch (e) {
+        console.warn('Could not update displayName:', e);
+      }
+    }
     const updated = {
       ...(userProfile || {}),
       ...data,

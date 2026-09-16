@@ -19,6 +19,7 @@ export interface OMRCustomField {
   label: string;
   type: 'text' | 'boxes' | 'bubbles';
   digits?: number;
+  required?: boolean;
 }
 
 export interface OMRFieldConfig {
@@ -40,12 +41,15 @@ export interface OMRHeaderConfig {
   setSeries: string; // e.g. "A", "B", "C", "D"
   logoUrl?: string;
   logoPosition: 'left' | 'center' | 'right';
+  logoSize?: 'small' | 'medium' | 'large';
   textAlignment: 'left' | 'center' | 'right';
   showDivider: boolean;
   showBorder: boolean;
   contactInfo?: string;
   sessionYear?: string;
+  customNote?: string;
   headerFontSize?: 'small' | 'medium' | 'large';
+  headerHeight?: 'compact' | 'standard' | 'spacious';
 }
 
 export interface OMRBubbleConfig {
@@ -65,6 +69,7 @@ export interface OMRPageConfig {
   marginRight: number;
   fontFamily: 'sans' | 'serif' | 'mono';
   fontSize: 'small' | 'medium' | 'large';
+  autoFit?: boolean;
 }
 
 export interface OMRConfig {
@@ -83,6 +88,7 @@ export interface OMRConfig {
   layoutColumns: QuestionLayout;
   numberingStyle: NumberingStyle;
   gridDensity?: 'standard' | 'compact' | 'spacious';
+  sheetsPerPage?: 1 | 2;
 
   // Sections (Optional section groupings like Physics, Chemistry, Biology)
   enableSections?: boolean;
@@ -97,7 +103,7 @@ export interface OMRConfig {
 
   // Student Fields
   enableRollNumber: boolean;
-  rollNumberDigits: number; // 4 - 10
+  rollNumberDigits: number; // 4 - 12
   rollNumberStyle: RollNumberStyle;
   enableRegistrationNumber?: boolean;
   registrationNumberDigits?: number;
@@ -120,6 +126,11 @@ export interface OMRConfig {
   enableInvigilatorSign: boolean;
   footerText: string;
   enableWatermark: boolean;
+  watermark?: {
+    enabled: boolean;
+    text?: string;
+    opacity?: number;
+  };
   enableQrCode: boolean;
   enableBarcode: boolean;
   enableCornerMarks?: boolean; // scanner registration marks

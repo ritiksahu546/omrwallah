@@ -11,7 +11,7 @@ export const OMREditorBasicTab: React.FC<OMREditorBasicTabProps> = ({
   config,
   onChange,
 }) => {
-  const presetQuestions = [20, 30, 50, 75, 100, 150, 180, 200];
+  const presetQuestions = [25, 50, 75, 100, 150, 200];
   const optionPresets = [2, 3, 4, 5, 6];
 
   const handleCustomQuestionChange = (val: number) => {

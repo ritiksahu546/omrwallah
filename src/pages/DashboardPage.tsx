@@ -12,8 +12,10 @@ import {
   FileText,
   Users,
   CheckCircle2,
+  Edit3,
 } from 'lucide-react';
 import { MOCK_STUDENT_STATS, MOCK_RECENT_TESTS } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 
 interface DashboardPageProps {
   onNavigate: (route: string) => void;
@@ -24,7 +26,49 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   onNavigate,
   onViewResult,
 }) => {
+  const { user, userProfile } = useAuth();
   const [userRole, setUserRole] = useState<'student' | 'teacher'>('student');
+
+  // Determine student name dynamically with intelligent fallbacks
+  const getStudentDisplayName = (): string => {
+    // 1. Saved in user profile
+    const profileName = userProfile?.name?.trim();
+    if (profileName && profileName.toLowerCase() !== 'student') {
+      return profileName;
+    }
+    // 2. Firebase user displayName
+    const authName = user?.displayName?.trim();
+    if (authName && authName.toLowerCase() !== 'student') {
+      return authName;
+    }
+    // 3. Local storage cached name
+    try {
+      const cached = localStorage.getItem('omrwallah_user_name')?.trim();
+      if (cached && cached.toLowerCase() !== 'student') {
+        return cached;
+      }
+    } catch (e) {}
+
+    // 4. Derive from email username (e.g. gig.ritik546@gmail.com -> Ritik)
+    if (user?.email) {
+      const prefix = user.email.split('@')[0];
+      const cleanParts = prefix
+        .replace(/^(gig|user|student|test)[._-]?/i, '')
+        .split(/[._\d-]/)
+        .filter((p) => p.length >= 2);
+      if (cleanParts.length > 0) {
+        return cleanParts.map((p) => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join(' ');
+      }
+      const rawPart = prefix.split(/[._\d-]/)[0];
+      if (rawPart && rawPart.length >= 2) {
+        return rawPart.charAt(0).toUpperCase() + rawPart.slice(1).toLowerCase();
+      }
+    }
+    return 'Student';
+  };
+
+  const studentName = getStudentDisplayName();
+  const professorName = userProfile?.name?.trim() || user?.displayName?.trim() || 'Professor';
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6 min-w-0 box-border">
@@ -33,11 +77,19 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 min-w-0">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
-              Hello, {userRole === 'student' ? 'Student' : 'Professor'} 👋
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-1.5">
+              <span>Hello, {userRole === 'student' ? studentName : professorName} 👋</span>
+              <button
+                type="button"
+                onClick={() => onNavigate('profile')}
+                title="Edit student profile & name"
+                className="text-slate-400 hover:text-blue-600 transition-colors p-1 rounded-lg hover:bg-slate-100 cursor-pointer inline-flex items-center"
+              >
+                <Edit3 className="w-4 h-4" />
+              </button>
             </h1>
             <span className="text-[11px] sm:text-xs font-bold px-2.5 py-0.5 sm:py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
-              {userRole === 'student' ? 'NEET Aspirant' : 'Coaching Faculty'}
+              {userProfile?.targetExam || (userRole === 'student' ? 'NEET Aspirant' : 'Coaching Faculty')}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">

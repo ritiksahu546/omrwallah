@@ -49,17 +49,50 @@ export const ScanOMRPage: React.FC<ScanOMRPageProps> = ({
     return {};
   });
 
+  const [totalQuestions, setTotalQuestions] = useState<number>(() => {
+    const cachedQ = localStorage.getItem('omrwallah_scan_question_count');
+    if (cachedQ) {
+      const parsed = parseInt(cachedQ, 10);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    const cached = localStorage.getItem('omrwallah_custom_answer_key');
+    if (cached) {
+      try {
+        const parsedKey = JSON.parse(cached);
+        const keys = Object.keys(parsedKey).map(Number);
+        if (keys.length > 0) {
+          const maxQ = Math.max(...keys);
+          if (maxQ > 0) return Math.max(50, maxQ);
+        }
+      } catch (e) {}
+    }
+    return 100;
+  });
+
   const [showAnswerKeyModal, setShowAnswerKeyModal] = useState(false);
 
   const keyCount = Object.keys(answerKey).length;
-  const totalQuestions = 50;
 
-  const handleSaveAnswerKey = (newKey: Record<number, string>) => {
+  const handleSaveAnswerKey = (newKey: Record<number, string>, totalQ?: number) => {
     setAnswerKey(newKey);
+    const keys = Object.keys(newKey).map(Number);
+    const maxQ = keys.length > 0 ? Math.max(...keys) : 0;
+    const finalTotalQ = totalQ || (maxQ > totalQuestions ? maxQ : totalQuestions);
+    setTotalQuestions(finalTotalQ);
     try {
       localStorage.setItem('omrwallah_custom_answer_key', JSON.stringify(newKey));
+      localStorage.setItem('omrwallah_scan_question_count', finalTotalQ.toString());
     } catch (e) {
       console.warn('Could not save answer key to storage', e);
+    }
+  };
+
+  const handleQuestionCountChange = (count: number) => {
+    setTotalQuestions(count);
+    try {
+      localStorage.setItem('omrwallah_scan_question_count', count.toString());
+    } catch (e) {
+      console.warn(e);
     }
   };
 
@@ -94,8 +127,8 @@ export const ScanOMRPage: React.FC<ScanOMRPageProps> = ({
       setScanProgress(75);
       setScanStatusText(
         keyCount > 0
-          ? `Scanning 50 filled bubbles against your uploaded Answer Key (${keyCount} set)...`
-          : 'Scanning filled bubbles (Note: You can add an Answer Key for precise scoring)...'
+          ? `Scanning ${totalQuestions} filled bubbles against your uploaded Answer Key (${keyCount} set)...`
+          : `Scanning ${totalQuestions} filled bubbles (Note: You can add an Answer Key for precise scoring)...`
       );
     }, 1400);
 
@@ -138,14 +171,15 @@ export const ScanOMRPage: React.FC<ScanOMRPageProps> = ({
           studentAnswer: studentAns,
           correctAnswer: correctAns || 'A',
           status: correctAns ? status : ('correct' as const),
-          subject: qNum <= 15 ? 'Physics' : qNum <= 30 ? 'Chemistry' : 'Biology',
+          subject: qNum <= Math.floor(totalQuestions * 0.3) ? 'Physics' : qNum <= Math.floor(totalQuestions * 0.6) ? 'Chemistry' : 'Biology',
         };
       });
 
+      const totalMarks = totalQuestions * 4;
       const score = Math.max(0, correct * 4 - wrong * 1);
       const generatedResult: TestResult = {
         id: `scan-${Date.now()}`,
-        testName: 'Scanned Physical OMR Sheet',
+        testName: `Scanned Physical OMR Sheet (${totalQuestions} Qs)`,
         date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
         totalQuestions,
         attempted,
@@ -153,8 +187,8 @@ export const ScanOMRPage: React.FC<ScanOMRPageProps> = ({
         wrong: keyCount > 0 ? wrong : 0,
         skipped: totalQuestions - attempted,
         score: keyCount > 0 ? score : attempted * 4,
-        totalMarks: 200,
-        percentage: Math.round(((keyCount > 0 ? score : attempted * 4) / 200) * 100),
+        totalMarks,
+        percentage: Math.round(((keyCount > 0 ? score : attempted * 4) / totalMarks) * 100),
         timeTaken: 'Instant AI Scan',
         accuracy: attempted > 0 ? Math.round((correct / attempted) * 100) : 0,
         questions,
@@ -196,61 +230,104 @@ export const ScanOMRPage: React.FC<ScanOMRPageProps> = ({
         </p>
       </div>
 
-      {/* Answer Key Management Card (User Request: Remove pre-uploaded key & give option to add) */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col md:flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
-        <div className="flex items-start sm:items-center gap-3.5 min-w-0">
-          <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-xs ${
-            keyCount > 0
-              ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-              : 'bg-amber-50 text-amber-600 border border-amber-200'
-          }`}>
-            <Key className="w-5 h-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-extrabold text-sm sm:text-base text-slate-900">
-                Official Answer Key (उत्तर कुंजी)
-              </span>
-              {keyCount > 0 ? (
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 shrink-0 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                  {keyCount} / {totalQuestions} Answers Set
-                </span>
-              ) : (
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 shrink-0 inline-flex items-center">
-                  Koi pre-loaded key nahi (Empty)
-                </span>
-              )}
+      {/* Answer Key Management Card with Exam Size Selector */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
+        <div className="flex flex-col md:flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+            <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-xs ${
+              keyCount > 0
+                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                : 'bg-blue-50 text-blue-600 border border-blue-200'
+            }`}>
+              <Key className="w-5 h-5" />
             </div>
-            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-              {keyCount > 0
-                ? 'Sheet evaluation is answer key ke hisaab se match ki jayegi.'
-                : 'Pehle se pre-uploaded answer key hata di gayi hai. Sahi evaluation ke liye apni answer key add karein.'}
-            </p>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-extrabold text-sm sm:text-base text-slate-900">
+                  Official Answer Key (उत्तर कुंजी)
+                </span>
+                {keyCount > 0 ? (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 shrink-0 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    {keyCount} / {totalQuestions} Answers Set
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 shrink-0 inline-flex items-center">
+                    Koi pre-loaded key nahi (Empty)
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                {keyCount > 0
+                  ? `Sheet evaluation is answer key ke hisaab se (${keyCount} Qs) match ki jayegi.`
+                  : 'Pehle se koi fake key nahi hai. Sahi marks evaluation ke liye apni Answer Key add karein (25, 50, 100, 180, 200 ya custom).'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 w-full lg:w-auto pt-1 lg:pt-0">
+            <button
+              type="button"
+              onClick={() => setShowAnswerKeyModal(true)}
+              className="flex-1 lg:flex-none px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-colors shrink-0"
+            >
+              <Plus className="w-4 h-4 shrink-0" />
+              <span>{keyCount > 0 ? `Edit / View Key (${keyCount} Qs)` : `Add Answer Key (${totalQuestions} Qs)`}</span>
+            </button>
+            
+            {keyCount > 0 && (
+              <button
+                type="button"
+                onClick={handleClearAnswerKey}
+                className="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs rounded-xl flex items-center justify-center gap-1 cursor-pointer transition-colors shrink-0"
+                title="Sabhi answers hatao"
+              >
+                <Trash2 className="w-4 h-4 shrink-0" />
+                <span>Hatao (Clear)</span>
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0 w-full lg:w-auto pt-1 lg:pt-0">
-          <button
-            type="button"
-            onClick={() => setShowAnswerKeyModal(true)}
-            className="flex-1 lg:flex-none px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-colors shrink-0"
-          >
-            <Plus className="w-4 h-4 shrink-0" />
-            <span>{keyCount > 0 ? 'Edit / View Key' : 'Add Answer Key'}</span>
-          </button>
-          
-          {keyCount > 0 && (
-            <button
-              type="button"
-              onClick={handleClearAnswerKey}
-              className="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs rounded-xl flex items-center justify-center gap-1 cursor-pointer transition-colors shrink-0"
-              title="Sabhi answers hatao"
-            >
-              <Trash2 className="w-4 h-4 shrink-0" />
-              <span>Hatao (Clear)</span>
-            </button>
-          )}
+        {/* Question Count Quick Selector Bar on Scan Page */}
+        <div className="pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="font-bold text-slate-700 flex items-center gap-1 mr-1">
+              Sheet Questions Count:
+            </span>
+            {[20, 25, 30, 50, 75, 100, 150, 180, 200].map((num) => (
+              <button
+                key={num}
+                type="button"
+                onClick={() => handleQuestionCountChange(num)}
+                className={`px-2.5 py-1 rounded-lg font-bold border transition-all cursor-pointer ${
+                  totalQuestions === num
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                {num} {num === 180 ? '(NEET)' : num === 75 ? '(JEE)' : num === 100 ? '(SSC)' : ''}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1.5 ml-auto">
+            <span className="text-slate-500 font-semibold text-[11px]">Custom:</span>
+            <input
+              type="number"
+              min={5}
+              max={300}
+              value={totalQuestions}
+              onChange={(e) => {
+                const val = parseInt(e.target.value, 10);
+                if (!isNaN(val) && val > 0 && val <= 300) {
+                  handleQuestionCountChange(val);
+                }
+              }}
+              className="w-16 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span className="text-[11px] text-slate-500">Qs</span>
+          </div>
         </div>
       </div>
 

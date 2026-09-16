@@ -89,7 +89,7 @@ export const OMREditorDesignTab: React.FC<OMREditorDesignTabProps> = ({
         </div>
       </div>
 
-      {/* 3. Bubble Shape */}
+      {/* 3. Bubble Shape & Size */}
       <div>
         <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
           Bubble Shape
@@ -120,6 +120,36 @@ export const OMREditorDesignTab: React.FC<OMREditorDesignTabProps> = ({
         </div>
       </div>
 
+      {/* Bubble Diameter / Size */}
+      <div>
+        <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
+          Bubble Size & Diameter
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: 'small', label: 'Small (14px)', desc: '150-200 Qs' },
+            { id: 'medium', label: 'Medium (17px)', desc: '75-100 Qs' },
+            { id: 'large', label: 'Large (20px)', desc: '20-50 Qs' },
+          ].map((sz) => (
+            <button
+              key={sz.id}
+              type="button"
+              onClick={() => updateBubble({ size: sz.id as any })}
+              className={`p-2 rounded-lg border text-center transition-all cursor-pointer ${
+                (bubble.size || 'medium') === sz.id
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400'
+              }`}
+            >
+              <div className="text-xs font-bold">{sz.label}</div>
+              <div className={`text-[10px] mt-0.5 ${(bubble.size || 'medium') === sz.id ? 'text-blue-100' : 'text-slate-500'}`}>
+                {sz.desc}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* 4. Bubble Border Thickness */}
       <div>
         <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
@@ -145,6 +175,44 @@ export const OMREditorDesignTab: React.FC<OMREditorDesignTabProps> = ({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Auto-Fit Page Optimizer */}
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1.5">
+        <span className="text-xs font-black uppercase tracking-wider text-slate-900 block">
+          ⚡ 1-Click Single A4 Auto-Fit
+        </span>
+        <p className="text-[11px] text-slate-500 leading-tight">
+          Automatically scales bubble dimensions, margins and column divides to fit all {config.questionsCount} questions on 1 single A4 sheet.
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            const count = config.questionsCount;
+            if (count <= 50) {
+              onChange({
+                layoutColumns: '2',
+                gridDensity: 'spacious',
+                bubble: { ...bubble, size: 'large', spacing: 'spacious' },
+              });
+            } else if (count <= 100) {
+              onChange({
+                layoutColumns: '3',
+                gridDensity: 'standard',
+                bubble: { ...bubble, size: 'medium', spacing: 'normal' },
+              });
+            } else {
+              onChange({
+                layoutColumns: '4',
+                gridDensity: 'compact',
+                bubble: { ...bubble, size: 'small', spacing: 'compact' },
+              });
+            }
+          }}
+          className="w-full mt-1 py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-2xs text-center"
+        >
+          Optimize Layout for {config.questionsCount} Questions
+        </button>
       </div>
 
       {/* 5. Scanner Calibration Corners */}
