@@ -15,6 +15,7 @@ import {
   Sliders
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface NavbarProps {
   currentRoute: string;
@@ -101,6 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Action Buttons */}
           <div className="hidden md:flex items-center gap-3">
+            <PWAInstallButton variant="nav" />
             {user ? (
               <div className="flex items-center gap-2.5 relative">
                 <button
@@ -221,87 +223,84 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
 
-          {/* Mobile hamburger */}
-          <div className="flex md:hidden items-center gap-2">
-            <button
-              type="button"
-              onClick={() => onNavigate('creator')}
-              className="px-2.5 py-1.5 text-xs font-bold text-white bg-blue-600 rounded-lg cursor-pointer"
-            >
-              Create
-            </button>
+          {/* Mobile hamburger & actions (Clean: Primary action is in bottom navigation bar) */}
+          <div className="flex md:hidden items-center gap-2 shrink-0">
+            <PWAInstallButton variant="nav" className="text-[11px] px-2 py-1" />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-600 hover:text-slate-900 rounded-lg focus:outline-none cursor-pointer"
+              className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg focus:outline-none cursor-pointer transition-colors"
               aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu (Supplementary Navigation Only - Core items are in Bottom Bar) */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 shadow-xl animate-in slide-in-from-top-2 duration-150">
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            <button
-              type="button"
-              onClick={() => {
-                onNavigate('creator');
-                setMobileMenuOpen(false);
-              }}
-              className="w-full py-2.5 text-center text-xs font-bold bg-blue-600 text-white rounded-xl shadow-sm cursor-pointer"
-            >
-              Create OMR
-            </button>
+        <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-2 shadow-xl animate-in slide-in-from-top-2 duration-150">
+          {/* Mobile App Install Highlight */}
+          <PWAInstallButton variant="mobile-item" className="mb-2" />
+
+          {/* Quick Dashboard Action */}
+          <div className="mb-2">
             <button
               type="button"
               onClick={() => {
                 onNavigate('dashboard');
                 setMobileMenuOpen(false);
               }}
-              className="w-full py-2.5 text-center text-xs font-bold bg-slate-900 text-white rounded-xl shadow-sm cursor-pointer"
+              className="w-full py-2.5 px-3.5 text-left text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-xs flex items-center justify-between cursor-pointer transition-colors"
             >
-              Dashboard
+              <span>Dashboard & Saved Sheets</span>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
           </div>
 
+          {/* Secondary Pages (Home & Practice are handled by Bottom Navigation Bar) */}
           <div className="divide-y divide-slate-100">
-            {navLinks.map((link) => (
-              <button
-                key={link.route}
-                type="button"
-                onClick={() => {
-                  onNavigate(link.route);
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full text-left py-2.5 text-xs font-bold flex items-center justify-between cursor-pointer ${
-                  currentRoute === link.route ? 'text-blue-600' : 'text-slate-700 hover:text-blue-600'
-                }`}
-              >
-                <span>{link.label}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
-              </button>
-            ))}
+            {navLinks
+              .filter((link) => link.route !== 'home' && link.route !== 'practice')
+              .map((link) => (
+                <button
+                  key={link.route}
+                  type="button"
+                  onClick={() => {
+                    onNavigate(link.route);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`w-full text-left py-2.5 text-xs font-bold flex items-center justify-between cursor-pointer transition-colors ${
+                    currentRoute === link.route ? 'text-blue-600 font-extrabold' : 'text-slate-700 hover:text-blue-600'
+                  }`}
+                >
+                  <span>{link.label}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+              ))}
           </div>
 
           <div className="pt-3 border-t border-slate-200">
             {user ? (
               <div className="space-y-2">
-                <div className="p-2 bg-slate-50 rounded-xl flex items-center justify-between">
-                  <div className="text-xs font-bold text-slate-900 truncate">
-                    {userProfile?.name || user.email}
+                <div className="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between border border-slate-100">
+                  <div className="min-w-0 pr-2">
+                    <div className="text-xs font-bold text-slate-900 truncate">
+                      {userProfile?.name || user.email}
+                    </div>
+                    <div className="text-[11px] text-slate-500 truncate">
+                      {user.email}
+                    </div>
                   </div>
-                  <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full shrink-0">
                     {userProfile?.plan || 'Free'}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={handleLogOut}
-                  className="w-full py-2 text-center text-xs font-bold text-rose-600 bg-rose-50 rounded-xl"
+                  className="w-full py-2 text-center text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl cursor-pointer transition-colors"
                 >
                   Sign Out
                 </button>
@@ -314,7 +313,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onOpenAuth('login');
                     setMobileMenuOpen(false);
                   }}
-                  className="flex-1 py-2 text-center text-xs font-bold border border-slate-300 rounded-xl text-slate-700"
+                  className="flex-1 py-2 text-center text-xs font-bold border border-slate-300 rounded-xl text-slate-700 hover:bg-slate-50 cursor-pointer"
                 >
                   Log In
                 </button>
@@ -324,7 +323,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onOpenAuth('signup');
                     setMobileMenuOpen(false);
                   }}
-                  className="flex-1 py-2 text-center text-xs font-bold bg-blue-600 text-white rounded-xl"
+                  className="flex-1 py-2 text-center text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl cursor-pointer shadow-xs"
                 >
                   Sign Up
                 </button>

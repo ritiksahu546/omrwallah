@@ -24,10 +24,10 @@ export const TemplatesPage: React.FC<TemplatesPageProps> = ({
   });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 w-full max-w-full overflow-x-hidden">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             Choose a Template
@@ -38,7 +38,7 @@ export const TemplatesPage: React.FC<TemplatesPageProps> = ({
         </div>
 
         {/* Search Input */}
-        <div className="relative w-full sm:w-72">
+        <div className="relative w-full sm:w-72 max-w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
           <input
             type="text"
@@ -51,7 +51,7 @@ export const TemplatesPage: React.FC<TemplatesPageProps> = ({
       </div>
 
       {/* Category Filter Pills (matching reference image #3) */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none w-full max-w-full">
         {categories.map((cat) => (
           <button
             key={cat}

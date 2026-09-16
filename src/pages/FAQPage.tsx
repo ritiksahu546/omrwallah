@@ -45,10 +45,10 @@ export const FAQPage: React.FC<FAQPageProps> = ({ showToast }) => {
   });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto space-y-8 w-full max-w-full overflow-x-hidden">
       
       {/* Top Header (matching reference image #9) */}
-      <div className="text-center max-w-2xl mx-auto space-y-2">
+      <div className="text-center max-w-2xl mx-auto space-y-2 w-full">
         <span className="text-xs font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
           HELP CENTER
         </span>
@@ -60,7 +60,7 @@ export const FAQPage: React.FC<FAQPageProps> = ({ showToast }) => {
         </p>
 
         {/* Search */}
-        <div className="pt-4 relative max-w-md mx-auto">
+        <div className="pt-4 relative max-w-md mx-auto w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-6.5" />
           <input
             type="text"
@@ -73,7 +73,7 @@ export const FAQPage: React.FC<FAQPageProps> = ({ showToast }) => {
       </div>
 
       {/* Category Filter Pills (matching reference image #9) */}
-      <div className="flex items-center justify-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center justify-start sm:justify-center gap-1.5 overflow-x-auto pb-2 scrollbar-none w-full max-w-full">
         {categories.map((cat) => (
           <button
             key={cat}

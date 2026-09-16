@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+    <linearGradient id="sheetGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#0f172a" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Background base -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <!-- Inner OMR Sheet Shape -->
+  <g filter="url(#shadow)">
+    <rect x="96" y="80" width="320" height="360" rx="20" fill="url(#sheetGrad)" />
+  </g>
+
+  <!-- OMR Top Header Header bar -->
+  <rect x="124" y="112" width="180" height="18" rx="6" fill="#2563eb" />
+  <circle cx="380" cy="121" r="12" fill="#eab308" />
+
+  <!-- Sheet Timing Tracker Bar on the left -->
+  <rect x="124" y="152" width="10" height="12" rx="2" fill="#0f172a" />
+  <rect x="124" y="180" width="10" height="12" rx="2" fill="#0f172a" />
+  <rect x="124" y="208" width="10" height="12" rx="2" fill="#0f172a" />
+  <rect x="124" y="236" width="10" height="12" rx="2" fill="#0f172a" />
+  <rect x="124" y="264" width="10" height="12" rx="2" fill="#0f172a" />
+  <rect x="124" y="292" width="10" height="12" rx="2" fill="#0f172a" />
+  <rect x="124" y="320" width="10" height="12" rx="2" fill="#0f172a" />
+  <rect x="124" y="348" width="10" height="12" rx="2" fill="#0f172a" />
+  <rect x="124" y="376" width="10" height="12" rx="2" fill="#0f172a" />
+  <rect x="124" y="404" width="10" height="12" rx="2" fill="#0f172a" />
+
+  <!-- Question 1 Row -->
+  <text x="146" y="163" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#64748b">Q1</text>
+  <circle cx="186" cy="158" r="10" fill="#2563eb" />
+  <text x="182" y="162" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">A</text>
+  <circle cx="222" cy="158" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="258" cy="158" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="294" cy="158" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+
+  <!-- Question 2 Row -->
+  <text x="146" y="219" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#64748b">Q2</text>
+  <circle cx="186" cy="214" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="222" cy="214" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="258" cy="214" r="10" fill="#10b981" />
+  <text x="254" y="218" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">C</text>
+  <circle cx="294" cy="214" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+
+  <!-- Question 3 Row -->
+  <text x="146" y="275" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#64748b">Q3</text>
+  <circle cx="186" cy="270" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="222" cy="270" r="10" fill="#2563eb" />
+  <text x="218" y="274" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">B</text>
+  <circle cx="258" cy="270" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="294" cy="270" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+
+  <!-- Question 4 Row -->
+  <text x="146" y="331" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#64748b">Q4</text>
+  <circle cx="186" cy="326" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="222" cy="326" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="258" cy="326" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="294" cy="326" r="10" fill="#2563eb" />
+  <text x="290" y="330" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">D</text>
+
+  <!-- Question 5 Row -->
+  <text x="146" y="387" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#64748b">Q5</text>
+  <circle cx="186" cy="382" r="10" fill="#2563eb" />
+  <text x="182" y="386" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">A</text>
+  <circle cx="222" cy="382" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="258" cy="382" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+  <circle cx="294" cy="382" r="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2" />
+
+  <!-- Scanner Laser Line Indicator -->
+  <g opacity="0.9">
+    <line x1="120" y1="214" x2="390" y2="214" stroke="#06b6d4" stroke-width="3" stroke-dasharray="6,4" />
+    <circle cx="390" cy="214" r="5" fill="#06b6d4" />
+  </g>
+</svg>

@@ -14,6 +14,8 @@ import { Footer } from './components/common/Footer';
 import { AuthModal } from './components/common/AuthModal';
 import { ProUpgradeModal } from './components/common/ProUpgradeModal';
 import { Toast, ToastMessage } from './components/common/Toast';
+import { PWAInstallButton } from './components/common/PWAInstallButton';
+import { OfflineIndicator } from './components/common/OfflineIndicator';
 
 import { HomePage } from './pages/HomePage';
 import { OMRCreatorPage } from './pages/OMRCreatorPage';
@@ -253,7 +255,7 @@ function AppMain() {
   ].includes(currentRoute);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-blue-500 selection:text-white w-full max-w-full overflow-x-hidden">
       
       {/* Top Header Navbar */}
       <Navbar
@@ -264,7 +266,7 @@ function AppMain() {
       />
 
       {/* Main Container */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex w-full max-w-full overflow-x-hidden">
         
         {/* Workspace Sidebar (visible in app modes on desktop) */}
         {isAppWorkspaceRoute && currentRoute !== 'creator' && (
@@ -276,11 +278,7 @@ function AppMain() {
         )}
 
         {/* Dynamic Page Content */}
-        <main
-          className={`flex-1 overflow-y-auto bg-slate-50 flex flex-col ${
-            currentRoute !== 'creator' ? 'pb-20 md:pb-0' : ''
-          }`}
-        >
+        <main className="flex-1 min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden bg-slate-50 flex flex-col pb-16 md:pb-0">
           {currentRoute === 'home' && (
             <HomePage
               onNavigate={handleNavigate}
@@ -381,12 +379,6 @@ function AppMain() {
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <MobileBottomNav
-        currentRoute={currentRoute}
-        onNavigate={handleNavigate}
-      />
-
       {/* Global Overlays */}
       <AuthModal
         isOpen={authModal.open}
@@ -419,6 +411,21 @@ function AppMain() {
           onClose={() => setToast(null)}
         />
       )}
+
+      {/* Offline Connectivity Status */}
+      <OfflineIndicator />
+
+      {/* Mobile App Install Prompt Banner */}
+      <PWAInstallButton
+        variant="banner"
+        onInstalled={() => showToast('OMRWallah App added to device!', 'success')}
+      />
+
+      {/* Mobile Bottom Navigation Bar (Home, Create, Practice, Results, Profile) */}
+      <MobileBottomNav
+        currentRoute={currentRoute}
+        onNavigate={handleNavigate}
+      />
 
     </div>
   );

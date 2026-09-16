@@ -17,10 +17,12 @@ import {
   ChevronRight,
   ShieldCheck,
   Zap,
+  Smartphone,
 } from 'lucide-react';
 import { OMRSheetRenderer } from '../components/omr/OMRSheetRenderer';
 import { DEFAULT_OMR_CONFIG, TEMPLATES_DATA } from '../data/templates';
 import { MOCK_FAQS, MOCK_BLOG_ARTICLES } from '../data/mockData';
+import { PWAInstallButton } from '../components/common/PWAInstallButton';
 
 interface HomePageProps {
   onNavigate: (route: string) => void;
@@ -561,6 +563,101 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= MOBILE APP SECTION ================= */}
+      <section className="py-16 bg-gradient-to-b from-slate-50 to-blue-50/50 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-950 rounded-3xl p-6 sm:p-10 lg:p-12 text-white shadow-2xl relative overflow-hidden">
+            {/* Background glowing circles */}
+            <div className="absolute -right-20 -top-20 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-7 space-y-4 text-center sm:text-left">
+                <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-cyan-300 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1 rounded-full">
+                  <Smartphone className="w-3.5 h-3.5" />
+                  MOBILE FRIENDLY APP (PWA)
+                </span>
+                
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight">
+                  OMRWallah on Your Smartphone — Apne Mobile Me Install Karein!
+                </h2>
+
+                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl">
+                  Bina Play Store download kiye seedha apne phone ki home screen par add karein. Real exam simulation, camera scanner, aur offline practice ab aapki pocket me.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                  <div className="bg-white/10 backdrop-blur-xs border border-white/10 p-3 rounded-xl text-left">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 mb-1" />
+                    <h3 className="font-bold text-xs text-white">Camera Scanner</h3>
+                    <p className="text-[11px] text-slate-300 mt-0.5">Phone camera se sheet scan karein</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-xs border border-white/10 p-3 rounded-xl text-left">
+                    <CheckCircle2 className="w-4 h-4 text-cyan-400 mb-1" />
+                    <h3 className="font-bold text-xs text-white">Works Offline</h3>
+                    <p className="text-[11px] text-slate-300 mt-0.5">Bina internet practice test dein</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-xs border border-white/10 p-3 rounded-xl text-left">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 mb-1" />
+                    <h3 className="font-bold text-xs text-white">Fast & Light</h3>
+                    <p className="text-[11px] text-slate-300 mt-0.5">Under 1MB, zero storage burden</p>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex flex-col sm:flex-row items-center gap-3">
+                  <PWAInstallButton variant="nav" className="w-full sm:w-auto px-5 py-3 text-sm bg-blue-600 hover:bg-blue-500 text-white border-none shadow-lg" />
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('scan')}
+                    className="w-full sm:w-auto px-5 py-3 text-sm font-bold bg-white/10 hover:bg-white/20 text-white rounded-xl border border-white/20 transition cursor-pointer text-center"
+                  >
+                    Open Camera Scanner
+                  </button>
+                </div>
+              </div>
+
+              {/* Mobile device mockup visual */}
+              <div className="lg:col-span-5 flex justify-center">
+                <div className="w-56 sm:w-64 bg-slate-900 p-3 rounded-[36px] shadow-2xl border-4 border-slate-700/60 relative">
+                  {/* Phone notch */}
+                  <div className="w-20 h-4 bg-slate-800 rounded-full mx-auto mb-2" />
+                  
+                  {/* Phone screen */}
+                  <div className="bg-slate-950 rounded-[24px] p-3 text-white space-y-2.5 overflow-hidden border border-slate-800">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-5 h-5 rounded-md bg-blue-600 flex items-center justify-center text-[10px] font-black">OW</div>
+                        <span className="text-[11px] font-bold">OMRWallah</span>
+                      </div>
+                      <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-bold">Ready</span>
+                    </div>
+
+                    <div className="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800 space-y-1.5">
+                      <p className="text-[10px] font-bold text-slate-300">Live Camera OMR</p>
+                      <div className="h-20 bg-slate-800/80 rounded-lg flex items-center justify-center border border-dashed border-cyan-500/40 relative overflow-hidden">
+                        <div className="absolute inset-x-0 top-1/2 h-0.5 bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
+                        <span className="text-[10px] text-cyan-300 font-mono">Scanning 180 Qs...</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-1.5 text-center">
+                      <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                        <p className="text-[9px] text-slate-400">Score</p>
+                        <p className="text-xs font-black text-emerald-400">680 / 720</p>
+                      </div>
+                      <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                        <p className="text-[9px] text-slate-400">Speed</p>
+                        <p className="text-xs font-black text-blue-400">0.8 sec</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

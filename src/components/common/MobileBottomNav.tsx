@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  LayoutDashboard,
-  FileEdit,
-  BookOpenCheck,
-  Award,
-  User,
-  ScanLine,
-  Layers,
-} from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { LayoutGrid, FileEdit, BookOpen, Award, User } from 'lucide-react';
 
 interface MobileBottomNavProps {
   currentRoute: string;
@@ -19,90 +10,128 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   currentRoute,
   onNavigate,
 }) => {
-  const { user } = useAuth();
-
-  // Don't show bottom nav inside the intense full-page A4 Creator editor
-  // because creator has its own sticky mobile bottom action bar
-  if (currentRoute === 'creator') {
-    return null;
-  }
-
-  const navItems = [
-    {
-      id: user ? 'dashboard' : 'home',
-      label: 'Home',
-      icon: LayoutDashboard,
-    },
-    {
-      id: 'creator',
-      label: 'Create',
-      icon: FileEdit,
-      highlight: true,
-    },
-    {
-      id: 'practice',
-      label: 'Practice',
-      icon: BookOpenCheck,
-    },
-    {
-      id: 'results',
-      label: 'Results',
-      icon: Award,
-    },
-    {
-      id: 'profile',
-      label: 'Profile',
-      icon: User,
-    },
-  ];
+  const isHome = currentRoute === 'home';
+  const isCreate = currentRoute === 'creator';
+  const isPractice = currentRoute === 'practice';
+  const isResults = currentRoute === 'results';
+  const isProfile = currentRoute === 'profile';
 
   return (
     <nav
-      id="mobile-bottom-nav"
-      aria-label="Mobile Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200/90 shadow-lg px-2 py-1.5 flex items-center justify-around select-none no-print"
+      aria-label="Mobile Navigation Bar"
+      className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] md:hidden"
     >
-      {navItems.map((item) => {
-        const Icon = item.icon;
-        const isActive =
-          currentRoute === item.id ||
-          (item.id === 'practice' && currentRoute === 'tests') ||
-          (item.id === 'profile' && currentRoute === 'settings');
-
-        if (item.highlight) {
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onNavigate(item.id)}
-              className="flex flex-col items-center justify-center -mt-4 group cursor-pointer focus:outline-none"
-            >
-              <div className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 transition-transform active:scale-95 border-2 border-white">
-                <Icon className="w-5 h-5 stroke-[2.5]" />
-              </div>
-              <span className="text-[10px] font-black text-blue-600 mt-0.5">
-                {item.label}
-              </span>
-            </button>
-          );
-        }
-
-        return (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onNavigate(item.id)}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-colors cursor-pointer focus:outline-none ${
-              isActive
-                ? 'text-blue-600 font-bold'
-                : 'text-slate-500 hover:text-slate-900 font-medium'
+      <div className="grid grid-cols-5 items-end px-2 pt-1 pb-2">
+        {/* 1. Home */}
+        <button
+          type="button"
+          onClick={() => onNavigate('home')}
+          className="flex flex-col items-center justify-center py-1 cursor-pointer transition-colors group"
+        >
+          <div
+            className={`p-1 transition-transform group-active:scale-90 ${
+              isHome ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
             }`}
           >
-            <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.4] text-blue-600' : 'stroke-[1.8]'}`} />
-            <span className="text-[10px] tracking-tight mt-0.5">{item.label}</span>
-          </button>
-        );
-      })}
+            <LayoutGrid className="w-5 h-5 stroke-[2.2]" />
+          </div>
+          <span
+            className={`text-[11px] tracking-tight transition-colors ${
+              isHome ? 'text-blue-600 font-bold' : 'text-slate-500 font-medium'
+            }`}
+          >
+            Home
+          </span>
+        </button>
+
+        {/* 2. Create (Elevated circular floating action button) */}
+        <button
+          type="button"
+          onClick={() => onNavigate('creator')}
+          className="flex flex-col items-center justify-center -mt-5 cursor-pointer group"
+        >
+          <div
+            className={`w-12 h-12 rounded-full bg-gradient-to-tr from-blue-700 to-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/40 border-4 border-white transition-transform group-active:scale-90 ${
+              isCreate ? 'ring-2 ring-blue-600 ring-offset-2' : ''
+            }`}
+          >
+            <FileEdit className="w-5 h-5 stroke-[2.4]" />
+          </div>
+          <span
+            className={`text-[11px] mt-0.5 tracking-tight ${
+              isCreate ? 'text-blue-700 font-extrabold' : 'text-blue-600 font-bold'
+            }`}
+          >
+            Create
+          </span>
+        </button>
+
+        {/* 3. Practice */}
+        <button
+          type="button"
+          onClick={() => onNavigate('practice')}
+          className="flex flex-col items-center justify-center py-1 cursor-pointer transition-colors group"
+        >
+          <div
+            className={`p-1 transition-transform group-active:scale-90 ${
+              isPractice ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+            }`}
+          >
+            <BookOpen className="w-5 h-5 stroke-[2.2]" />
+          </div>
+          <span
+            className={`text-[11px] tracking-tight transition-colors ${
+              isPractice ? 'text-blue-600 font-bold' : 'text-slate-500 font-medium'
+            }`}
+          >
+            Practice
+          </span>
+        </button>
+
+        {/* 4. Results */}
+        <button
+          type="button"
+          onClick={() => onNavigate('results')}
+          className="flex flex-col items-center justify-center py-1 cursor-pointer transition-colors group"
+        >
+          <div
+            className={`p-1 transition-transform group-active:scale-90 ${
+              isResults ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+            }`}
+          >
+            <Award className="w-5 h-5 stroke-[2.2]" />
+          </div>
+          <span
+            className={`text-[11px] tracking-tight transition-colors ${
+              isResults ? 'text-blue-600 font-bold' : 'text-slate-500 font-medium'
+            }`}
+          >
+            Results
+          </span>
+        </button>
+
+        {/* 5. Profile */}
+        <button
+          type="button"
+          onClick={() => onNavigate('profile')}
+          className="flex flex-col items-center justify-center py-1 cursor-pointer transition-colors group"
+        >
+          <div
+            className={`p-1 transition-transform group-active:scale-90 ${
+              isProfile ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+            }`}
+          >
+            <User className="w-5 h-5 stroke-[2.2]" />
+          </div>
+          <span
+            className={`text-[11px] tracking-tight transition-colors ${
+              isProfile ? 'text-blue-600 font-bold' : 'text-slate-500 font-medium'
+            }`}
+          >
+            Profile
+          </span>
+        </button>
+      </div>
     </nav>
   );
 };

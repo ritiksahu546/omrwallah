@@ -78,7 +78,7 @@ export const PricingPage: React.FC<PricingPageProps> = ({
   ];
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-12">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-12 w-full max-w-full overflow-x-hidden">
       
       {/* Top Header (matching reference image #7) */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
