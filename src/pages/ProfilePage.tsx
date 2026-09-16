@@ -10,23 +10,48 @@ interface ProfilePageProps {
 export const ProfilePage: React.FC<ProfilePageProps> = ({ showToast, onOpenAuth }) => {
   const { user, userProfile, updateProfileData } = useAuth();
 
-  const [name, setName] = useState('Aarav Sharma');
-  const [email, setEmail] = useState('aarav.sharma@example.com');
-  const [targetExam, setTargetExam] = useState('NEET UG 2026');
-  const [institute, setInstitute] = useState('Allen Career Institute (Kota)');
-  const [rollNumber, setRollNumber] = useState('24058912');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [targetExam, setTargetExam] = useState('');
+  const [institute, setInstitute] = useState('');
+  const [rollNumber, setRollNumber] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    // Sanitize any previous session dummy demo values
+    const sanitizeDummy = (val?: string, dummyList: string[] = []) => {
+      if (!val) return '';
+      const trimmed = val.trim();
+      return dummyList.some((d) => d.toLowerCase() === trimmed.toLowerCase()) ? '' : trimmed;
+    };
+
     if (userProfile) {
-      setName(userProfile.name || '');
-      setEmail(userProfile.email || '');
-      setTargetExam(userProfile.targetExam || 'NEET UG 2026');
-      setInstitute(userProfile.institute || 'Allen Career Institute (Kota)');
-      setRollNumber(userProfile.rollNumber || '24058912');
+      setName(userProfile.name || user?.displayName || '');
+      setEmail(userProfile.email || user?.email || '');
+      setTargetExam(
+        sanitizeDummy(userProfile.targetExam, [
+          'NEET UG 2026',
+          'NEET / JEE 2026',
+          'Target Exam',
+        ])
+      );
+      setInstitute(
+        sanitizeDummy(userProfile.institute, [
+          'Allen Career Institute (Kota)',
+          'Kota Coaching Institute',
+          'Apex Medical Academy',
+          'OMR Coaching Academy',
+        ])
+      );
+      setRollNumber(
+        sanitizeDummy(userProfile.rollNumber, ['24058912'])
+      );
     } else if (user) {
-      setName(user.displayName || user.email?.split('@')[0] || 'Student');
+      setName(user.displayName || user.email?.split('@')[0] || '');
       setEmail(user.email || '');
+      setTargetExam('');
+      setInstitute('');
+      setRollNumber('');
     }
   }, [user, userProfile]);
 
@@ -96,12 +121,15 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ showToast, onOpenAuth 
               {userProfile?.plan || 'Free'} Plan
             </span>
           </div>
-          <p className="text-xs text-slate-500">
-            Target: {targetExam} • {institute}
-          </p>
-          {user && (
-            <p className="text-[11px] text-slate-400 font-mono">
-              Firebase UID: {user.uid.substring(0, 12)}...
+          {(targetExam || institute) ? (
+            <p className="text-xs text-slate-500">
+              {targetExam ? `Target: ${targetExam}` : ''}
+              {targetExam && institute ? ' • ' : ''}
+              {institute || ''}
+            </p>
+          ) : (
+            <p className="text-xs text-slate-400">
+              Personalize your examination and institute credentials below
             </p>
           )}
         </div>
@@ -121,6 +149,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ showToast, onOpenAuth 
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
                 className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 font-semibold"
                 required
               />
@@ -133,6 +162,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ showToast, onOpenAuth 
                 value={email}
                 disabled={!!user}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter email address"
                 className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 font-semibold disabled:bg-slate-100 disabled:text-slate-500"
               />
             </div>
@@ -143,6 +173,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ showToast, onOpenAuth 
                 type="text"
                 value={rollNumber}
                 onChange={(e) => setRollNumber(e.target.value)}
+                placeholder="e.g. 1001"
                 className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 font-semibold"
               />
             </div>
@@ -153,6 +184,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ showToast, onOpenAuth 
                 type="text"
                 value={targetExam}
                 onChange={(e) => setTargetExam(e.target.value)}
+                placeholder="e.g. NEET UG, JEE Main, Board Exam"
                 className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 font-semibold"
               />
             </div>
@@ -163,6 +195,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ showToast, onOpenAuth 
                 type="text"
                 value={institute}
                 onChange={(e) => setInstitute(e.target.value)}
+                placeholder="e.g. Coaching Institute / School Name"
                 className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 font-semibold"
               />
             </div>

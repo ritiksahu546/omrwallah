@@ -134,15 +134,15 @@ function sanitizeClonedDocument(clonedDoc: Document, targetElementId: string) {
   // 3. Normalize the target printable element and its parent hierarchy
   const clonedTarget = clonedDoc.getElementById(targetElementId);
   if (clonedTarget) {
-    // Un-collapse and reset any scaled, absolute, or hidden parent containers
     let parent: HTMLElement | null = clonedTarget.parentElement;
     while (parent && parent !== clonedDoc.body) {
       parent.style.transform = 'none';
       parent.style.position = 'static';
       parent.style.overflow = 'visible';
-      parent.style.width = 'auto';
-      parent.style.height = 'auto';
+      parent.style.width = '794px';
+      parent.style.minWidth = '794px';
       parent.style.maxWidth = 'none';
+      parent.style.height = 'auto';
       parent.style.maxHeight = 'none';
       parent.style.margin = '0';
       parent.style.padding = '0';
@@ -158,14 +158,51 @@ function sanitizeClonedDocument(clonedDoc: Document, targetElementId: string) {
     clonedTarget.style.margin = '0 auto';
     clonedTarget.style.boxShadow = 'none';
     clonedTarget.style.borderRadius = '0';
-    clonedTarget.style.width = '210mm';
-    clonedTarget.style.minHeight = '297mm';
-    clonedTarget.style.maxWidth = '210mm';
+    clonedTarget.style.width = '794px';
+    clonedTarget.style.minWidth = '794px';
+    clonedTarget.style.maxWidth = '794px';
+    clonedTarget.style.height = '1123px';
+    clonedTarget.style.minHeight = '1123px';
     clonedTarget.style.backgroundColor = '#ffffff';
     clonedTarget.style.color = '#000000';
     clonedTarget.style.display = 'block';
     clonedTarget.style.visibility = 'visible';
   }
+}
+
+/**
+ * Pre-converts all OKLCH colors across a DOM tree into standard rgb/rgba
+ */
+function convertTreeOklchStyles(root: HTMLElement) {
+  const cssProperties = [
+    'color',
+    'background-color',
+    'border-color',
+    'border-top-color',
+    'border-right-color',
+    'border-bottom-color',
+    'border-left-color',
+    'outline-color',
+    'fill',
+    'stroke',
+  ];
+
+  const elements = [root, ...Array.from(root.querySelectorAll('*'))] as HTMLElement[];
+  elements.forEach((el) => {
+    if (!el.style) return;
+    try {
+      const computed = window.getComputedStyle(el);
+      for (const prop of cssProperties) {
+        const val = computed.getPropertyValue(prop);
+        if (val && val.toLowerCase().includes('oklch')) {
+          const converted = resolveColor(val);
+          el.style.setProperty(prop, converted, 'important');
+        }
+      }
+    } catch {
+      // Continue
+    }
+  });
 }
 
 export async function downloadOMRPdf(
@@ -178,25 +215,82 @@ export async function downloadOMRPdf(
     return false;
   }
 
-  try {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    const scaleFactor = isMobile ? 2.0 : 2.2;
+  // To prevent mobile viewports from compressing or wrapping columns into a narrow column:
+  // Mount an isolated, unscaled 794px × 1123px container into document.body during capture.
+  const tempHost = document.createElement('div');
+  tempHost.id = 'omr-pdf-render-host';
+  tempHost.style.position = 'fixed';
+  tempHost.style.top = '0';
+  tempHost.style.left = '0';
+  tempHost.style.width = '794px';
+  tempHost.style.minWidth = '794px';
+  tempHost.style.maxWidth = '794px';
+  tempHost.style.height = '1123px';
+  tempHost.style.minHeight = '1123px';
+  tempHost.style.maxHeight = '1123px';
+  tempHost.style.zIndex = '-99999';
+  tempHost.style.pointerEvents = 'none';
+  tempHost.style.overflow = 'hidden';
+  tempHost.style.backgroundColor = '#ffffff';
 
-    // Generate high-resolution canvas with full OKLCH color normalization and zero scroll offset
-    const canvas = await html2canvas(element, {
+  const clone = element.cloneNode(true) as HTMLElement;
+  clone.id = 'printable-omr-render-clone';
+  clone.style.position = 'static';
+  clone.style.top = '0';
+  clone.style.left = '0';
+  clone.style.transform = 'none';
+  clone.style.margin = '0';
+  clone.style.boxShadow = 'none';
+  clone.style.borderRadius = '0';
+  clone.style.width = '794px';
+  clone.style.minWidth = '794px';
+  clone.style.maxWidth = '794px';
+  clone.style.height = '1123px';
+  clone.style.minHeight = '1123px';
+  clone.style.maxHeight = '1123px';
+  clone.style.boxSizing = 'border-box';
+  clone.style.backgroundColor = '#ffffff';
+  clone.style.color = '#000000';
+  clone.style.display = 'block';
+  clone.style.visibility = 'visible';
+
+  tempHost.appendChild(clone);
+  document.body.appendChild(tempHost);
+
+  // Pre-convert OKLCH colors across the clone DOM tree before html2canvas touches it
+  convertTreeOklchStyles(clone);
+
+  try {
+    const scaleFactor = 2.0; // Produces 1588px × 2246px crystal clear A4 print
+
+    // Render using html2canvas with explicit 794px × 1123px dimensions
+    const canvas = await html2canvas(clone, {
       scale: scaleFactor,
+      width: 794,
+      height: 1123,
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
       scrollX: 0,
       scrollY: 0,
       windowWidth: 1200,
+      windowHeight: 1600,
       onclone: (clonedDoc) => {
-        sanitizeClonedDocument(clonedDoc, elementId);
+        if (clonedDoc.documentElement) {
+          clonedDoc.documentElement.style.width = '1200px';
+          clonedDoc.documentElement.style.maxWidth = 'none';
+          clonedDoc.documentElement.style.overflow = 'visible';
+        }
+        if (clonedDoc.body) {
+          clonedDoc.body.style.width = '1200px';
+          clonedDoc.body.style.maxWidth = 'none';
+          clonedDoc.body.style.overflow = 'visible';
+        }
+        sanitizeClonedDocument(clonedDoc, 'printable-omr-render-clone');
       },
     });
 
-    // Composite onto a guaranteed opaque white background so no transparency can turn black in JPEG
+    // Composite onto a guaranteed opaque white background
     const finalCanvas = document.createElement('canvas');
     finalCanvas.width = canvas.width;
     finalCanvas.height = canvas.height;
@@ -233,6 +327,11 @@ export async function downloadOMRPdf(
       return true;
     } catch {
       return false;
+    }
+  } finally {
+    // Always clean up detached render container
+    if (tempHost.parentNode) {
+      tempHost.parentNode.removeChild(tempHost);
     }
   }
 }
