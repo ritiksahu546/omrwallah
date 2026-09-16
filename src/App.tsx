@@ -37,7 +37,7 @@ import { OMRConfig, TestResult } from './types/omr';
 import { DEFAULT_OMR_CONFIG, TEMPLATES_DATA } from './data/templates';
 
 function AppMain() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [currentRoute, setCurrentRoute] = useState<string>('home');
   const [activeEditorConfig, setActiveEditorConfig] = useState<OMRConfig>(DEFAULT_OMR_CONFIG);
   
@@ -69,6 +69,20 @@ function AppMain() {
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [practiceZenMode, setPracticeZenMode] = useState<boolean>(false);
+
+  // Auto-redirect logged-in users to Dashboard (so mobile/desktop immediately show workspace)
+  useEffect(() => {
+    if (!loading && user && currentRoute === 'home') {
+      setCurrentRoute('dashboard');
+    }
+  }, [user, loading, currentRoute]);
+
+  // When user logs out, redirect to marketing Home page
+  useEffect(() => {
+    if (!loading && !user && ['dashboard', 'profile', 'settings', 'tests'].includes(currentRoute)) {
+      setCurrentRoute('home');
+    }
+  }, [user, loading, currentRoute]);
 
   // Sync to local storage
   useEffect(() => {
@@ -402,6 +416,7 @@ function AppMain() {
         onSwitchMode={(mode) => setAuthModal({ open: true, mode })}
         onSuccess={() => {
           setAuthModal({ open: false, mode: 'login' });
+          setCurrentRoute('dashboard');
           showToast('Welcome to OMRWallah!', 'success');
         }}
       />

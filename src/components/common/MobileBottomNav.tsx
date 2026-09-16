@@ -1,5 +1,6 @@
 import React from 'react';
-import { LayoutGrid, FileEdit, BookOpen, Award, User } from 'lucide-react';
+import { LayoutGrid, LayoutDashboard, FileEdit, BookOpen, Award, User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 interface MobileBottomNavProps {
   currentRoute: string;
@@ -10,7 +11,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   currentRoute,
   onNavigate,
 }) => {
+  const { user } = useAuth();
+
   const isHome = currentRoute === 'home';
+  const isDashboard = currentRoute === 'dashboard';
   const isCreate = currentRoute === 'creator';
   const isPractice = currentRoute === 'practice';
   const isResults = currentRoute === 'results';
@@ -22,25 +26,29 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] md:hidden pb-[max(0.25rem,env(safe-area-inset-bottom))]"
     >
       <div className="grid grid-cols-5 items-end px-2 pt-1 pb-1.5">
-        {/* 1. Home */}
+        {/* 1. Dashboard (for logged-in user) or Home (for visitors) */}
         <button
           type="button"
-          onClick={() => onNavigate('home')}
+          onClick={() => onNavigate(user ? 'dashboard' : 'home')}
           className="flex flex-col items-center justify-center py-1 cursor-pointer transition-colors group"
         >
           <div
             className={`p-1 transition-transform group-active:scale-90 ${
-              isHome ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+              (user ? isDashboard : isHome) ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
             }`}
           >
-            <LayoutGrid className="w-5 h-5 stroke-[2.2]" />
+            {user ? (
+              <LayoutDashboard className="w-5 h-5 stroke-[2.2]" />
+            ) : (
+              <LayoutGrid className="w-5 h-5 stroke-[2.2]" />
+            )}
           </div>
           <span
             className={`text-[11px] tracking-tight transition-colors ${
-              isHome ? 'text-blue-600 font-bold' : 'text-slate-500 font-medium'
+              (user ? isDashboard : isHome) ? 'text-blue-600 font-bold' : 'text-slate-500 font-medium'
             }`}
           >
-            Home
+            {user ? 'Dashboard' : 'Home'}
           </span>
         </button>
 
@@ -110,7 +118,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           </span>
         </button>
 
-        {/* 5. Profile */}
+        {/* 5. Profile or Sign In */}
         <button
           type="button"
           onClick={() => onNavigate('profile')}
@@ -128,7 +136,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               isProfile ? 'text-blue-600 font-bold' : 'text-slate-500 font-medium'
             }`}
           >
-            Profile
+            {user ? 'Profile' : 'Sign In'}
           </span>
         </button>
       </div>

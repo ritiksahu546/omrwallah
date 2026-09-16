@@ -61,18 +61,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
+      <div className="w-full px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
           
           {/* Logo */}
           <button
             type="button"
             onClick={() => onNavigate(user ? 'dashboard' : 'home')}
-            className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none shrink-0"
+            className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none shrink min-w-0"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-md shadow-blue-500/30 ring-1 ring-white/20 group-hover:scale-105 transition-all">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-md shadow-blue-500/30 ring-1 ring-white/20 group-hover:scale-105 transition-all shrink-0">
               {/* Authentic OMR Sheet with Bubble Matrix SVG */}
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 {/* Paper sheet outline */}
                 <rect x="3.5" y="2.5" width="17" height="19" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
                 {/* 4 Optical Corner Timing Marks */}
@@ -90,16 +90,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <circle cx="17" cy="14" r="1.5" stroke="currentColor" strokeWidth="1.2" />
               </svg>
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-black text-xl tracking-tight text-slate-900">
+                <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 truncate">
                   OMR<span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Wallah</span>
                 </span>
-                <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 hidden sm:inline-block">
+                <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 hidden sm:inline-block shrink-0">
                   AI Suite
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 font-semibold tracking-tight mt-0.5">
+              <p className="text-[10px] text-slate-500 font-semibold tracking-tight mt-0.5 hidden xs:block truncate">
                 Create • Practice • Scan • Evaluate
               </p>
             </div>
@@ -250,12 +250,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Mobile hamburger & actions (Clean: Primary action is in bottom navigation bar) */}
-          <div className="flex md:hidden items-center gap-2 shrink-0">
+          <div className="flex md:hidden items-center gap-1.5 shrink-0">
             <PWAInstallButton variant="nav" className="text-[11px] px-2 py-1" />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg focus:outline-none cursor-pointer transition-colors"
+              className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg focus:outline-none cursor-pointer transition-colors"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
