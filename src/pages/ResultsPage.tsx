@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CheckCircle2,
   XCircle,
@@ -15,6 +15,7 @@ import {
   ScanLine,
 } from 'lucide-react';
 import { TestResult } from '../types/omr';
+import { AnswerKeyModal } from '../components/omr/AnswerKeyModal';
 
 interface ResultsPageProps {
   result?: TestResult | null;
@@ -27,10 +28,17 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
   onNavigate,
   showToast,
 }) => {
+  const [evalResult, setEvalResult] = useState<TestResult | null>(result || null);
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(1);
   const [showAnswerKeyModal, setShowAnswerKeyModal] = useState(false);
 
-  if (!result) {
+  useEffect(() => {
+    if (result) {
+      setEvalResult(result);
+    }
+  }, [result]);
+
+  if (!evalResult) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
         <div className="bg-white border border-slate-200 rounded-3xl p-8 sm:p-14 text-center shadow-xs space-y-6">
@@ -61,7 +69,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('scan')}
-              className="w-full sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
+              className="w-full sm:w-auto px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-300 transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <ScanLine className="w-4 h-4" />
               <span>Scan OMR Sheet</span>
@@ -72,7 +80,71 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
     );
   }
 
-  const qDetails = result.questions.find((q) => q.questionNo === selectedQuestion);
+  const qDetails = evalResult.questions.find((q) => q.questionNo === selectedQuestion);
+
+  // Extract current answer key for AnswerKeyModal
+  const currentAnswerKey = evalResult.questions.reduce((acc, q) => {
+    if (q.correctAnswer && q.correctAnswer !== 'Not Set') {
+      acc[q.questionNo] = q.correctAnswer;
+    }
+    return acc;
+  }, {} as Record<number, string>);
+
+  const handleUpdateAnswerKey = (newKey: Record<number, string>) => {
+    try {
+      localStorage.setItem('omrwallah_custom_answer_key', JSON.stringify(newKey));
+    } catch (e) {
+      console.warn(e);
+    }
+
+    let correct = 0;
+    let wrong = 0;
+    let attempted = 0;
+
+    const updatedQuestions = evalResult.questions.map((q) => {
+      const correctAns = newKey[q.questionNo] || null;
+      let status: 'correct' | 'wrong' | 'skipped' = 'skipped';
+
+      if (q.studentAnswer) {
+        attempted++;
+        if (correctAns) {
+          if (q.studentAnswer === correctAns) {
+            status = 'correct';
+            correct++;
+          } else {
+            status = 'wrong';
+            wrong++;
+          }
+        } else {
+          status = 'correct';
+          correct++;
+        }
+      }
+
+      return {
+        ...q,
+        correctAnswer: correctAns || 'Not Set',
+        status: correctAns ? status : ('correct' as const),
+      };
+    });
+
+    const score = Math.max(0, correct * 4 - wrong * 1);
+    const totalQ = evalResult.totalQuestions || evalResult.questions.length;
+    const updated: TestResult = {
+      ...evalResult,
+      attempted,
+      correct,
+      wrong,
+      skipped: totalQ - attempted,
+      score,
+      percentage: Math.round((score / evalResult.totalMarks) * 100),
+      accuracy: attempted > 0 ? Math.round((correct / attempted) * 100) : 0,
+      questions: updatedQuestions,
+    };
+
+    setEvalResult(updated);
+    showToast('Answer key updated & scorecard recalculated!', 'success');
+  };
 
   const handleDownloadReport = () => {
     showToast('Downloading Performance Evaluation Scorecard PDF...', 'info');
@@ -84,7 +156,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
       
-      {/* Top Banner (matching reference image #6) */}
+      {/* Top Banner */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           
@@ -96,19 +168,19 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              {result.testName}
+              {evalResult.testName}
             </h1>
 
             <div className="flex items-center gap-4 text-xs font-semibold text-slate-500">
-              <span>Date: {result.date}</span>
+              <span>Date: {evalResult.date}</span>
               <span>•</span>
-              <span>Total Questions: {result.questions.length}</span>
+              <span>Total Questions: {evalResult.questions.length}</span>
               <span>•</span>
               <span>OMR Scan ID: #OMR-9842</span>
             </div>
           </div>
 
-          {/* Circular Score Badge (matching reference #6 72/100) */}
+          {/* Circular Score Badge */}
           <div className="flex items-center gap-6">
             <div className="relative w-28 h-28 flex items-center justify-center">
               <svg className="w-full h-full transform -rotate-90">
@@ -127,7 +199,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
                   stroke="#10b981"
                   strokeWidth="8"
                   strokeDasharray="289"
-                  strokeDashoffset={289 - (289 * result.percentage) / 100}
+                  strokeDashoffset={289 - (289 * evalResult.percentage) / 100}
                   strokeLinecap="round"
                   fill="transparent"
                   className="transition-all duration-1000"
@@ -135,10 +207,10 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-3xl font-black text-slate-900 leading-none">
-                  {result.score}
+                  {evalResult.score}
                 </span>
                 <span className="text-[11px] font-bold text-slate-400">
-                  /{result.totalMarks}
+                  /{evalResult.totalMarks}
                 </span>
               </div>
             </div>
@@ -146,22 +218,22 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
 
         </div>
 
-        {/* 4 Metric Counter Pills (matching reference #6) */}
+        {/* 4 Metric Counter Pills */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-100">
           
           <div className="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-3.5 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black">
-              {result.attempted}
+              {evalResult.attempted}
             </div>
             <div>
               <div className="text-xs font-black text-slate-900">Attempted</div>
-              <div className="text-[10px] font-semibold text-slate-500">Out of 100</div>
+              <div className="text-[10px] font-semibold text-slate-500">Out of {evalResult.totalQuestions || evalResult.questions.length}</div>
             </div>
           </div>
 
           <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-3.5 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black">
-              {result.correct}
+              {evalResult.correct}
             </div>
             <div>
               <div className="text-xs font-black text-slate-900">Correct</div>
@@ -171,7 +243,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
 
           <div className="bg-rose-50/70 border border-rose-200/80 rounded-2xl p-3.5 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center font-black">
-              {result.wrong}
+              {evalResult.wrong}
             </div>
             <div>
               <div className="text-xs font-black text-slate-900">Wrong</div>
@@ -181,7 +253,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
 
           <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3.5 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black">
-              {result.skipped}
+              {evalResult.skipped}
             </div>
             <div>
               <div className="text-xs font-black text-slate-900">Skipped</div>
@@ -214,111 +286,92 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
                 <span className="text-slate-600">Wrong</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
                 <span className="text-slate-600">Skipped</span>
               </div>
             </div>
           </div>
 
-          {/* Interactive Question Bubbles Matrix (1 to 50) */}
+          {/* 50 Questions Number Grid */}
           <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
-            {result.questions.map((q) => {
+            {evalResult.questions.map((q) => {
               const isSelected = selectedQuestion === q.questionNo;
-
-              let colorClasses = 'bg-slate-100 text-slate-600 border-slate-300';
-              if (q.status === 'correct') {
-                colorClasses = 'bg-emerald-500 text-white border-emerald-600 shadow-xs';
-              } else if (q.status === 'wrong') {
-                colorClasses = 'bg-rose-500 text-white border-rose-600 shadow-xs';
-              } else if (q.status === 'skipped') {
-                colorClasses = 'bg-slate-200 text-slate-700 border-slate-300';
-              }
+              let bg = 'bg-amber-100 text-amber-900 border-amber-300';
+              if (q.status === 'correct') bg = 'bg-emerald-100 text-emerald-900 border-emerald-300 font-black';
+              if (q.status === 'wrong') bg = 'bg-rose-100 text-rose-900 border-rose-300 font-black';
 
               return (
                 <button
                   key={q.questionNo}
                   type="button"
                   onClick={() => setSelectedQuestion(q.questionNo)}
-                  className={`h-9 rounded-xl font-bold text-xs border flex items-center justify-center transition-all cursor-pointer ${colorClasses} ${
-                    isSelected ? 'ring-3 ring-blue-500 ring-offset-2 scale-105' : 'hover:scale-102'
+                  className={`py-2 text-xs rounded-xl border flex flex-col items-center justify-center transition-all cursor-pointer ${bg} ${
+                    isSelected ? 'ring-2 ring-blue-600 ring-offset-2 scale-105 shadow-md' : 'hover:opacity-80'
                   }`}
                 >
-                  {q.questionNo}
+                  <span className="text-[10px] text-slate-500 font-medium">#{q.questionNo}</span>
+                  <span className="text-xs uppercase">{q.studentAnswer || '-'}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Selected Question Detail Drawer / Box */}
+          {/* Selected Question Detail Card */}
           {qDetails && (
-            <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
-              <div className="flex items-center justify-between mb-2">
+            <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="font-extrabold text-sm text-slate-900">
                     Question #{qDetails.questionNo}
                   </span>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600">
-                    {qDetails.subject}
+                  <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${
+                    qDetails.status === 'correct' ? 'bg-emerald-100 text-emerald-800' :
+                    qDetails.status === 'wrong' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {qDetails.status.toUpperCase()}
                   </span>
+                  {qDetails.subject && (
+                    <span className="text-xs text-slate-500 font-medium">
+                      ({qDetails.subject})
+                    </span>
+                  )}
                 </div>
-
-                <span
-                  className={`text-xs font-black px-2.5 py-0.5 rounded-full uppercase ${
-                    qDetails.status === 'correct'
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : qDetails.status === 'wrong'
-                      ? 'bg-rose-100 text-rose-800'
-                      : 'bg-slate-200 text-slate-700'
-                  }`}
-                >
-                  {qDetails.status}
-                </span>
+                <div className="text-xs text-slate-600 flex items-center gap-4 pt-1">
+                  <span>Your Bubble: <strong className="font-mono text-slate-900 text-sm">{qDetails.studentAnswer || 'Skipped (None)'}</strong></span>
+                  <span>•</span>
+                  <span>Correct Key: <strong className="font-mono text-emerald-600 text-sm">{qDetails.correctAnswer}</strong></span>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs pt-2 border-t border-slate-200/70">
-                <div>
-                  <span className="text-slate-500 block">Your Marked Answer:</span>
-                  <span className="font-extrabold text-slate-900 text-sm">
-                    {qDetails.studentAnswer ? `Option (${qDetails.studentAnswer})` : 'Not Attempted'}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-slate-500 block">Official Correct Answer:</span>
-                  <span className="font-extrabold text-emerald-600 text-sm">
-                    Option ({qDetails.correctAnswer})
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-slate-500 block">Score Impact:</span>
-                  <span className="font-extrabold text-slate-900 text-sm">
-                    {qDetails.status === 'correct' ? '+4 Marks' : qDetails.status === 'wrong' ? '-1 Mark' : '0'}
-                  </span>
-                </div>
+              <div className="text-xs font-bold text-slate-500">
+                {qDetails.status === 'correct' ? '+4 Marks' : qDetails.status === 'wrong' ? '-1 Mark' : '0 Marks'}
               </div>
             </div>
           )}
+
         </div>
 
-        {/* Right 4 Cols: Subject Wise Breakdown & Actions (matching reference #6) */}
+        {/* Right 4 Cols: Subject-Wise Performance + Download */}
         <div className="lg:col-span-4 space-y-6">
           
+          {/* Subject Breakdown Card */}
           <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-4">
-            <h3 className="font-extrabold text-base text-slate-900">
-              Subject Wise Performance
+            <h3 className="font-extrabold text-base text-slate-900 pb-2 border-b border-slate-100">
+              Subject-Wise Breakdown
             </h3>
 
-            <div className="space-y-3.5">
-              {result.subjectWise.map((sub) => (
-                <div key={sub.subject} className="space-y-1">
+            <div className="space-y-4">
+              {evalResult.subjectWise.map((sub, idx) => (
+                <div key={idx} className="space-y-1.5">
                   <div className="flex justify-between text-xs font-bold">
                     <span className="text-slate-800">{sub.subject}</span>
-                    <span className="text-slate-900">{sub.percentage}%</span>
+                    <span className="text-slate-500">{sub.score} / {sub.total} ({sub.percentage}%)</span>
                   </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-600 rounded-full"
+                      className={`h-full rounded-full transition-all duration-700 ${
+                        sub.percentage >= 75 ? 'bg-emerald-500' : sub.percentage >= 50 ? 'bg-blue-500' : 'bg-rose-500'
+                      }`}
                       style={{ width: `${sub.percentage}%` }}
                     />
                   </div>
@@ -326,19 +379,19 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-xs">
-              <div className="bg-slate-50 p-2.5 rounded-xl text-center">
+            <div className="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-center">
+              <div className="p-2.5 bg-slate-50 rounded-xl">
                 <span className="text-slate-500 block text-[10px] uppercase font-bold">Time Taken</span>
-                <span className="font-extrabold text-slate-900 text-sm">{result.timeTaken}</span>
+                <span className="font-extrabold text-slate-900 text-sm">{evalResult.timeTaken}</span>
               </div>
-              <div className="bg-slate-50 p-2.5 rounded-xl text-center">
+              <div className="p-2.5 bg-slate-50 rounded-xl">
                 <span className="text-slate-500 block text-[10px] uppercase font-bold">Accuracy</span>
-                <span className="font-extrabold text-emerald-600 text-sm">{result.accuracy}%</span>
+                <span className="font-extrabold text-emerald-600 text-sm">{evalResult.accuracy}%</span>
               </div>
             </div>
           </div>
 
-          {/* Action CTAs (matching reference image #6) */}
+          {/* Action CTAs */}
           <div className="space-y-2.5">
             <button
               type="button"
@@ -346,7 +399,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
               className="w-full py-3 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs rounded-2xl border border-slate-300 shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <Key className="w-4 h-4 text-blue-600" />
-              <span>View Answer Key</span>
+              <span>Answer Key (View / Edit / Upload)</span>
             </button>
 
             <button
@@ -371,44 +424,17 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
 
       </div>
 
-      {/* Answer Key Modal */}
-      {showAnswerKeyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-              <h3 className="font-extrabold text-lg text-slate-900">Official Answer Key (50 Questions)</h3>
-              <button
-                type="button"
-                onClick={() => setShowAnswerKeyModal(false)}
-                className="text-xs font-bold text-slate-500 hover:text-slate-900 cursor-pointer"
-              >
-                Close ✕
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto py-4">
-              <div className="grid grid-cols-5 gap-2 text-xs">
-                {result.questions.map((q) => (
-                  <div key={q.questionNo} className="p-2 bg-slate-50 border border-slate-200 rounded-lg text-center">
-                    <span className="text-slate-400 block text-[10px] font-bold">Q{q.questionNo}</span>
-                    <span className="font-black text-blue-600 text-sm">{q.correctAnswer}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-200 text-right">
-              <button
-                type="button"
-                onClick={() => setShowAnswerKeyModal(false)}
-                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Answer Key Modal with Interactive Grid, Paste, CSV upload, and Clear */}
+      <AnswerKeyModal
+        isOpen={showAnswerKeyModal}
+        onClose={() => setShowAnswerKeyModal(false)}
+        currentKey={currentAnswerKey}
+        onSaveKey={handleUpdateAnswerKey}
+        totalQuestions={evalResult.totalQuestions || evalResult.questions.length}
+        optionsList={['A', 'B', 'C', 'D']}
+        title="Official Answer Key (Edit or Upload)"
+        showToast={showToast}
+      />
 
     </div>
   );

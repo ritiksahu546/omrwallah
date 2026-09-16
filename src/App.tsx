@@ -188,43 +188,122 @@ function AppMain() {
     showToast('Sheet duplicated successfully', 'success');
   };
 
-  const handlePracticeComplete = async (marked: Record<number, string>) => {
-    // Generate calculated test result based on marked answers
+  const handlePracticeComplete = async (
+    marked: Record<number, string>,
+    customKey?: Record<number, string>,
+    testMeta?: {
+      totalQuestions?: number;
+      testName?: string;
+      timeTaken?: string;
+      sections?: { name: string; startQ: number; endQ: number }[];
+    }
+  ) => {
+    // Check if customKey exists in parameter or localStorage
+    let activeKey: Record<number, string> = customKey && Object.keys(customKey).length > 0 ? customKey : {};
+    if (Object.keys(activeKey).length === 0) {
+      try {
+        const cached = localStorage.getItem('omrwallah_custom_answer_key');
+        if (cached) activeKey = JSON.parse(cached);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
     let correctCount = 0;
     let wrongCount = 0;
-    const totalQuestions = 50;
+    const totalQuestions = testMeta?.totalQuestions || 50;
 
     const evaluatedQuestions = Array.from({ length: totalQuestions }, (_, i) => {
       const qNum = i + 1;
       const studentAns = marked[qNum];
-      const correctAns = ['A', 'B', 'C', 'D'][(qNum * 3) % 4];
+      const correctAns = activeKey[qNum] || null;
 
       let status: 'correct' | 'wrong' | 'skipped' = 'skipped';
       if (studentAns) {
-        if (studentAns === correctAns) {
+        if (correctAns) {
+          if (studentAns === correctAns) {
+            status = 'correct';
+            correctCount++;
+          } else {
+            status = 'wrong';
+            wrongCount++;
+          }
+        } else {
+          // If no key was configured, mark as attempted
           status = 'correct';
           correctCount++;
-        } else {
-          status = 'wrong';
-          wrongCount++;
         }
+      }
+
+      // Subject determination from sections if provided
+      let subject = 'General';
+      if (testMeta?.sections && testMeta.sections.length > 0) {
+        const matchingSection = testMeta.sections.find((s) => qNum >= s.startQ && qNum <= s.endQ);
+        if (matchingSection) {
+          subject = matchingSection.name;
+        }
+      } else {
+        subject =
+          qNum <= Math.round(totalQuestions * 0.3)
+            ? 'Physics'
+            : qNum <= Math.round(totalQuestions * 0.6)
+            ? 'Chemistry'
+            : 'Biology';
       }
 
       return {
         questionNo: qNum,
         studentAnswer: studentAns || null,
-        correctAnswer: correctAns,
+        correctAnswer: correctAns || (studentAns || 'A'),
         status,
-        subject: qNum <= 15 ? 'Physics' : qNum <= 30 ? 'Chemistry' : 'Biology',
+        subject,
       };
     });
 
     const calculatedScore = Math.max(0, correctCount * 4 - wrongCount * 1);
     const attemptedCount = correctCount + wrongCount;
+    const totalMarks = totalQuestions * 4;
+
+    // Build subjectWise summary
+    let subjectWiseList: { subject: string; score: number; total: number; percentage: number }[] = [];
+    if (testMeta?.sections && testMeta.sections.length > 0) {
+      subjectWiseList = testMeta.sections.map((sec) => {
+        const secQuestions = evaluatedQuestions.filter(
+          (q) => q.questionNo >= sec.startQ && q.questionNo <= sec.endQ
+        );
+        const secCorrect = secQuestions.filter(
+          (q) => q.status === 'correct' && q.studentAnswer !== null
+        ).length;
+        const secWrong = secQuestions.filter((q) => q.status === 'wrong').length;
+        const secScore = Math.max(0, secCorrect * 4 - secWrong * 1);
+        const secTotalMarks = (sec.endQ - sec.startQ + 1) * 4;
+        const secPercentage = secTotalMarks > 0 ? Math.round((secScore / secTotalMarks) * 100) : 0;
+        return {
+          subject: sec.name,
+          score: secScore,
+          total: secTotalMarks,
+          percentage: secPercentage,
+        };
+      });
+    } else {
+      const pCount = Math.round(totalQuestions * 0.3);
+      const cCount = Math.round(totalQuestions * 0.3);
+      const bCount = totalQuestions - pCount - cCount;
+
+      const pCorrect = evaluatedQuestions.filter((q) => q.subject === 'Physics' && q.status === 'correct').length;
+      const cCorrect = evaluatedQuestions.filter((q) => q.subject === 'Chemistry' && q.status === 'correct').length;
+      const bCorrect = evaluatedQuestions.filter((q) => q.subject === 'Biology' && q.status === 'correct').length;
+
+      subjectWiseList = [
+        { subject: 'Physics', score: pCorrect * 4, total: pCount * 4, percentage: pCount > 0 ? Math.round((pCorrect / pCount) * 100) : 0 },
+        { subject: 'Chemistry', score: cCorrect * 4, total: cCount * 4, percentage: cCount > 0 ? Math.round((cCorrect / cCount) * 100) : 0 },
+        { subject: 'Biology', score: bCorrect * 4, total: bCount * 4, percentage: bCount > 0 ? Math.round((bCorrect / bCount) * 100) : 0 },
+      ];
+    }
 
     const newResult: TestResult = {
       id: `test-${Date.now()}`,
-      testName: 'Interactive Practice Test #03',
+      testName: testMeta?.testName || `Interactive Practice Test (${totalQuestions} Questions)`,
       date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
       totalQuestions,
       attempted: attemptedCount,
@@ -232,15 +311,11 @@ function AppMain() {
       wrong: wrongCount,
       skipped: totalQuestions - attemptedCount,
       score: calculatedScore,
-      totalMarks: 200,
-      percentage: Math.round((calculatedScore / 200) * 100),
-      timeTaken: '38m 20s',
+      totalMarks,
+      percentage: totalMarks > 0 ? Math.round((calculatedScore / totalMarks) * 100) : 0,
+      timeTaken: testMeta?.timeTaken || '38m 20s',
       accuracy: attemptedCount > 0 ? Math.round((correctCount / attemptedCount) * 100) : 0,
-      subjectWise: [
-        { subject: 'Physics', score: Math.round(correctCount * 0.3), total: 15, percentage: 70 },
-        { subject: 'Chemistry', score: Math.round(correctCount * 0.35), total: 15, percentage: 80 },
-        { subject: 'Biology', score: Math.round(correctCount * 0.35), total: 20, percentage: 85 },
-      ],
+      subjectWise: subjectWiseList,
       questions: evaluatedQuestions,
     };
 
@@ -301,7 +376,7 @@ function AppMain() {
 
         {/* Dynamic Page Content */}
         <main className={`flex-1 min-w-0 w-full max-w-full overflow-x-hidden bg-slate-50 flex flex-col ${
-          practiceZenMode && currentRoute === 'practice' ? 'pb-0' : 'pb-28 sm:pb-32 md:pb-8'
+          currentRoute === 'practice' ? 'pb-0' : 'pb-28 sm:pb-32 md:pb-8'
         }`}>
           {currentRoute === 'home' && (
             <HomePage
@@ -361,12 +436,18 @@ function AppMain() {
               showToast={showToast}
               isZenMode={practiceZenMode}
               onToggleZenMode={() => setPracticeZenMode((prev) => !prev)}
+              onNavigate={handleNavigate}
             />
           )}
 
           {currentRoute === 'scan' && (
             <ScanOMRPage
-              onScanComplete={() => setCurrentRoute('results')}
+              onScanComplete={(result) => {
+                if (result) {
+                  setActiveResult(result);
+                }
+                setCurrentRoute('results');
+              }}
               showToast={showToast}
             />
           )}

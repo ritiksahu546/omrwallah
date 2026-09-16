@@ -20,6 +20,11 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   const isResults = currentRoute === 'results';
   const isProfile = currentRoute === 'profile';
 
+  // Do not render bottom site navigation during active practice exam to prevent control conflicts
+  if (currentRoute === 'practice') {
+    return null;
+  }
+
   return (
     <nav
       aria-label="Mobile Navigation Bar"

@@ -181,17 +181,15 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
     return sections.find((s) => s.startQuestion === qNum || (s as any).startQ === qNum);
   };
 
-  return (
+  const sheetContent = (
     <div
       id="printable-omr-container"
-      className={`bg-white ${textColor} ${getFontFamilyClass()} mx-auto select-none transition-all shadow-md relative overflow-hidden`}
+      className={`bg-white ${textColor} ${getFontFamilyClass()} select-none transition-all shadow-md relative overflow-hidden shrink-0`}
       style={{
         width: '210mm',
         minHeight: '297mm',
         padding: `${config.page.marginTop || 7}mm ${config.page.marginRight || 7}mm ${config.page.marginBottom || 7}mm ${config.page.marginLeft || 7}mm`,
         boxSizing: 'border-box',
-        transform: scale !== 1 ? `scale(${scale})` : undefined,
-        transformOrigin: 'top center',
       }}
     >
       {/* Watermark Overlay (if enabled) */}
@@ -689,6 +687,38 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
         </div>
 
       </div>
+    </div>
+  );
+
+  if (scale && scale !== 1) {
+    return (
+      <div
+        className="omr-scale-outer-container mx-auto shrink-0 relative overflow-hidden rounded-lg shadow-md"
+        style={{
+          width: `calc(210mm * ${scale})`,
+          height: `calc(297mm * ${scale})`,
+        }}
+      >
+        <div
+          style={{
+            width: '210mm',
+            minHeight: '297mm',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+          }}
+        >
+          {sheetContent}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto shrink-0 flex justify-center items-start">
+      {sheetContent}
     </div>
   );
 };
