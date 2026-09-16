@@ -1,0 +1,53 @@
+{
+  "entities": {
+    "UserProfile": {
+      "collection": "users",
+      "fields": {
+        "userId": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string", "description": "User full name" },
+        "email": { "type": "string", "description": "User email address" },
+        "role": { "type": "string", "description": "student or teacher" },
+        "institute": { "type": "string", "description": "School or coaching institute name" },
+        "targetExam": { "type": "string", "description": "Target exam e.g. NEET, JEE" },
+        "rollNumber": { "type": "string", "description": "Default candidate roll number" },
+        "plan": { "type": "string", "description": "free, pro, or coaching" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" },
+        "updatedAt": { "type": "string", "description": "ISO timestamp" }
+      }
+    },
+    "OMRSheet": {
+      "collection": "omr_sheets",
+      "fields": {
+        "id": { "type": "string", "description": "Unique sheet ID" },
+        "userId": { "type": "string", "description": "Creator user UID" },
+        "title": { "type": "string", "description": "Sheet title" },
+        "questionsCount": { "type": "number", "description": "Number of questions" },
+        "config": { "type": "object", "description": "Full OMRConfig object" },
+        "isPublic": { "type": "boolean", "description": "Whether template is public" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" },
+        "updatedAt": { "type": "string", "description": "ISO timestamp" }
+      }
+    },
+    "TestResult": {
+      "collection": "test_results",
+      "fields": {
+        "id": { "type": "string", "description": "Unique result ID" },
+        "userId": { "type": "string", "description": "Student user UID" },
+        "testName": { "type": "string", "description": "Name of the test" },
+        "date": { "type": "string", "description": "Date string" },
+        "score": { "type": "number", "description": "Calculated score" },
+        "totalMarks": { "type": "number", "description": "Total marks possible" },
+        "percentage": { "type": "number", "description": "Percentage score" },
+        "attempted": { "type": "number", "description": "Questions attempted" },
+        "correct": { "type": "number", "description": "Correct answers" },
+        "wrong": { "type": "number", "description": "Wrong answers" },
+        "skipped": { "type": "number", "description": "Skipped answers" },
+        "timeTaken": { "type": "string", "description": "Duration string" },
+        "accuracy": { "type": "number", "description": "Accuracy percentage" },
+        "subjectWise": { "type": "array", "description": "Array of subject metrics" },
+        "questions": { "type": "array", "description": "Array of question evaluations" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" }
+      }
+    }
+  }
+}

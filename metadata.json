@@ -1,0 +1,6 @@
+{
+  "name": "OMRWallah",
+  "description": "India's premier OMR platform - Create, Practice, Scan, and Evaluate A4 print-ready OMR sheets.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
