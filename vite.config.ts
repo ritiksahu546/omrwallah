@@ -11,7 +11,7 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg'],
+        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg', 'sitemap.xml', 'robots.txt'],
         manifest: {
           id: '/',
           name: 'OMRWallah - OMR Sheet Maker & Scanner',

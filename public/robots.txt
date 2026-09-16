@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+Disallow: /login
+Disallow: /signup
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /settings
+Disallow: /saved
+Disallow: /tests
+Disallow: /results
+Disallow: /scan
+
+Sitemap: https://omrwallah.in/sitemap.xml
