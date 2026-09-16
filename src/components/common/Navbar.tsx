@@ -68,7 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             type="button"
             onClick={() => onNavigate(user ? 'dashboard' : 'home')}
-            className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none shrink min-w-0"
+            className="flex items-center gap-2 sm:gap-2.5 text-left group cursor-pointer focus:outline-none shrink-0"
           >
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-md shadow-blue-500/30 ring-1 ring-white/20 group-hover:scale-105 transition-all shrink-0">
               {/* Authentic OMR Sheet with Bubble Matrix SVG */}
@@ -90,23 +90,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <circle cx="17" cy="14" r="1.5" stroke="currentColor" strokeWidth="1.2" />
               </svg>
             </div>
-            <div className="min-w-0">
+            <div className="shrink-0">
               <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 truncate">
+                <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 whitespace-nowrap">
                   OMR<span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Wallah</span>
                 </span>
-                <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 hidden sm:inline-block shrink-0">
+                <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 hidden xl:inline-block shrink-0">
                   AI Suite
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 font-semibold tracking-tight mt-0.5 hidden xs:block truncate">
+              <p className="text-[10px] text-slate-500 font-semibold tracking-tight mt-0.5 hidden xl:block whitespace-nowrap">
                 Create • Practice • Scan • Evaluate
               </p>
             </div>
           </button>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* Desktop Nav Links (Visible on large screens xl 1280px+; tablet uses clean controls & drawer/sidebar) */}
+          <nav className="hidden xl:flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive = currentRoute === link.route;
               return (
@@ -114,7 +114,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   key={link.route}
                   type="button"
                   onClick={() => onNavigate(link.route)}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                     isActive
                       ? 'text-blue-600 bg-blue-50/90'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
@@ -126,30 +126,37 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Action Buttons */}
-          <div className="hidden md:flex items-center gap-3">
-            <PWAInstallButton variant="nav" />
+          {/* Action Buttons (Desktop & Tablet) */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* PWA Install shown on full desktop */}
+            <div className="hidden xl:flex">
+              <PWAInstallButton variant="nav" />
+            </div>
+
             {user ? (
-              <div className="flex items-center gap-2.5 relative">
+              <div className="flex items-center gap-2 sm:gap-2.5 relative">
+                {/* Create OMR Button */}
                 <button
                   type="button"
                   onClick={() => onNavigate('creator')}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs shadow-blue-500/25 transition-colors cursor-pointer"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs shadow-blue-500/25 transition-colors cursor-pointer shrink-0"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Create OMR</span>
                 </button>
 
-                <div className="relative">
+                {/* User Dropdown */}
+                <div className="relative shrink-0">
                   <button
                     type="button"
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="flex items-center gap-2 p-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 p-1 sm:p-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer shrink-0"
+                    title={userProfile?.name || user.displayName || user.email || 'User Account'}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-blue-600 text-white font-black flex items-center justify-center text-xs">
+                    <div className="w-8 h-8 rounded-lg bg-blue-600 text-white font-black flex items-center justify-center text-xs shrink-0">
                       {(userProfile?.name || user.displayName || user.email || 'U').charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-xs font-bold text-slate-800 max-w-[100px] truncate">
+                    <span className="text-xs font-bold text-slate-800 max-w-[90px] truncate hidden 2xl:inline-block">
                       {userProfile?.name || user.displayName || user.email?.split('@')[0]}
                     </span>
                   </button>
@@ -229,44 +236,45 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
               </div>
             ) : (
-              <>
+              <div className="hidden sm:flex items-center gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={() => onOpenAuth('login')}
-                  className="px-3.5 py-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+                  className="px-3 py-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
                 >
                   Log In
                 </button>
                 <button
                   type="button"
                   onClick={() => onOpenAuth('signup')}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs shadow-blue-500/25 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs shadow-blue-500/25 transition-all cursor-pointer"
                 >
                   <span>Sign Up Free</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
-              </>
+              </div>
             )}
-          </div>
 
-          {/* Mobile hamburger & actions (Clean: Primary action is in bottom navigation bar) */}
-          <div className="flex md:hidden items-center gap-1.5 shrink-0">
-            <PWAInstallButton variant="nav" className="text-[11px] px-2 py-1" />
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg focus:outline-none cursor-pointer transition-colors"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Mobile & Tablet hamburger toggle (Visible up to xl) */}
+            <div className="flex xl:hidden items-center gap-1.5 shrink-0">
+              <PWAInstallButton variant="nav" className="text-[11px] px-2 py-1 md:hidden" />
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg focus:outline-none cursor-pointer transition-colors"
+                aria-label="Toggle menu"
+                title="Open Navigation Menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu (Supplementary Navigation Only - Core items are in Bottom Bar) */}
+      {/* Mobile & Tablet Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-2 shadow-xl animate-in slide-in-from-top-2 duration-150">
+        <div className="xl:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-2 shadow-xl animate-in slide-in-from-top-2 duration-150">
           {/* Mobile App Install Highlight */}
           <PWAInstallButton variant="mobile-item" className="mb-2" />
 

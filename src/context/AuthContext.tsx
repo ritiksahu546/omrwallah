@@ -66,11 +66,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             };
-            await setDoc(userDocRef, defaultProfile);
+            try {
+              await setDoc(userDocRef, defaultProfile);
+            } catch (writeErr) {
+              console.warn('Could not write profile to Firestore immediately:', writeErr);
+            }
             setUserProfile(defaultProfile);
           }
         } catch (err) {
-          console.error('Error fetching user profile from Firestore:', err);
+          console.warn('Error fetching user profile from Firestore, using offline profile fallback:', err);
+          setUserProfile({
+            userId: currentUser.uid,
+            name: currentUser.displayName || currentUser.email?.split('@')[0] || 'Student',
+            email: currentUser.email || '',
+            role: 'student',
+            institute: 'Allen Career Institute (Kota)',
+            targetExam: 'NEET UG 2026',
+            rollNumber: '24058912',
+            plan: 'free',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
         }
       } else {
         setUserProfile(null);

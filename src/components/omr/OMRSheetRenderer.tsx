@@ -643,71 +643,133 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
         </div>
 
         {/* ================= INSTRUCTIONS & SIGNATURES ================= */}
-        <div className={`w-full mt-1.5 pt-1 border-t ${strokeColor}`}>
-          <div className="grid grid-cols-12 gap-2 items-stretch">
-            
-            {/* Instructions list */}
-            {enableInstructions && (
-              <div className={`col-span-7 border ${strokeColor} p-1.5 text-[8.5px] leading-tight bg-slate-50`}>
-                <div className="font-extrabold uppercase tracking-wider text-black mb-0.5">
-                  Important Instructions for Candidates:
+        <div className={`w-full mt-2 pt-1.5 border-t ${strokeColor}`}>
+          {enableInstructions ? (
+            <div className="grid grid-cols-12 gap-3 items-stretch">
+              {/* Instructions list */}
+              <div className={`col-span-7 border ${strokeColor} p-2 text-[8.5px] leading-tight bg-slate-50 flex flex-col justify-between`}>
+                <div>
+                  <div className="font-extrabold uppercase tracking-wider text-black mb-1">
+                    Important Instructions for Candidates:
+                  </div>
+                  <ul className="list-disc list-inside space-y-0.5 text-slate-800 font-medium">
+                    {instructions.slice(0, 4).map((ins, i) => (
+                      <li key={i} className="truncate">{ins}</li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="list-disc list-inside space-y-0.5 text-slate-800 font-medium">
-                  {instructions.slice(0, 4).map((ins, i) => (
-                    <li key={i} className="truncate">{ins}</li>
-                  ))}
-                </ul>
               </div>
-            )}
 
-            {/* Signature Boxes & Machine Readable Codes */}
-            <div className={`col-span-${enableInstructions ? '5' : '12'} flex flex-col justify-between gap-1`}>
-              <div className="grid grid-cols-2 gap-1.5">
+              {/* Signature Boxes & Machine Readable Codes */}
+              <div className="col-span-5 flex flex-col justify-between gap-1.5">
+                <div className="grid grid-cols-2 gap-2">
+                  {enableSignatureBox && (
+                    <div className={`border ${strokeColor} p-1.5 text-center bg-white flex flex-col justify-between h-14 min-w-0`}>
+                      <div className="flex-1 flex items-center justify-center text-[7px] text-slate-400 italic">
+                        Candidate Sign
+                      </div>
+                      <span className="text-[8.5px] font-bold text-slate-900 border-t border-dotted border-black pt-0.5 leading-none whitespace-nowrap uppercase">
+                        Candidate's Signature
+                      </span>
+                    </div>
+                  )}
+
+                  {enableInvigilatorSign && (
+                    <div className={`border ${strokeColor} p-1.5 text-center bg-white flex flex-col justify-between h-14 min-w-0`}>
+                      <div className="flex-1 flex items-center justify-center text-[7px] text-slate-400 italic">
+                        With Seal
+                      </div>
+                      <span className="text-[8.5px] font-bold text-slate-900 border-t border-dotted border-black pt-0.5 leading-none whitespace-nowrap uppercase">
+                        Invigilator's Signature
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Barcode & Security ID */}
+                <div className="flex items-center justify-between text-[7.5px] font-mono font-bold text-slate-700 px-0.5">
+                  {enableBarcode && (
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex gap-[1px] h-3 items-end">
+                        {[1, 2, 1, 3, 2, 1, 2, 3, 1, 2, 1, 3, 1].map((w, i) => (
+                          <span
+                            key={i}
+                            className="bg-black inline-block h-full"
+                            style={{ width: `${w * 1.1}px` }}
+                          />
+                        ))}
+                      </div>
+                      <span className="tracking-wider">OMR-{config.id?.slice(0, 8) || '2025-A'}</span>
+                    </div>
+                  )}
+
+                  {enableQrCode && (
+                    <div className="flex items-center gap-1 text-black">
+                      <QrCode className="w-3 h-3" />
+                      <span>SECURE-VERIFIED</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Full-width professional layout when instructions are hidden (Standard Exam Hall Layout) */
+            <div className="w-full flex items-center justify-between gap-4 py-1">
+              
+              {/* Left: Barcode & Security Verification */}
+              <div className="flex flex-col justify-center gap-1 min-w-[180px]">
+                {enableBarcode && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-[1.5px] h-4 items-end">
+                      {[1, 2, 1, 3, 2, 1, 2, 3, 1, 2, 1, 3, 2, 1, 2].map((w, i) => (
+                        <span
+                          key={i}
+                          className="bg-black inline-block h-full"
+                          style={{ width: `${w * 1.2}px` }}
+                        />
+                      ))}
+                    </div>
+                    <span className="font-mono text-[9px] font-bold text-slate-800 tracking-wider">
+                      OMR-{config.id?.slice(0, 8) || '2025-A'}
+                    </span>
+                  </div>
+                )}
+                
+                {enableQrCode && (
+                  <div className="flex items-center gap-1 text-[8px] font-mono font-bold text-slate-700">
+                    <QrCode className="w-3.5 h-3.5 text-black shrink-0" />
+                    <span className="tracking-tight">MACHINE-READABLE • SECURE-VERIFIED</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Right: Generous, Professional Candidate & Invigilator Signature Boxes */}
+              <div className="flex items-center gap-4 flex-1 justify-end max-w-[480px]">
                 {enableSignatureBox && (
-                  <div className={`border ${strokeColor} p-1 text-center bg-white flex flex-col justify-between h-13`}>
-                    <div className="flex-1" />
-                    <span className="text-[8px] font-bold text-slate-800 border-t border-dotted border-black pt-0.5 leading-none">
+                  <div className={`border ${strokeColor} px-3 py-1.5 text-center bg-white flex-1 flex flex-col justify-between h-14 min-w-[170px]`}>
+                    <div className="flex-1 flex items-center justify-center text-[7.5px] text-slate-400 italic">
+                      Sign within this box
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-900 border-t border-dotted border-black pt-1 leading-none uppercase tracking-tight whitespace-nowrap">
                       Candidate's Signature
                     </span>
                   </div>
                 )}
 
                 {enableInvigilatorSign && (
-                  <div className={`border ${strokeColor} p-1 text-center bg-white flex flex-col justify-between h-13`}>
-                    <div className="flex-1" />
-                    <span className="text-[8px] font-bold text-slate-800 border-t border-dotted border-black pt-0.5 leading-none">
+                  <div className={`border ${strokeColor} px-3 py-1.5 text-center bg-white flex-1 flex flex-col justify-between h-14 min-w-[170px]`}>
+                    <div className="flex-1 flex items-center justify-center text-[7.5px] text-slate-400 italic">
+                      With Official Seal / Stamp
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-900 border-t border-dotted border-black pt-1 leading-none uppercase tracking-tight whitespace-nowrap">
                       Invigilator's Signature
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* Barcode & Security ID */}
-              <div className="flex items-center justify-between text-[7.5px] font-mono font-bold text-slate-700 px-0.5">
-                {enableBarcode && (
-                  <div className="flex items-center gap-1">
-                    <div className="flex gap-[1px] h-2.5 items-end">
-                      {[1, 2, 1, 3, 2, 1, 2, 3, 1, 2, 1, 3, 1].map((w, i) => (
-                        <span
-                          key={i}
-                          className="bg-black inline-block h-full"
-                          style={{ width: `${w * 1.1}px` }}
-                        />
-                      ))}
-                    </div>
-                    <span>OMR-{config.id?.slice(0, 8) || '2025-A'}</span>
-                  </div>
-                )}
-
-                {enableQrCode && (
-                  <div className="flex items-center gap-0.5 text-black">
-                    <QrCode className="w-3 h-3" />
-                    <span>SECURE-VERIFIED</span>
-                  </div>
-                )}
-              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Footer info */}

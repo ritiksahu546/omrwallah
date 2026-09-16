@@ -57,17 +57,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={`hidden md:flex bg-[#0b132b] text-slate-300 flex-col justify-between border-r border-slate-800 transition-all duration-300 select-none flex-shrink-0 z-30 ${
-        collapsed ? 'w-20' : 'w-64'
+        collapsed ? 'w-16 sm:w-20' : 'w-60 lg:w-64'
       } min-h-screen`}
     >
       {/* Top Workspace Header & Collapse Toggle */}
       <div>
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/80">
+        <div className="h-16 flex items-center justify-between px-3.5 sm:px-4 border-b border-slate-800/80">
           {!collapsed ? (
             <div className="flex items-center gap-2.5 overflow-hidden">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50 animate-pulse shrink-0" />
               <div className="min-w-0">
-                <span className="text-xs font-black tracking-wider uppercase text-slate-300 block truncate">
+                <span className="text-[11px] sm:text-xs font-black tracking-wide uppercase text-slate-300 block truncate whitespace-nowrap">
                   Student Workspace
                 </span>
                 <span className="text-[10px] text-slate-500 font-medium block truncate">

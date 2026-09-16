@@ -177,41 +177,47 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       </div>
 
       {/* Quick Access Action Banners */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 w-full min-w-0">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-3 w-full min-w-0">
         <button
           type="button"
           onClick={() => onNavigate('creator')}
-          className="p-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl text-left flex items-center justify-between shadow-xs hover:shadow-md transition-all cursor-pointer group min-w-0"
+          className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl text-left flex items-center justify-between shadow-xs hover:shadow-md transition-all cursor-pointer group min-w-0"
         >
-          <div className="min-w-0 flex-1 pr-2">
-            <div className="font-extrabold text-sm truncate">Create New OMR</div>
-            <div className="text-[11px] text-blue-100 truncate">A4 Print ready generator</div>
+          <div className="min-w-0 flex-1 pr-3">
+            <div className="font-extrabold text-sm sm:text-base leading-snug">Create New OMR</div>
+            <div className="text-xs text-blue-100/90 mt-0.5">A4 Print ready generator</div>
           </div>
-          <Plus className="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" />
+          <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <Plus className="w-5 h-5 text-white" />
+          </div>
         </button>
 
         <button
           type="button"
           onClick={() => onNavigate('practice')}
-          className="p-3.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-2xl text-left flex items-center justify-between shadow-xs hover:shadow-md transition-all cursor-pointer group min-w-0"
+          className="p-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-2xl text-left flex items-center justify-between shadow-xs hover:shadow-md transition-all cursor-pointer group min-w-0"
         >
-          <div className="min-w-0 flex-1 pr-2">
-            <div className="font-extrabold text-sm truncate">Interactive Practice</div>
-            <div className="text-[11px] text-emerald-100 truncate">Live bubbling timer test</div>
+          <div className="min-w-0 flex-1 pr-3">
+            <div className="font-extrabold text-sm sm:text-base leading-snug">Interactive Practice</div>
+            <div className="text-xs text-emerald-100/90 mt-0.5">Live bubbling timer test</div>
           </div>
-          <PenTool className="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" />
+          <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <PenTool className="w-5 h-5 text-white" />
+          </div>
         </button>
 
         <button
           type="button"
           onClick={() => onNavigate('scan')}
-          className="p-3.5 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-2xl text-left flex items-center justify-between shadow-xs hover:shadow-md transition-all cursor-pointer group min-w-0"
+          className="p-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-2xl text-left flex items-center justify-between shadow-xs hover:shadow-md transition-all cursor-pointer group min-w-0"
         >
-          <div className="min-w-0 flex-1 pr-2">
-            <div className="font-extrabold text-sm truncate">Scan OMR Sheet</div>
-            <div className="text-[11px] text-slate-300 truncate">Camera / Image evaluate</div>
+          <div className="min-w-0 flex-1 pr-3">
+            <div className="font-extrabold text-sm sm:text-base leading-snug">Scan OMR Sheet</div>
+            <div className="text-xs text-slate-300 mt-0.5">Camera / Image evaluate</div>
           </div>
-          <ScanLine className="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" />
+          <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <ScanLine className="w-5 h-5 text-white" />
+          </div>
         </button>
       </div>
 

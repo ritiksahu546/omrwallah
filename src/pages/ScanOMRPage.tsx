@@ -197,7 +197,7 @@ export const ScanOMRPage: React.FC<ScanOMRPageProps> = ({
       </div>
 
       {/* Answer Key Management Card (User Request: Remove pre-uploaded key & give option to add) */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col md:flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
         <div className="flex items-start sm:items-center gap-3.5 min-w-0">
           <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-xs ${
             keyCount > 0
@@ -206,7 +206,7 @@ export const ScanOMRPage: React.FC<ScanOMRPageProps> = ({
           }`}>
             <Key className="w-5 h-5" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-extrabold text-sm sm:text-base text-slate-900">
                 Official Answer Key (उत्तर कुंजी)
@@ -217,12 +217,12 @@ export const ScanOMRPage: React.FC<ScanOMRPageProps> = ({
                   {keyCount} / {totalQuestions} Answers Set
                 </span>
               ) : (
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 shrink-0">
-                  Koi pre-loaded key nahi hai (Empty Key)
+                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 shrink-0 inline-flex items-center">
+                  Koi pre-loaded key nahi (Empty)
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               {keyCount > 0
                 ? 'Sheet evaluation is answer key ke hisaab se match ki jayegi.'
                 : 'Pehle se pre-uploaded answer key hata di gayi hai. Sahi evaluation ke liye apni answer key add karein.'}
@@ -230,24 +230,24 @@ export const ScanOMRPage: React.FC<ScanOMRPageProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+        <div className="flex items-center gap-2 shrink-0 w-full lg:w-auto pt-1 lg:pt-0">
           <button
             type="button"
             onClick={() => setShowAnswerKeyModal(true)}
-            className="flex-1 sm:flex-none px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+            className="flex-1 lg:flex-none px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-colors shrink-0"
           >
-            <Plus className="w-4 h-4" />
-            <span>{keyCount > 0 ? 'Edit / View Key' : '+ Add Answer Key'}</span>
+            <Plus className="w-4 h-4 shrink-0" />
+            <span>{keyCount > 0 ? 'Edit / View Key' : 'Add Answer Key'}</span>
           </button>
           
           {keyCount > 0 && (
             <button
               type="button"
               onClick={handleClearAnswerKey}
-              className="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs rounded-xl flex items-center justify-center gap-1 cursor-pointer transition-colors"
+              className="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs rounded-xl flex items-center justify-center gap-1 cursor-pointer transition-colors shrink-0"
               title="Sabhi answers hatao"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4 shrink-0" />
               <span>Hatao (Clear)</span>
             </button>
           )}

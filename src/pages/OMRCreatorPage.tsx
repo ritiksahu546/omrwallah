@@ -106,8 +106,8 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
     <div className="flex flex-col h-full bg-slate-100 overflow-hidden">
       
       {/* ================= TOP EDITOR ACTION BAR ================= */}
-      <div className="bg-white border-b border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs z-20">
-        <div className="flex items-center gap-3">
+      <div className="bg-white border-b border-slate-200 px-3 sm:px-4 py-2.5 flex flex-col md:flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3 shadow-2xs z-20">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={() => onNavigate('dashboard')}
@@ -115,31 +115,31 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
             title="Return to Dashboard"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Dashboard</span>
+            <span className="hidden sm:inline whitespace-nowrap">Dashboard</span>
           </button>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-black text-slate-900 tracking-tight">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              <h1 className="text-sm sm:text-base font-black text-slate-900 tracking-tight whitespace-nowrap">
                 Create Your OMR Sheet
               </h1>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
                 Live Editor
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-[11px] sm:text-xs text-slate-500 font-medium hidden sm:block truncate">
               Customize every detail and see instant live preview
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto scrollbar-none py-0.5">
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto w-full lg:w-auto scrollbar-none py-0.5 shrink-0">
           
           {/* Mobile Preview Toggle */}
           <button
             type="button"
             onClick={() => setMobilePreviewOpen(!mobilePreviewOpen)}
-            className="lg:hidden px-2.5 py-1.5 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg flex items-center gap-1 shrink-0 cursor-pointer"
+            className="lg:hidden px-2.5 py-1.5 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg flex items-center gap-1 shrink-0 cursor-pointer whitespace-nowrap"
           >
             <Eye className="w-3.5 h-3.5 text-blue-600" />
             <span>{mobilePreviewOpen ? 'Editor' : 'Preview'}</span>
@@ -160,10 +160,10 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
             type="button"
             onClick={handleSave}
             title="Save Sheet"
-            className="p-1.5 sm:px-3 sm:py-1.5 text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg shadow-xs transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
+            className="px-2.5 sm:px-3 py-1.5 text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg shadow-xs transition-colors flex items-center gap-1 shrink-0 cursor-pointer whitespace-nowrap"
           >
             <Save className="w-3.5 h-3.5 text-slate-600" />
-            <span className="hidden sm:inline">Save</span>
+            <span>Save</span>
           </button>
 
           {/* Download PDF */}
@@ -171,10 +171,10 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
             type="button"
             disabled={isDownloadingPdf}
             onClick={handleDownloadPdf}
-            className="px-3 sm:px-4 py-1.5 text-xs font-extrabold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm shadow-blue-500/25 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer disabled:opacity-50"
+            className="px-3 sm:px-4 py-1.5 text-xs font-extrabold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm shadow-blue-500/25 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer whitespace-nowrap disabled:opacity-50"
           >
-            <Download className="w-3.5 h-3.5" />
-            <span>{isDownloadingPdf ? 'PDF...' : 'Download PDF'}</span>
+            <Download className="w-3.5 h-3.5 shrink-0" />
+            <span>{isDownloadingPdf ? 'Generating...' : 'Download PDF'}</span>
           </button>
 
           {/* Print OMR */}
@@ -182,7 +182,7 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
             type="button"
             onClick={handlePrint}
             title="Print OMR"
-            className="p-1.5 sm:px-3.5 sm:py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-lg shadow-xs transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
+            className="px-2.5 sm:px-3.5 py-1.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-lg shadow-xs transition-colors flex items-center gap-1 shrink-0 cursor-pointer whitespace-nowrap"
           >
             <Printer className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Print</span>

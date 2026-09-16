@@ -29,8 +29,8 @@ export const TemplatesPage: React.FC<TemplatesPageProps> = ({
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 w-full max-w-full overflow-x-hidden">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col md:flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 w-full">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           {onNavigate && (
             <button
               type="button"
@@ -39,28 +39,28 @@ export const TemplatesPage: React.FC<TemplatesPageProps> = ({
               title="Return to Dashboard"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Dashboard</span>
+              <span className="hidden sm:inline whitespace-nowrap">Dashboard</span>
             </button>
           )}
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight whitespace-nowrap">
               Choose a Template
             </h1>
-            <p className="text-sm text-slate-600 mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
               Start with a ready-made template and customize it your way
             </p>
           </div>
         </div>
 
         {/* Search Input */}
-        <div className="relative w-full sm:w-72 max-w-full">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+        <div className="relative w-full lg:w-72 max-w-full">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
             placeholder="Search templates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+            className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 shadow-2xs"
           />
         </div>
       </div>
@@ -72,7 +72,7 @@ export const TemplatesPage: React.FC<TemplatesPageProps> = ({
             key={cat}
             type="button"
             onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs font-bold rounded-xl border transition-all whitespace-nowrap cursor-pointer ${
               selectedCategory === cat
                 ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                 : 'bg-white text-slate-700 border-slate-300 hover:border-slate-400'
@@ -84,7 +84,7 @@ export const TemplatesPage: React.FC<TemplatesPageProps> = ({
       </div>
 
       {/* Templates Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredTemplates.map((tmpl) => (
           <div
             key={tmpl.id}

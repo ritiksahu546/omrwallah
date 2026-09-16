@@ -54,7 +54,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ showToast }) => {
               <label className="block font-bold text-slate-700 mb-1.5">
                 Bubble Darkening Detection Threshold
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {[
                   { id: 'lenient', label: 'Lenient (Faint pencil ok)' },
                   { id: 'medium', label: 'Standard (Ballpoint Pen)' },
@@ -64,10 +64,10 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ showToast }) => {
                     key={s.id}
                     type="button"
                     onClick={() => setScannerSensitivity(s.id)}
-                    className={`p-2.5 rounded-xl border text-center font-bold cursor-pointer ${
+                    className={`p-2.5 rounded-xl border text-center font-bold cursor-pointer transition-colors ${
                       scannerSensitivity === s.id
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-slate-50 text-slate-700 border-slate-300'
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-300'
                     }`}
                   >
                     {s.label}
