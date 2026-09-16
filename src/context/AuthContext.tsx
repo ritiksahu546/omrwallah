@@ -4,6 +4,7 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
   onAuthStateChanged,
 } from 'firebase/auth';
@@ -30,6 +31,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signUpWithEmail: (email: string, pass: string, name: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   logOut: () => Promise<void>;
   updateProfileData: (data: Partial<UserProfile>) => Promise<void>;
 }
@@ -104,20 +106,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithEmail = async (email: string, pass: string) => {
-    await signInWithEmailAndPassword(auth, email, pass);
+    const cleanEmail = email.trim().toLowerCase();
+    await signInWithEmailAndPassword(auth, cleanEmail, pass.trim());
   };
 
   const signUpWithEmail = async (email: string, pass: string, name: string) => {
-    const res = await createUserWithEmailAndPassword(auth, email, pass);
+    const cleanEmail = email.trim().toLowerCase();
+    const res = await createUserWithEmailAndPassword(auth, cleanEmail, pass.trim());
     if (res.user) {
       const newProfile: UserProfile = {
         userId: res.user.uid,
-        name: name || email.split('@')[0],
-        email: res.user.email || email,
+        name: name?.trim() || cleanEmail.split('@')[0],
+        email: res.user.email || cleanEmail,
         role: 'student',
-        institute: 'Kota Coaching Institute',
-        targetExam: 'NEET UG 2026',
-        rollNumber: '24058912',
+        institute: 'OMR Coaching Academy',
+        targetExam: 'NEET / JEE 2026',
+        rollNumber: 'OMR' + Math.floor(100000 + Math.random() * 900000),
         plan: 'free',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -125,6 +129,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await setDoc(doc(db, 'users', res.user.uid), newProfile);
       setUserProfile(newProfile);
     }
+  };
+
+  const resetPassword = async (email: string) => {
+    const cleanEmail = email.trim().toLowerCase();
+    await sendPasswordResetEmail(auth, cleanEmail);
   };
 
   const logOut = async () => {
@@ -154,6 +163,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signInWithGoogle,
         signInWithEmail,
         signUpWithEmail,
+        resetPassword,
         logOut,
         updateProfileData,
       }}

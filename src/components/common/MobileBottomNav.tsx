@@ -19,9 +19,9 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   return (
     <nav
       aria-label="Mobile Navigation Bar"
-      className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] md:hidden"
+      className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] md:hidden pb-[max(0.25rem,env(safe-area-inset-bottom))]"
     >
-      <div className="grid grid-cols-5 items-end px-2 pt-1 pb-2">
+      <div className="grid grid-cols-5 items-end px-2 pt-1 pb-1.5">
         {/* 1. Home */}
         <button
           type="button"
@@ -44,18 +44,18 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           </span>
         </button>
 
-        {/* 2. Create (Elevated circular floating action button) */}
+        {/* 2. Create (Elevated circular action button) */}
         <button
           type="button"
           onClick={() => onNavigate('creator')}
-          className="flex flex-col items-center justify-center -mt-5 cursor-pointer group"
+          className="flex flex-col items-center justify-center -mt-3.5 cursor-pointer group"
         >
           <div
-            className={`w-12 h-12 rounded-full bg-gradient-to-tr from-blue-700 to-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/40 border-4 border-white transition-transform group-active:scale-90 ${
-              isCreate ? 'ring-2 ring-blue-600 ring-offset-2' : ''
+            className={`w-11 h-11 rounded-full bg-gradient-to-tr from-blue-700 to-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-500/30 border-3 border-white transition-transform group-active:scale-90 ${
+              isCreate ? 'ring-2 ring-blue-600 ring-offset-1' : ''
             }`}
           >
-            <FileEdit className="w-5 h-5 stroke-[2.4]" />
+            <FileEdit className="w-4.5 h-4.5 stroke-[2.4]" />
           </div>
           <span
             className={`text-[11px] mt-0.5 tracking-tight ${

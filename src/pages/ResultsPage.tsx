@@ -10,23 +10,67 @@ import {
   ArrowRight,
   RotateCcw,
   Sparkles,
+  Award,
+  PenTool,
+  ScanLine,
 } from 'lucide-react';
-import { MOCK_SAMPLE_RESULT } from '../data/mockData';
 import { TestResult } from '../types/omr';
 
 interface ResultsPageProps {
-  result?: TestResult;
+  result?: TestResult | null;
   onNavigate: (route: string) => void;
   showToast: (msg: string, type?: 'success' | 'error' | 'info') => void;
 }
 
 export const ResultsPage: React.FC<ResultsPageProps> = ({
-  result = MOCK_SAMPLE_RESULT,
+  result,
   onNavigate,
   showToast,
 }) => {
-  const [selectedQuestion, setSelectedQuestion] = useState<number | null>(7);
+  const [selectedQuestion, setSelectedQuestion] = useState<number | null>(1);
   const [showAnswerKeyModal, setShowAnswerKeyModal] = useState(false);
+
+  if (!result) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
+        <div className="bg-white border border-slate-200 rounded-3xl p-8 sm:p-14 text-center shadow-xs space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-100 shadow-xs">
+            <Award className="w-8 h-8" />
+          </div>
+
+          <div className="max-w-md mx-auto space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              No Test Evaluated Yet
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              Take a live interactive practice test with automatic timer or scan an offline OMR sheet to generate your complete performance scorecard, accuracy analysis, and question breakdown.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => onNavigate('practice')}
+              className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
+            >
+              <PenTool className="w-4 h-4" />
+              <span>Start Practice Test</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('scan')}
+              className="w-full sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
+            >
+              <ScanLine className="w-4 h-4" />
+              <span>Scan OMR Sheet</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const qDetails = result.questions.find((q) => q.questionNo === selectedQuestion);
 

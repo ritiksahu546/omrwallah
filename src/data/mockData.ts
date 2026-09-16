@@ -1,55 +1,23 @@
 import { TestResult, PracticeTest } from '../types/omr';
 
 export const MOCK_STUDENT_STATS = {
-  testsTaken: 12,
-  averageScore: 78,
-  bestScore: 92,
-  practiceTime: '6h 40m',
-  trend: '+8.4% this month',
+  testsTaken: 0,
+  averageScore: 0,
+  bestScore: 0,
+  practiceTime: '0h 0m',
+  trend: '0% (Start testing)',
 };
 
-export const MOCK_RECENT_TESTS = [
-  {
-    id: 'test-1',
-    testName: 'NEET Biology Mock',
-    questions: 50,
-    score: 82,
-    total: 100,
-    date: '12 Sep 2025',
-    status: 'Evaluated',
-    category: 'Medical',
-  },
-  {
-    id: 'test-2',
-    testName: 'Physics Chapter Test',
-    questions: 30,
-    score: 67,
-    total: 100,
-    date: '10 Sep 2025',
-    status: 'Evaluated',
-    category: 'Physics',
-  },
-  {
-    id: 'test-3',
-    testName: 'Full Syllabus Mock',
-    questions: 100,
-    score: 72,
-    total: 100,
-    date: '05 Sep 2025',
-    status: 'Evaluated',
-    category: 'All Subjects',
-  },
-  {
-    id: 'test-4',
-    testName: 'Chemistry Practice',
-    questions: 50,
-    score: 88,
-    total: 100,
-    date: '01 Sep 2025',
-    status: 'Evaluated',
-    category: 'Chemistry',
-  },
-];
+export const MOCK_RECENT_TESTS: {
+  id: string;
+  testName: string;
+  questions: number;
+  score: number;
+  total: number;
+  date: string;
+  status: string;
+  category: string;
+}[] = [];
 
 export const MOCK_SAMPLE_RESULT: TestResult = {
   id: 'result-neet-bio-1',
@@ -166,44 +134,15 @@ export const MOCK_PRACTICE_TESTS: PracticeTest[] = [
   },
 ];
 
-export const MOCK_SAVED_SHEETS = [
-  {
-    id: 'saved-1',
-    title: 'Mid-Term Science Exam (50 Qs)',
-    institute: 'Delhi Public School',
-    questions: 50,
-    columns: 2,
-    createdAt: '12 Sep 2025',
-    lastPrinted: '14 Sep 2025',
-  },
-  {
-    id: 'saved-2',
-    title: 'Weekly Ranker Series 100 Qs',
-    institute: 'Apex IIT-JEE Academy',
-    questions: 100,
-    columns: 3,
-    createdAt: '08 Sep 2025',
-    lastPrinted: '11 Sep 2025',
-  },
-  {
-    id: 'saved-3',
-    title: 'All India NEET Mock Test Sheet',
-    institute: 'NTA Test Prep Center',
-    questions: 180,
-    columns: 4,
-    createdAt: '02 Sep 2025',
-    lastPrinted: '05 Sep 2025',
-  },
-  {
-    id: 'saved-4',
-    title: 'Daily Practice Sheet (25 Qs)',
-    institute: 'Self Study Practice',
-    questions: 25,
-    columns: 1,
-    createdAt: '28 Aug 2025',
-    lastPrinted: '29 Aug 2025',
-  },
-];
+export const MOCK_SAVED_SHEETS: {
+  id: string;
+  title: string;
+  institute: string;
+  questions: number;
+  columns: number;
+  createdAt: string;
+  lastPrinted: string;
+}[] = [];
 
 export const MOCK_BLOG_ARTICLES = [
   {

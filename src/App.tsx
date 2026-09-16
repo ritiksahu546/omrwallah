@@ -35,7 +35,6 @@ import { SettingsPage } from './pages/SettingsPage';
 
 import { OMRConfig, TestResult } from './types/omr';
 import { DEFAULT_OMR_CONFIG, TEMPLATES_DATA } from './data/templates';
-import { MOCK_SAMPLE_RESULT } from './data/mockData';
 
 function AppMain() {
   const { user } = useAuth();
@@ -46,19 +45,21 @@ function AppMain() {
     const cached = localStorage.getItem('omrwallah_saved_sheets');
     if (cached) {
       try {
-        return JSON.parse(cached);
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) {
+          // Exclude default demo templates so user starts with a clean slate
+          return parsed.filter(
+            (s: OMRConfig) => s.id !== 'neet-200-full' && s.id !== 'jee-main-75' && s.id !== 'default-omr'
+          );
+        }
       } catch (e) {
         // fallback
       }
     }
-    return [
-      DEFAULT_OMR_CONFIG,
-      TEMPLATES_DATA[0].config,
-      TEMPLATES_DATA[1].config,
-    ];
+    return [];
   });
 
-  const [activeResult, setActiveResult] = useState<TestResult>(MOCK_SAMPLE_RESULT);
+  const [activeResult, setActiveResult] = useState<TestResult | null>(null);
 
   const [authModal, setAuthModal] = useState<{ open: boolean; mode: 'login' | 'signup' }>({
     open: false,
@@ -266,7 +267,7 @@ function AppMain() {
       />
 
       {/* Main Container */}
-      <div className="flex-1 flex w-full max-w-full overflow-x-hidden">
+      <div className="flex-1 flex w-full max-w-full overflow-x-hidden min-w-0">
         
         {/* Workspace Sidebar (visible in app modes on desktop) */}
         {isAppWorkspaceRoute && currentRoute !== 'creator' && (
@@ -278,7 +279,7 @@ function AppMain() {
         )}
 
         {/* Dynamic Page Content */}
-        <main className="flex-1 min-w-0 w-full max-w-full overflow-y-auto overflow-x-hidden bg-slate-50 flex flex-col pb-16 md:pb-0">
+        <main className="flex-1 min-w-0 w-full max-w-full overflow-x-hidden bg-slate-50 flex flex-col pb-28 sm:pb-32 md:pb-8">
           {currentRoute === 'home' && (
             <HomePage
               onNavigate={handleNavigate}

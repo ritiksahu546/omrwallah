@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Lock, User, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import {
+  X,
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  ShieldCheck,
+  AlertCircle,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  KeyRound,
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface AuthModalProps {
@@ -17,17 +29,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onSwitchMode,
   onSuccess,
 }) => {
-  const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+  const { signInWithGoogle, signInWithEmail, signUpWithEmail, resetPassword } = useAuth();
   const [activeMode, setActiveMode] = useState<'login' | 'signup'>(mode);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   useEffect(() => {
     setActiveMode(mode);
     setErrorMsg(null);
+    setErrorCode(null);
+    setResetSent(false);
   }, [mode, isOpen]);
 
   if (!isOpen) return null;
@@ -35,13 +53,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
+    setErrorCode(null);
+    setResetSent(false);
     setLoading(true);
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
 
     try {
       if (activeMode === 'login') {
-        await signInWithEmail(email, password);
+        await signInWithEmail(cleanEmail, cleanPassword);
       } else {
-        await signUpWithEmail(email, password, name);
+        await signUpWithEmail(cleanEmail, cleanPassword, name.trim());
       }
       setLoading(false);
       if (onSuccess) onSuccess();
@@ -49,20 +72,53 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     } catch (err: any) {
       setLoading(false);
       console.error('Authentication error:', err);
-      let msg = err.message || 'Authentication failed. Please check your credentials.';
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        msg = 'Invalid email or password. Please try again.';
-      } else if (err.code === 'auth/email-already-in-use') {
-        msg = 'An account with this email already exists. Please sign in.';
-      } else if (err.code === 'auth/weak-password') {
-        msg = 'Password should be at least 6 characters.';
+      const code = err.code || '';
+      setErrorCode(code);
+
+      if (code === 'auth/invalid-credential' || code === 'auth/user-not-found' || code === 'auth/wrong-password') {
+        setErrorMsg('Invalid email or password. If you forgot your password, you can reset it below or switch to sign up.');
+      } else if (code === 'auth/email-already-in-use') {
+        setErrorMsg(`An account with "${cleanEmail}" already exists. Please sign in below.`);
+      } else if (code === 'auth/weak-password') {
+        setErrorMsg('Password should be at least 6 characters long.');
+      } else if (code === 'auth/invalid-email') {
+        setErrorMsg('Please enter a valid email address.');
+      } else if (code === 'auth/too-many-requests') {
+        setErrorMsg('Too many failed attempts. Please reset your password or wait a moment.');
+      } else {
+        setErrorMsg(err.message || 'Authentication failed. Please check your credentials.');
       }
-      setErrorMsg(msg);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail) {
+      setErrorMsg('Please enter your email address in the field above to receive the password reset link.');
+      return;
+    }
+    setResetLoading(true);
+    setErrorMsg(null);
+    try {
+      await resetPassword(cleanEmail);
+      setResetSent(true);
+      setErrorMsg(null);
+      setErrorCode(null);
+    } catch (err: any) {
+      console.error('Password reset error:', err);
+      if (err.code === 'auth/user-not-found') {
+        setErrorMsg('No user found with this email. Please click "Sign Up" to create an account.');
+      } else {
+        setErrorMsg('Could not send password reset email. Please verify the email address.');
+      }
+    } finally {
+      setResetLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
     setErrorMsg(null);
+    setErrorCode(null);
     setLoading(true);
     try {
       await signInWithGoogle();
@@ -73,7 +129,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setLoading(false);
       console.error('Google sign-in error:', err);
       if (err.code !== 'auth/popup-closed-by-user') {
-        setErrorMsg('Could not complete Google Sign-In. Please try again.');
+        setErrorMsg('Could not complete Google Sign-In. Please try email sign-in.');
       }
     }
   };
@@ -81,11 +137,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const switchMode = (newMode: 'login' | 'signup') => {
     setActiveMode(newMode);
     setErrorMsg(null);
+    setErrorCode(null);
+    setResetSent(false);
     if (onSwitchMode) onSwitchMode(newMode);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs animate-in fade-in duration-150">
       <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-slate-200">
         
         {/* Close button */}
@@ -98,8 +156,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </button>
 
         {/* Header */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 mb-3 border border-blue-100">
+        <div className="text-center mb-5">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 mb-2.5 border border-blue-100">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <h3 className="text-2xl font-black text-slate-900">
@@ -112,11 +170,70 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </p>
         </div>
 
-        {/* Error alert */}
+        {/* Password reset success banner */}
+        {resetSent && (
+          <div className="mb-4 p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-start gap-2.5 animate-in fade-in">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-extrabold text-emerald-900">Password Reset Link Sent!</p>
+              <p className="text-[11px] text-emerald-700 mt-0.5 leading-relaxed">
+                Check your email inbox or spam folder for instructions to reset your password, then return here to sign in.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Error Alert with Smart Quick-Action Resolution */}
         {errorMsg && (
-          <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
-            <span>{errorMsg}</span>
+          <div className="mb-4 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 space-y-2 animate-in fade-in">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1 font-medium leading-relaxed">{errorMsg}</div>
+            </div>
+
+            {/* Smart resolution button when email already exists */}
+            {errorCode === 'auth/email-already-in-use' && (
+              <div className="flex items-center gap-2 pt-2 border-t border-rose-200/80">
+                <button
+                  type="button"
+                  onClick={() => switchMode('login')}
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-lg cursor-pointer text-xs transition-colors"
+                >
+                  Sign In to this Account →
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetPassword}
+                  disabled={resetLoading}
+                  className="px-2.5 py-1.5 bg-white border border-rose-300 text-rose-800 font-bold rounded-lg hover:bg-rose-100 cursor-pointer text-xs transition-colors"
+                >
+                  {resetLoading ? 'Sending...' : 'Reset Password'}
+                </button>
+              </div>
+            )}
+
+            {/* Smart resolution button when password/credential is invalid */}
+            {(errorCode === 'auth/invalid-credential' ||
+              errorCode === 'auth/wrong-password' ||
+              errorCode === 'auth/user-not-found') && (
+              <div className="flex items-center gap-2 pt-2 border-t border-rose-200/80">
+                <button
+                  type="button"
+                  onClick={handleResetPassword}
+                  disabled={resetLoading}
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-lg cursor-pointer text-xs transition-colors"
+                >
+                  {resetLoading ? 'Sending Link...' : 'Email Reset Link'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchMode('signup')}
+                  className="px-2.5 py-1.5 bg-white border border-slate-300 text-slate-700 font-bold rounded-lg hover:bg-slate-50 cursor-pointer text-xs transition-colors"
+                >
+                  Sign Up New
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -135,7 +252,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Ritik Kumar"
-                  className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                  className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
                 />
               </div>
             </div>
@@ -153,25 +270,46 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              Password
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-bold text-slate-700">
+                Password
+              </label>
+              {activeMode === 'login' && (
+                <button
+                  type="button"
+                  onClick={handleResetPassword}
+                  disabled={resetLoading}
+                  className="text-[11px] text-blue-600 hover:text-blue-700 font-bold hover:underline cursor-pointer flex items-center gap-1"
+                >
+                  <KeyRound className="w-3 h-3" />
+                  <span>{resetLoading ? 'Sending...' : 'Forgot Password?'}</span>
+                </button>
+              )}
+            </div>
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                className="w-full pl-9 pr-10 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-colors"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer p-0.5"
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
