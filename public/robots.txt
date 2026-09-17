@@ -12,4 +12,3 @@ Disallow: /results
 Disallow: /scan
 
 Sitemap: https://omrwallah.in/sitemap.xml
-Sitemap: https://www.omrwallah.in/sitemap.xml
