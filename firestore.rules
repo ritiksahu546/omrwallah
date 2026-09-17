@@ -5,7 +5,7 @@ service cloud.firestore {
     
     // Core identity and validation helpers
     function isAuthenticated() {
-      return request.auth != null;
+      return request.auth != null && request.auth.uid != null;
     }
 
     function isOwner(userId) {
@@ -24,42 +24,103 @@ service cloud.firestore {
       return resource.data;
     }
 
-    // Users collection (PII Isolation: read restricted strictly to the owner; enumeration blocked)
+    // Prevents client tampering with plan, role, identity, creation timestamp, or privilege escalation flags
+    function maintainsSecurityFields() {
+      return incoming().userId == existing().userId
+          && incoming().plan == existing().plan
+          && incoming().role == existing().role
+          && incoming().createdAt == existing().createdAt
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny([
+              'userId', 'role', 'plan', 'createdAt', 'isAdmin',
+              'subscriptionStatus', 'subscriptionExpiry', 'paymentId',
+              'permissions', 'verified', 'isVerified'
+             ]));
+    }
+
+    // Validate user profile editable input fields
+    function isValidUserProfile() {
+      return incoming().name is string && incoming().name.size() <= 100
+          && incoming().email is string && incoming().email.size() <= 150
+          && (!('institute' in incoming()) || (incoming().institute is string && incoming().institute.size() <= 150))
+          && (!('targetExam' in incoming()) || (incoming().targetExam is string && incoming().targetExam.size() <= 100))
+          && (!('rollNumber' in incoming()) || (incoming().rollNumber is string && incoming().rollNumber.size() <= 50));
+    }
+
+    // 1. Users collection
+    // PII Isolation: Read restricted strictly to the authenticated owner; collection listing/enumeration blocked.
+    // Privilege Escalation Prevention: plan, role, and entitlement fields cannot be escalated by client writes.
     match /users/{userId} {
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isOwner(userId) && isValidId(userId)
-                    && incoming().userId == request.auth.uid;
+
+      // Creation allows only default 'student' or 'teacher' role and 'free' plan; no admin/pro escalation
+      allow create: if isOwner(userId)
+                    && isValidId(userId)
+                    && incoming().userId == request.auth.uid
+                    && incoming().plan == 'free'
+                    && incoming().role in ['student', 'teacher']
+                    && (!('isAdmin' in incoming()) || incoming().isAdmin == false)
+                    && (!('subscriptionStatus' in incoming()) || incoming().subscriptionStatus in ['inactive', 'none'])
+                    && (!('permissions' in incoming()) || incoming().permissions.size() == 0)
+                    && isValidUserProfile();
+
+      // Updates can modify authorized profile fields only; plan, role, userId, createdAt are immutable by clients
       allow update: if isOwner(userId)
-                    && incoming().userId == existing().userId;
+                    && maintainsSecurityFields()
+                    && isValidUserProfile();
+
       allow delete: if false;
     }
 
-    // Saved OMR Sheets collection
+    // 2. Saved OMR Sheets collection
+    // Public templates are readable; private user sheets strictly isolated to the author.
     match /omr_sheets/{sheetId} {
-      allow get: if resource.data.isPublic == true || (isAuthenticated() && resource.data.userId == request.auth.uid);
-      allow list: if isAuthenticated() && (resource.data.isPublic == true || resource.data.userId == request.auth.uid);
-      allow create: if isAuthenticated() && isValidId(sheetId)
+      allow get: if resource.data.get('isPublic', false) == true
+                 || (isAuthenticated() && resource.data.userId == request.auth.uid);
+
+      allow list: if isAuthenticated()
+                  && (resource.data.get('isPublic', false) == true || resource.data.userId == request.auth.uid);
+
+      allow create: if isAuthenticated()
+                    && isValidId(sheetId)
                     && incoming().userId == request.auth.uid
                     && incoming().title is string
-                    && incoming().title.size() <= 200;
+                    && incoming().title.size() <= 200
+                    && (!('questionsCount' in incoming()) || (incoming().questionsCount is number && incoming().questionsCount >= 1 && incoming().questionsCount <= 300));
+
       allow update: if isAuthenticated()
                     && existing().userId == request.auth.uid
-                    && incoming().userId == existing().userId;
+                    && incoming().userId == existing().userId
+                    && incoming().title is string
+                    && incoming().title.size() <= 200
+                    && (!('questionsCount' in incoming()) || (incoming().questionsCount is number && incoming().questionsCount >= 1 && incoming().questionsCount <= 300));
+
       allow delete: if isAuthenticated() && existing().userId == request.auth.uid;
     }
 
-    // Test Results collection
+    // 3. Test Results collection
+    // Completely private to the student; no public access, no cross-user access.
     match /test_results/{resultId} {
       allow get, list: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow create: if isAuthenticated() && isValidId(resultId)
+
+      allow create: if isAuthenticated()
+                    && isValidId(resultId)
                     && incoming().userId == request.auth.uid
                     && incoming().testName is string
                     && incoming().testName.size() <= 200;
+
       allow update: if isAuthenticated()
                     && existing().userId == request.auth.uid
-                    && incoming().userId == existing().userId;
+                    && incoming().userId == existing().userId
+                    && incoming().testName is string
+                    && incoming().testName.size() <= 200;
+
       allow delete: if isAuthenticated() && existing().userId == request.auth.uid;
+    }
+
+    // Deny all other collections by default
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

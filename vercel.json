@@ -11,7 +11,7 @@
         },
         {
           "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=43200"
+          "value": "public, max-age=0, must-revalidate"
         },
         {
           "key": "X-Content-Type-Options",
@@ -28,14 +28,22 @@
         },
         {
           "key": "Cache-Control",
-          "value": "public, max-age=86400"
+          "value": "public, max-age=0, must-revalidate"
         }
       ]
     }
   ],
   "rewrites": [
     {
-      "source": "/((?!assets|pwa|icon|apple-touch|sitemap\\.xml|robots\\.txt|favicon\\.ico).*)",
+      "source": "/sitemap.xml",
+      "destination": "/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
+    },
+    {
+      "source": "/((?!.*\\.(?:xml|txt|ico|png|svg|jpg|jpeg|webp|webmanifest|json|js|css)$).*)",
       "destination": "/index.html"
     }
   ]

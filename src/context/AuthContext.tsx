@@ -164,6 +164,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await signOut(auth);
     setUser(null);
     setUserProfile(null);
+    try {
+      localStorage.removeItem('omrwallah_user_name');
+    } catch (e) {
+      console.warn('Could not clear local user cache:', e);
+    }
   };
 
   const updateProfileData = async (data: Partial<UserProfile>) => {
@@ -177,12 +182,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.warn('Could not update displayName:', e);
       }
     }
+
+    // Security Hardening: Whitelist editable customer profile fields only.
+    // Explicitly reject/strip client-side modifications to plan, role, userId, createdAt, or admin flags.
+    const safeUpdates: Record<string, string> = {
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (data.name !== undefined) safeUpdates.name = String(data.name).trim().slice(0, 100);
+    if (data.institute !== undefined) safeUpdates.institute = String(data.institute).trim().slice(0, 150);
+    if (data.targetExam !== undefined) safeUpdates.targetExam = String(data.targetExam).trim().slice(0, 100);
+    if (data.rollNumber !== undefined) safeUpdates.rollNumber = String(data.rollNumber).trim().slice(0, 50);
+
     const updated = {
       ...(userProfile || {}),
-      ...data,
-      updatedAt: new Date().toISOString(),
+      ...safeUpdates,
+      // Strictly maintain immutable identity & entitlement fields
+      userId: user.uid,
+      plan: userProfile?.plan || 'free',
+      role: userProfile?.role || 'student',
+      createdAt: userProfile?.createdAt || new Date().toISOString(),
     } as UserProfile;
-    await setDoc(userDocRef, updated, { merge: true });
+
+    await setDoc(userDocRef, safeUpdates, { merge: true });
     setUserProfile(updated);
   };
 
