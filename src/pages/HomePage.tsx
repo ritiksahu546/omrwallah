@@ -119,13 +119,13 @@ export const HomePage: React.FC<HomePageProps> = ({
 
               {/* Main Headline */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">
-                Create Your OMR Sheet <br />
-                <span className="text-blue-600">Your Way.</span>
+                Create OMR Sheets Online <br />
+                <span className="text-blue-600">Design, Print &amp; Practice</span>
               </h1>
 
               {/* Subheading */}
               <p className="text-lg sm:text-xl text-slate-600 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Design, Print, Practice and Evaluate — Everything OMR in One Place.
+                India's intuitive online OMR sheet generator and maker. Design custom answer sheets, download print-ready A4 PDFs, and practice OMR bubbling for schools, coaching institutes, and competitive exams.
               </p>
 
               {/* Features Quick Pills */}
@@ -709,6 +709,47 @@ export const HomePage: React.FC<HomePageProps> = ({
             >
               Browse Complete Help Center →
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= SEO HUBS & GUIDES NAVIGATION ================= */}
+      <section className="py-12 bg-slate-100/70 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+              Popular OMR Tools, Formats &amp; Exam Guides
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">
+              Quick access to dedicated online tools, printable formats, and competitive exam guidelines.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {[
+              { label: 'OMR Sheet Generator', route: 'omr-sheet-generator', desc: 'Custom question & column builder' },
+              { label: 'OMR Sheet Maker', route: 'omr-sheet-maker', desc: 'Design bubble grids & roll codes' },
+              { label: 'OMR Sheet PDF', route: 'omr-sheet-pdf', desc: 'Print-ready A4 vector downloads' },
+              { label: 'Online OMR Practice', route: 'omr-practice', desc: 'Timed mock bubbling mode' },
+              { label: 'OMR for Coaching', route: 'omr-sheet-for-coaching', desc: 'Branded test series formats' },
+              { label: 'OMR for Schools', route: 'omr-sheet-for-schools', desc: 'Classroom & term exam sheets' },
+              { label: 'Competitive Exam Hub', route: 'omr-exams', desc: 'NEET, JEE, SSC, CUET guides' },
+              { label: 'NEET OMR Guide', route: 'neet-omr-sheet', desc: '200Q Section A & B mock guide' },
+            ].map((item, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => onNavigate(item.route)}
+                className="p-3.5 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-xs text-left transition cursor-pointer group"
+              >
+                <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors block">
+                  {item.label} →
+                </span>
+                <span className="text-[11px] text-slate-500 block mt-0.5">
+                  {item.desc}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
       </section>

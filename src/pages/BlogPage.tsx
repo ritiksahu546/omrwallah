@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
-import { Search, Clock, Calendar, ArrowRight, BookOpen, Share2 } from 'lucide-react';
-import { MOCK_BLOG_ARTICLES } from '../data/mockData';
+import { Search, Clock, Calendar, ArrowRight, BookOpen, Share2, Sparkles, ChevronLeft } from 'lucide-react';
+import { BLOG_ARTICLES } from '../data/blogArticles';
 import { BlogArticle } from '../types/omr';
 
 interface BlogPageProps {
   showToast: (msg: string, type?: 'success' | 'error' | 'info') => void;
+  onNavigate?: (route: string) => void;
+  initialArticleSlug?: string;
 }
 
-export const BlogPage: React.FC<BlogPageProps> = ({ showToast }) => {
+export const BlogPage: React.FC<BlogPageProps> = ({ showToast, onNavigate, initialArticleSlug }) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeArticle, setActiveArticle] = useState<BlogArticle | null>(null);
+  const [activeArticle, setActiveArticle] = useState<BlogArticle | null>(() => {
+    if (initialArticleSlug) {
+      return BLOG_ARTICLES.find((a) => a.slug === initialArticleSlug || a.id === initialArticleSlug) || null;
+    }
+    return null;
+  });
 
-  const categories = ['All', 'Exam Prep', 'Tips', 'Teachers', 'Technology'];
+  const categories = ['All', 'Guides', 'Tutorials', 'Exam Tips', 'Technology', 'Printing', 'Coaching', 'Analysis'];
 
-  const filteredArticles = MOCK_BLOG_ARTICLES.filter((art) => {
+  const filteredArticles = BLOG_ARTICLES.filter((art) => {
     const matchesCat = selectedCategory === 'All' || art.category === selectedCategory;
     const matchesSearch =
       art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -22,20 +29,143 @@ export const BlogPage: React.FC<BlogPageProps> = ({ showToast }) => {
     return matchesCat && matchesSearch;
   });
 
+  // If viewing a full article directly
+  if (activeArticle) {
+    return (
+      <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Back button */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setActiveArticle(null)}
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-3.5 py-2 rounded-xl shadow-xs transition cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Back to All Articles</span>
+            </button>
+          </div>
+
+          <article className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xs space-y-6">
+            <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-500">
+              <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md font-bold uppercase tracking-wider text-[10px]">
+                {activeArticle.category}
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                <span>{activeArticle.date}</span>
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                <span>{activeArticle.readTime}</span>
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight">
+              {activeArticle.title}
+            </h1>
+
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
+              {activeArticle.excerpt}
+            </p>
+
+            <div className="h-64 sm:h-80 rounded-2xl overflow-hidden bg-slate-100">
+              <img
+                src={activeArticle.imageUrl}
+                alt={activeArticle.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Article Body */}
+            <div className="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-4 pt-2">
+              {activeArticle.content ? (
+                <div className="whitespace-pre-line space-y-4">
+                  {activeArticle.content.trim()}
+                </div>
+              ) : (
+                <p>{activeArticle.excerpt}</p>
+              )}
+            </div>
+
+            {/* Quick Links inside Article */}
+            <div className="p-5 bg-blue-50 border border-blue-100 rounded-2xl space-y-3">
+              <h3 className="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-blue-600" />
+                <span>Try Related OMR Tools on OMRWallah</span>
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {onNavigate && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('creator')}
+                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition cursor-pointer"
+                    >
+                      OMR Sheet Generator
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('templates')}
+                      className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold transition cursor-pointer"
+                    >
+                      Template Gallery
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('practice')}
+                      className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold transition cursor-pointer"
+                    >
+                      Online OMR Practice
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Footer actions */}
+            <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard?.writeText(window.location.href);
+                  showToast('Article link copied to clipboard!', 'info');
+                }}
+                className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 cursor-pointer"
+              >
+                <Share2 className="w-4 h-4 text-blue-600" />
+                <span>Share This Guide</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveArticle(null)}
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold cursor-pointer transition"
+              >
+                Back to All Articles
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 w-full max-w-full overflow-x-hidden">
-      
-      {/* Top Header (matching reference image #8) */}
+      {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
         <div>
           <span className="text-xs font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-            KNOWLEDGE BASE
+            KNOWLEDGE BASE &amp; GUIDES
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-2">
-            OMR Tips & Resources
+            OMR Guides, Tips &amp; Tutorials
           </h1>
           <p className="text-sm text-slate-600 mt-1">
-            Articles, guides and strategies to help you practice, design and excel
+            Articles, guides and strategies to help you practice, design and evaluate OMR answer sheets
           </p>
         </div>
 
@@ -70,7 +200,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ showToast }) => {
         ))}
       </div>
 
-      {/* Articles Grid (matching reference image #8) */}
+      {/* Articles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredArticles.map((art) => (
           <article
@@ -104,9 +234,9 @@ export const BlogPage: React.FC<BlogPageProps> = ({ showToast }) => {
                   </span>
                 </div>
 
-                <h3 className="font-extrabold text-base text-slate-900 leading-snug group-hover:text-blue-600 transition-colors">
+                <h2 className="font-extrabold text-base text-slate-900 leading-snug group-hover:text-blue-600 transition-colors">
                   {art.title}
-                </h3>
+                </h2>
 
                 <p className="text-xs text-slate-500 mt-2 leading-relaxed line-clamp-3">
                   {art.excerpt}
@@ -127,80 +257,6 @@ export const BlogPage: React.FC<BlogPageProps> = ({ showToast }) => {
           </article>
         ))}
       </div>
-
-      {/* Article Full Reader Modal */}
-      {activeArticle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 max-h-[85vh] overflow-y-auto space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <span className="text-xs font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">
-                {activeArticle.category}
-              </span>
-              <button
-                type="button"
-                onClick={() => setActiveArticle(null)}
-                className="text-xs font-bold text-slate-400 hover:text-slate-800 cursor-pointer"
-              >
-                Close ✕
-              </button>
-            </div>
-
-            <h2 className="text-2xl font-black text-slate-900 leading-tight">
-              {activeArticle.title}
-            </h2>
-
-            <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
-              <span>{activeArticle.date}</span>
-              <span>•</span>
-              <span>{activeArticle.readTime}</span>
-            </div>
-
-            <div className="h-56 rounded-2xl overflow-hidden">
-              <img
-                src={activeArticle.imageUrl}
-                alt={activeArticle.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="text-sm text-slate-700 leading-relaxed space-y-3 font-medium">
-              <p>{activeArticle.excerpt}</p>
-              <p>
-                When taking competitive examinations like NEET, JEE, UPSC, or State PSCs, bubbling mechanics account for a significant percentage of avoidable errors. Candidates who simulate physical bubbling under strict time limits develop muscle memory and reduce anxiety.
-              </p>
-              <h4 className="font-extrabold text-slate-900 text-base pt-2">Key Best Practices:</h4>
-              <ul className="list-disc list-inside space-y-1 text-slate-600 text-xs">
-                <li>Always use 0.7mm or 0.8mm medium tip ballpoint pens for faster bubble filling.</li>
-                <li>Never fill bubbles after every individual question; batch your bubbling section-by-section.</li>
-                <li>Keep the registration marks clean and avoid resting sweaty palms on the answer sheet borders.</li>
-              </ul>
-            </div>
-
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => {
-                  navigator.clipboard?.writeText(window.location.href);
-                  showToast('Article link copied to clipboard!', 'info');
-                }}
-                className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 cursor-pointer"
-              >
-                <Share2 className="w-4 h-4" />
-                <span>Share Article</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveArticle(null)}
-                className="px-5 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold cursor-pointer"
-              >
-                Back to Articles
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 };

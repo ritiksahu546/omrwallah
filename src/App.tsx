@@ -33,12 +33,73 @@ import { FAQPage } from './pages/FAQPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SettingsPage } from './pages/SettingsPage';
 
+// SEO Landing Pages
+import { OMRSheetGeneratorLanding } from './pages/seo/OMRSheetGeneratorLanding';
+import { OMRSheetMakerLanding } from './pages/seo/OMRSheetMakerLanding';
+import { OMRSheetPdfLanding } from './pages/seo/OMRSheetPdfLanding';
+import { OnlineOMRSheetLanding } from './pages/seo/OnlineOMRSheetLanding';
+import { OMRCoachingLanding } from './pages/seo/OMRCoachingLanding';
+import { OMRSchoolsLanding } from './pages/seo/OMRSchoolsLanding';
+import { OMRPracticeLanding } from './pages/seo/OMRPracticeLanding';
+
+// Exam Guide Pages
+import { ExamHubPage } from './pages/exams/ExamHubPage';
+import { NeetOMRGuidePage } from './pages/exams/NeetOMRGuidePage';
+import { JeeOMRGuidePage } from './pages/exams/JeeOMRGuidePage';
+import { SscOMRGuidePage } from './pages/exams/SscOMRGuidePage';
+import { CuetOMRGuidePage } from './pages/exams/CuetOMRGuidePage';
+import { CtetOMRGuidePage } from './pages/exams/CtetOMRGuidePage';
+
+// SEO Metadata Utility
+import { updatePageSEO } from './utils/seo';
+
 import { OMRConfig, TestResult } from './types/omr';
 import { DEFAULT_OMR_CONFIG, TEMPLATES_DATA } from './data/templates';
 
+const VALID_PUBLIC_ROUTES = [
+  'home',
+  'creator',
+  'templates',
+  'saved',
+  'tests',
+  'practice',
+  'scan',
+  'results',
+  'analytics',
+  'pricing',
+  'blog',
+  'faq',
+  'profile',
+  'settings',
+  'dashboard',
+  'omr-sheet-generator',
+  'omr-sheet-maker',
+  'omr-sheet-pdf',
+  'online-omr-sheet',
+  'omr-sheet-for-coaching',
+  'omr-sheet-for-schools',
+  'omr-practice',
+  'omr-exams',
+  'neet-omr-sheet',
+  'jee-omr-sheet',
+  'ssc-omr-sheet',
+  'cuet-omr-sheet',
+  'ctet-omr-sheet',
+];
+
+const getInitialRoute = (): string => {
+  if (typeof window === 'undefined') return 'home';
+  const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+  if (!rawPath) return 'home';
+  if (VALID_PUBLIC_ROUTES.includes(rawPath)) {
+    return rawPath;
+  }
+  return 'home';
+};
+
 function AppMain() {
   const { user, loading } = useAuth();
-  const [currentRoute, setCurrentRoute] = useState<string>('home');
+  const [currentRoute, setCurrentRoute] = useState<string>(getInitialRoute);
   const [activeEditorConfig, setActiveEditorConfig] = useState<OMRConfig>(DEFAULT_OMR_CONFIG);
   
   const [savedSheets, setSavedSheets] = useState<OMRConfig[]>(() => {
@@ -111,6 +172,20 @@ function AppMain() {
     return () => unsubscribe();
   }, [user]);
 
+  // Sync route on browser back/forward
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentRoute(getInitialRoute());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Update Document Title, Meta tags, and Structured JSON-LD on route change
+  useEffect(() => {
+    updatePageSEO(currentRoute);
+  }, [currentRoute]);
+
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
     setToast({ message, type });
   };
@@ -125,6 +200,10 @@ function AppMain() {
       return;
     }
     setCurrentRoute(route);
+    const targetPath = route === 'home' ? '/' : `/${route}`;
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState(null, '', targetPath);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -477,9 +556,102 @@ function AppMain() {
             />
           )}
 
-          {currentRoute === 'blog' && <BlogPage showToast={showToast} />}
+          {currentRoute === 'blog' && <BlogPage showToast={showToast} onNavigate={handleNavigate} />}
 
           {currentRoute === 'faq' && <FAQPage showToast={showToast} />}
+
+          {/* SEO Landing Pages */}
+          {currentRoute === 'omr-sheet-generator' && (
+            <OMRSheetGeneratorLanding
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'omr-sheet-maker' && (
+            <OMRSheetMakerLanding
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'omr-sheet-pdf' && (
+            <OMRSheetPdfLanding
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'online-omr-sheet' && (
+            <OnlineOMRSheetLanding
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'omr-sheet-for-coaching' && (
+            <OMRCoachingLanding
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'omr-sheet-for-schools' && (
+            <OMRSchoolsLanding
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'omr-practice' && (
+            <OMRPracticeLanding
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {/* Exam Hub & Guides */}
+          {currentRoute === 'omr-exams' && (
+            <ExamHubPage
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'neet-omr-sheet' && (
+            <NeetOMRGuidePage
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'jee-omr-sheet' && (
+            <JeeOMRGuidePage
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'ssc-omr-sheet' && (
+            <SscOMRGuidePage
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'cuet-omr-sheet' && (
+            <CuetOMRGuidePage
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
+
+          {currentRoute === 'ctet-omr-sheet' && (
+            <CtetOMRGuidePage
+              onNavigate={handleNavigate}
+              onSelectTemplate={handleSelectTemplate}
+            />
+          )}
 
           {currentRoute === 'profile' && (
             <ProfilePage

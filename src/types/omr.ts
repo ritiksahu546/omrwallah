@@ -202,9 +202,11 @@ export interface PracticeTest {
 export interface BlogArticle {
   id: string;
   title: string;
+  slug?: string;
   excerpt: string;
   category: string;
   date: string;
   readTime: string;
   imageUrl: string;
+  content?: string;
 }
