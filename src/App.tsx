@@ -52,6 +52,7 @@ import { CtetOMRGuidePage } from './pages/exams/CtetOMRGuidePage';
 
 // SEO Metadata Utility
 import { updatePageSEO } from './utils/seo';
+import { getRouteSEO } from './utils/seoConfig';
 
 import { OMRConfig, TestResult } from './types/omr';
 import { DEFAULT_OMR_CONFIG, TEMPLATES_DATA } from './data/templates';
@@ -183,7 +184,8 @@ function AppMain() {
 
   // Update Document Title, Meta tags, and Structured JSON-LD on route change
   useEffect(() => {
-    updatePageSEO(currentRoute);
+    const seo = getRouteSEO(currentRoute);
+    updatePageSEO(seo);
   }, [currentRoute]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
