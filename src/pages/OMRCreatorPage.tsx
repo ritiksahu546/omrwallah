@@ -53,12 +53,12 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
     if (scrollContainerRef.current) {
       const containerWidth = scrollContainerRef.current.clientWidth;
       const containerHeight = scrollContainerRef.current.clientHeight;
-      const isMobile = window.innerWidth < 768;
-      const padX = isMobile ? 16 : 40;
-      const padY = isMobile ? 16 : 40;
+      const isSmallScreen = window.innerWidth < 1024;
+      const padX = isSmallScreen ? 16 : 32;
+      const padY = isSmallScreen ? 16 : 32;
 
-      const availW = Math.max(260, containerWidth - padX);
-      const availH = Math.max(260, containerHeight - padY);
+      const availW = Math.max(240, containerWidth - padX);
+      const availH = Math.max(240, containerHeight - padY);
 
       // Base unscaled dimensions of A4 at 96 DPI: 794px × 1123px
       const scaleW = Number((availW / 794).toFixed(2));
@@ -67,40 +67,44 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
       if (mode === 'page') {
         return Math.min(1.0, Math.max(0.2, Math.min(scaleW, scaleH)));
       }
-      return Math.min(1.1, Math.max(0.2, scaleW));
+      return Math.min(1.0, Math.max(0.2, scaleW));
     }
 
     if (typeof window !== 'undefined') {
-      const isMobile = window.innerWidth < 768;
-      if (isMobile) {
-        const availW = window.innerWidth - 20;
+      if (window.innerWidth < 1024) {
+        const availW = window.innerWidth - 24;
         return Math.min(0.55, Math.max(0.25, Number((availW / 794).toFixed(2))));
+      } else {
+        const availW = window.innerWidth - 450;
+        return Math.min(0.85, Math.max(0.4, Number((availW / 794).toFixed(2))));
       }
     }
-    return 0.85;
+    return 0.75;
   }, []);
 
   const [zoomLevel, setZoomLevel] = useState<number>(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
-      // Responsive initial scale on mobile screen width
-      return Math.min(0.52, Math.max(0.28, Number(((window.innerWidth - 20) / 794).toFixed(2))));
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth < 1024) {
+        return Math.min(0.52, Math.max(0.28, Number(((window.innerWidth - 24) / 794).toFixed(2))));
+      } else {
+        const availW = window.innerWidth - 450;
+        return Math.min(0.85, Math.max(0.45, Number((availW / 794).toFixed(2))));
+      }
     }
-    return 0.85;
+    return 0.75;
   });
 
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
 
-  // Auto-fit to mobile screen width when preview opens or window resizes
+  // Auto-fit to screen width when preview opens or window resizes
   useEffect(() => {
     const handleAutoFit = () => {
-      if (typeof window !== 'undefined' && window.innerWidth < 768) {
-        const fit = calculateFitScale('width');
-        setZoomLevel(fit);
-      }
+      const fit = calculateFitScale('width');
+      setZoomLevel(fit);
     };
 
-    const timer = setTimeout(handleAutoFit, 60);
+    const timer = setTimeout(handleAutoFit, 80);
     window.addEventListener('resize', handleAutoFit);
     return () => {
       clearTimeout(timer);

@@ -205,6 +205,94 @@ function convertTreeOklchStyles(root: HTMLElement) {
   });
 }
 
+/**
+ * Gathers all CSS from document.styleSheets, <link rel="stylesheet">, and <style> tags,
+ * sanitizes OKLCH color notations, and removes @property definitions that break html2canvas.
+ */
+async function collectAllStylesheetsCss(): Promise<string> {
+  const cssChunks: string[] = [];
+
+  // 1. Try to read from document.styleSheets
+  try {
+    for (let i = 0; i < document.styleSheets.length; i++) {
+      const sheet = document.styleSheets[i];
+      try {
+        if (sheet.cssRules && sheet.cssRules.length > 0) {
+          let sheetCss = '';
+          for (let j = 0; j < sheet.cssRules.length; j++) {
+            const ruleText = sheet.cssRules[j].cssText;
+            if (!ruleText.startsWith('@property')) {
+              sheetCss += ruleText + '\n';
+            }
+          }
+          if (sheetCss.trim()) {
+            cssChunks.push(sheetCss);
+            continue;
+          }
+        }
+      } catch {
+        // Cross-origin CSSStyleSheet restriction, fallback to fetch below
+      }
+
+      // If cssRules was inaccessible or empty, fetch the stylesheet text directly
+      if (sheet.href) {
+        try {
+          const resp = await fetch(sheet.href);
+          if (resp.ok) {
+            const text = await resp.text();
+            cssChunks.push(text);
+          }
+        } catch {
+          // Ignore fetch error
+        }
+      }
+    }
+  } catch {
+    // Continue
+  }
+
+  // 2. Scan all <link rel="stylesheet"> tags in document.head
+  try {
+    const linkTags = Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as HTMLLinkElement[];
+    for (const link of linkTags) {
+      if (link.href && !cssChunks.some((chunk) => chunk.includes(link.href))) {
+        try {
+          const resp = await fetch(link.href);
+          if (resp.ok) {
+            const text = await resp.text();
+            cssChunks.push(text);
+          }
+        } catch {
+          // Continue
+        }
+      }
+    }
+  } catch {
+    // Continue
+  }
+
+  // 3. Scan all <style> tags in document
+  try {
+    const styleTags = Array.from(document.querySelectorAll('style'));
+    for (const style of styleTags) {
+      if (style.textContent) {
+        cssChunks.push(style.textContent);
+      }
+    }
+  } catch {
+    // Continue
+  }
+
+  // Combine and clean up
+  let combined = cssChunks.join('\n');
+
+  // Strip @property blocks: e.g. @property --tw-... { ... }
+  combined = combined.replace(/@property\s+[^{]+\{[^}]*\}/gi, '');
+
+  // Convert all OKLCH colors to rgb/rgba
+  return convertOklchToRgb(combined);
+}
+
 export async function downloadOMRPdf(
   elementId: string,
   filename: string = 'OMRWallah-Sheet.pdf'
@@ -215,8 +303,11 @@ export async function downloadOMRPdf(
     return false;
   }
 
-  // To prevent mobile viewports from compressing or wrapping columns into a narrow column:
-  // Mount an isolated, unscaled 794px × 1123px container into document.body during capture.
+  // Gather complete sanitized stylesheet text
+  const fullCss = await collectAllStylesheetsCss();
+
+  // To prevent mobile/laptop viewports from compressing or wrapping columns:
+  // Mount an isolated, unscaled 794px × 1123px container with positive z-index and opacity near zero
   const tempHost = document.createElement('div');
   tempHost.id = 'omr-pdf-render-host';
   tempHost.style.position = 'fixed';
@@ -228,14 +319,21 @@ export async function downloadOMRPdf(
   tempHost.style.height = '1123px';
   tempHost.style.minHeight = '1123px';
   tempHost.style.maxHeight = '1123px';
-  tempHost.style.zIndex = '-99999';
+  tempHost.style.zIndex = '99999'; // Positive z-index ensures html2canvas renders all layers
+  tempHost.style.opacity = '0.001'; // Invisible to user during capture
   tempHost.style.pointerEvents = 'none';
   tempHost.style.overflow = 'hidden';
   tempHost.style.backgroundColor = '#ffffff';
 
+  // Inject full CSS stylesheet directly into tempHost
+  const styleEl = document.createElement('style');
+  styleEl.id = 'omr-injected-full-css';
+  styleEl.textContent = fullCss;
+  tempHost.appendChild(styleEl);
+
   const clone = element.cloneNode(true) as HTMLElement;
   clone.id = 'printable-omr-render-clone';
-  clone.style.position = 'static';
+  clone.style.position = 'relative';
   clone.style.top = '0';
   clone.style.left = '0';
   clone.style.transform = 'none';
@@ -251,11 +349,30 @@ export async function downloadOMRPdf(
   clone.style.boxSizing = 'border-box';
   clone.style.backgroundColor = '#ffffff';
   clone.style.color = '#000000';
-  clone.style.display = 'block';
+  clone.style.display = 'flex';
+  clone.style.flexDirection = 'column';
+  clone.style.justifyContent = 'space-between';
   clone.style.visibility = 'visible';
+  clone.style.opacity = '1';
 
   tempHost.appendChild(clone);
   document.body.appendChild(tempHost);
+
+  // Measure if clone inner content needs auto-fit scaling to prevent any bottom clipping
+  const innerFrame = clone.querySelector('#printable-omr-render-clone > div') as HTMLElement | null;
+  if (innerFrame) {
+    innerFrame.style.boxSizing = 'border-box';
+    innerFrame.style.display = 'flex';
+    innerFrame.style.flexDirection = 'column';
+    innerFrame.style.justifyContent = 'space-between';
+    const scrollH = innerFrame.scrollHeight;
+    const clientH = innerFrame.clientHeight || 1080;
+    if (scrollH > clientH + 2) {
+      const fitRatio = Number((clientH / scrollH).toFixed(3));
+      innerFrame.style.transform = `scale(${fitRatio})`;
+      innerFrame.style.transformOrigin = 'top center';
+    }
+  }
 
   // Pre-convert OKLCH colors across the clone DOM tree before html2canvas touches it
   convertTreeOklchStyles(clone);
@@ -276,6 +393,14 @@ export async function downloadOMRPdf(
       windowWidth: 1200,
       windowHeight: 1600,
       onclone: (clonedDoc) => {
+        // Inject full CSS into the cloned document head
+        const clonedHead = clonedDoc.head || clonedDoc.getElementsByTagName('head')[0];
+        if (clonedHead) {
+          const clonedStyle = clonedDoc.createElement('style');
+          clonedStyle.textContent = fullCss;
+          clonedHead.appendChild(clonedStyle);
+        }
+
         if (clonedDoc.documentElement) {
           clonedDoc.documentElement.style.width = '1200px';
           clonedDoc.documentElement.style.maxWidth = 'none';
@@ -323,7 +448,7 @@ export async function downloadOMRPdf(
 
     // Fallback: Trigger browser native print / PDF dialog
     try {
-      window.print();
+      await printOMRSheet(elementId);
       return true;
     } catch {
       return false;
@@ -336,8 +461,103 @@ export async function downloadOMRPdf(
   }
 }
 
-export function printOMRSheet(): void {
-  window.print();
+export async function printOMRSheet(elementId: string = 'printable-omr-container'): Promise<void> {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    window.print();
+    return;
+  }
+
+  try {
+    const fullCss = await collectAllStylesheetsCss();
+
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'fixed';
+    printFrame.style.top = '-9999px';
+    printFrame.style.left = '-9999px';
+    printFrame.style.width = '210mm';
+    printFrame.style.height = '297mm';
+    printFrame.style.border = 'none';
+    printFrame.id = 'omr-print-iframe';
+
+    document.body.appendChild(printFrame);
+
+    const frameDoc = printFrame.contentDocument || printFrame.contentWindow?.document;
+    if (!frameDoc) {
+      document.body.removeChild(printFrame);
+      window.print();
+      return;
+    }
+
+    frameDoc.open();
+    frameDoc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>OMR Sheet Print</title>
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 0;
+            }
+            html, body {
+              margin: 0 !important;
+              padding: 0 !important;
+              background: #ffffff !important;
+              color: #000000 !important;
+              width: 210mm !important;
+              height: 297mm !important;
+              max-height: 297mm !important;
+              overflow: hidden !important;
+            }
+            #printable-omr-container {
+              width: 210mm !important;
+              height: 297mm !important;
+              max-height: 297mm !important;
+              overflow: hidden !important;
+              margin: 0 !important;
+              box-shadow: none !important;
+              transform: none !important;
+              background: #ffffff !important;
+              color: #000000 !important;
+              display: flex !important;
+              flex-direction: column !important;
+              justify-content: space-between !important;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+              page-break-after: avoid !important;
+              page-break-inside: avoid !important;
+            }
+            ${fullCss}
+          </style>
+        </head>
+        <body>
+          ${element.outerHTML}
+        </body>
+      </html>
+    `);
+    frameDoc.close();
+
+    setTimeout(() => {
+      try {
+        printFrame.contentWindow?.focus();
+        printFrame.contentWindow?.print();
+      } catch (e) {
+        console.error('Iframe print error, falling back to window.print', e);
+        window.print();
+      } finally {
+        setTimeout(() => {
+          if (printFrame.parentNode) {
+            printFrame.parentNode.removeChild(printFrame);
+          }
+        }, 1500);
+      }
+    }, 250);
+  } catch (err) {
+    console.error('Error preparing print iframe:', err);
+    window.print();
+  }
 }
 
 
