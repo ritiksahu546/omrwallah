@@ -9,6 +9,7 @@ import {
   HelpCircle,
   FileText,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface SEOPageProps {
   onNavigate: (route: string) => void;
@@ -34,6 +35,44 @@ export const OMRSheetPdfLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
     },
   ];
 
+  const relatedTools = [
+    {
+      title: 'OMR Sheet Generator',
+      desc: 'Create custom question count answer sheets with personalized coaching headers.',
+      route: 'omr-sheet-generator',
+      path: 'omr-sheet-generator',
+      tag: 'Custom Builder',
+    },
+    {
+      title: 'OMR Sheet Maker Online',
+      desc: 'Customize bubble styling, roll number grids, and institutional logos in your browser.',
+      route: 'omr-sheet-maker',
+      path: 'omr-sheet-maker',
+      tag: 'Design Studio',
+    },
+    {
+      title: 'Ready OMR Templates',
+      desc: 'Browse pre-made sheets for 20, 50, 100, and 200 questions across competitive exams.',
+      route: 'templates',
+      path: 'templates',
+      tag: 'Pre-made Formats',
+    },
+    {
+      title: 'OMR Practice Speed Training',
+      desc: 'Practice real exam timing and eliminate bubbling errors with interactive timers.',
+      route: 'omr-practice',
+      path: 'omr-practice',
+      tag: 'Practice Guide',
+    },
+    {
+      title: 'Competitive Exam OMR Sheets',
+      desc: 'Explore mock formats for NEET UG, JEE Main, SSC CGL, CTET, and CUET.',
+      route: 'omr-exams',
+      path: 'omr-exams',
+      tag: 'Exam Hub',
+    },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -47,24 +86,60 @@ export const OMRSheetPdfLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
             OMR Sheet PDF – Download &amp; Print Free
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Download high-resolution, vector-calibrated A4 OMR sheet PDFs for standard 25, 50, 100, 180, and 200 question competitive practice exams.
+            Download high-resolution, vector-calibrated A4 OMR sheet PDFs for standard 25, 50, 100, 180, and 200 question competitive practice exams. Design custom formats using our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-generator');
+                }
+              }}
+              className="text-cyan-700 font-bold hover:underline"
+            >
+              OMR Sheet Generator
+            </a>{' '}
+            or customize with the{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-maker"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-maker');
+                }
+              }}
+              className="text-cyan-700 font-bold hover:underline"
+            >
+              OMR Sheet Maker
+            </a>
+            .
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => onNavigate('templates')}
-              className="px-6 py-3 bg-cyan-700 hover:bg-cyan-800 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+            <a
+              href="https://omrwallah.in/templates"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('templates');
+                }
+              }}
+              className="px-6 py-3 bg-cyan-700 hover:bg-cyan-800 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2"
             >
               <span>Download Ready PDF Templates</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('creator')}
-              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/creator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('creator');
+                }
+              }}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition"
             >
               Generate Custom PDF
-            </button>
+            </a>
           </div>
         </div>
 
@@ -81,13 +156,18 @@ export const OMRSheetPdfLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
               </div>
               <h3 className="font-bold text-slate-900 text-base">50 Questions OMR PDF</h3>
               <p className="text-xs text-slate-600">Double column layout with roll number grid, candidate signature, and scoring box.</p>
-              <button
-                type="button"
-                onClick={() => onNavigate('templates')}
-                className="w-full py-2 bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs rounded-lg border border-slate-300 transition cursor-pointer"
+              <a
+                href="https://omrwallah.in/templates"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                    e.preventDefault();
+                    onNavigate('templates');
+                  }
+                }}
+                className="block text-center w-full py-2 bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs rounded-lg border border-slate-300 transition"
               >
                 View 50Q Sheet
-              </button>
+              </a>
             </div>
 
             <div className="border border-slate-200 rounded-xl p-5 space-y-3 bg-slate-50">
@@ -97,13 +177,18 @@ export const OMRSheetPdfLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
               </div>
               <h3 className="font-bold text-slate-900 text-base">100 Questions OMR PDF</h3>
               <p className="text-xs text-slate-600">Four column layout suitable for State PSCs, SSC CGL Tier-1, and CUET practice.</p>
-              <button
-                type="button"
-                onClick={() => onNavigate('templates')}
-                className="w-full py-2 bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs rounded-lg border border-slate-300 transition cursor-pointer"
+              <a
+                href="https://omrwallah.in/templates"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                    e.preventDefault();
+                    onNavigate('templates');
+                  }
+                }}
+                className="block text-center w-full py-2 bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs rounded-lg border border-slate-300 transition"
               >
                 View 100Q Sheet
-              </button>
+              </a>
             </div>
 
             <div className="border border-slate-200 rounded-xl p-5 space-y-3 bg-slate-50">
@@ -113,13 +198,18 @@ export const OMRSheetPdfLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
               </div>
               <h3 className="font-bold text-slate-900 text-base">200 Questions (Section A &amp; B)</h3>
               <p className="text-xs text-slate-600">Section A (35 questions) and Section B (15 optional) division for NEET mock practice.</p>
-              <button
-                type="button"
-                onClick={() => onNavigate('templates')}
-                className="w-full py-2 bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs rounded-lg border border-slate-300 transition cursor-pointer"
+              <a
+                href="https://omrwallah.in/neet-omr-sheet"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                    e.preventDefault();
+                    onNavigate('neet-omr-sheet');
+                  }
+                }}
+                className="block text-center w-full py-2 bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs rounded-lg border border-slate-300 transition"
               >
-                View 200Q Sheet
-              </button>
+                View NEET 200Q Guide
+              </a>
             </div>
           </div>
         </div>
@@ -167,19 +257,32 @@ export const OMRSheetPdfLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
+        {/* Related Tools Section */}
+        <RelatedToolsSection
+          title="Related OMR Tools &amp; Resources"
+          subtitle="Explore complementary builders, print-ready PDFs, and exam mock templates."
+          links={relatedTools}
+          onNavigate={onNavigate}
+        />
+
         {/* CTA */}
         <div className="p-6 sm:p-8 bg-cyan-800 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Generate &amp; Download Your OMR Sheet PDF</h2>
           <p className="text-sm sm:text-base text-cyan-100 max-w-xl mx-auto">
             100% free vector PDF download ready for instant printing.
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('creator')}
-            className="px-6 py-3 bg-white text-cyan-900 hover:bg-cyan-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+          <a
+            href="https://omrwallah.in/creator"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                onNavigate('creator');
+              }
+            }}
+            className="inline-block px-6 py-3 bg-white text-cyan-900 hover:bg-cyan-50 font-bold text-sm rounded-xl transition shadow-xs"
           >
             Create OMR PDF Now
-          </button>
+          </a>
         </div>
       </div>
     </div>

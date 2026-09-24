@@ -8,6 +8,7 @@ import {
   Sparkles,
   Zap,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface ExamPageProps {
   onNavigate: (route: string) => void;
@@ -30,6 +31,51 @@ export const JeeOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
     },
   ];
 
+  const relatedExamsAndTools = [
+    {
+      title: 'NEET OMR Sheet Guide',
+      desc: '200-question medical entrance mock format with Physics, Chemistry, Botany, and Zoology sections.',
+      route: 'neet-omr-sheet',
+      path: 'neet-omr-sheet',
+      tag: 'Related Exam',
+    },
+    {
+      title: 'CUET 50Q OMR Sheet',
+      desc: 'Double-column 50-question answer sheet template for central university entrance mocks.',
+      route: 'cuet-omr-sheet',
+      path: 'cuet-omr-sheet',
+      tag: 'Related Exam',
+    },
+    {
+      title: 'OMR Sheet Generator',
+      desc: 'Build customized PCM mock sheets with your institute name and test series codes.',
+      route: 'omr-sheet-generator',
+      path: 'omr-sheet-generator',
+      tag: 'Custom Builder',
+    },
+    {
+      title: 'OMR Sheet PDF Download',
+      desc: 'Download instant print-ready vector A4 PDFs without watermarks.',
+      route: 'omr-sheet-pdf',
+      path: 'omr-sheet-pdf',
+      tag: 'Printable PDF',
+    },
+    {
+      title: 'OMR Practice Speed Training',
+      desc: 'Learn time allocation discipline and row drift prevention techniques.',
+      route: 'omr-practice',
+      path: 'omr-practice',
+      tag: 'Practice Guide',
+    },
+    {
+      title: 'All Competitive Exam OMR Sheets',
+      desc: 'Explore mock formats for NEET, JEE, SSC CGL, CTET, and CUET.',
+      route: 'omr-exams',
+      path: 'omr-exams',
+      tag: 'Exam Hub',
+    },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -42,27 +88,48 @@ export const JeeOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
             JEE Mock OMR Sheet &amp; Practice Guide
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Format your PCM engineering mock test series with customized 75-90 question A4 OMR answer sheets. Ideal for classroom practice, coaching mock tests, and self-assessment.
+            Format your PCM engineering mock test series with customized 75-90 question A4 OMR answer sheets using our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-generator');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              OMR Sheet Generator
+            </a>
+            . Ideal for classroom practice, coaching mock tests, and self-assessment.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                if (onSelectTemplate) onSelectTemplate('jee-main');
-                onNavigate('creator');
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onSelectTemplate) onSelectTemplate('jee-main');
+                  onNavigate('creator');
+                }
               }}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2"
             >
               <span>Download JEE Practice Sheet</span>
               <Download className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('practice')}
-              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('practice');
+                }
+              }}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition"
             >
               Practice Online With Timer
-            </button>
+            </a>
           </div>
         </div>
 
@@ -78,7 +145,33 @@ export const JeeOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
             Why Engineering Aspirants Practice with Paper OMRs
           </h2>
           <p className="text-sm text-slate-600 leading-relaxed">
-            Even though the official examination is computer-based, intense pencil-and-paper problem solving remains the gold standard for mastering deep mathematical and physics derivations. Practicing on physical answer sheets helps students maintain structured test-taking discipline without screen fatigue.
+            Even though the official examination is computer-based, intense pencil-and-paper problem solving remains the gold standard for mastering deep mathematical and physics derivations. Practicing on physical answer sheets helps students maintain structured test-taking discipline without screen fatigue. You can also explore our{' '}
+            <a
+              href="https://omrwallah.in/neet-omr-sheet"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('neet-omr-sheet');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              NEET OMR Sheet Guide
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://omrwallah.in/cuet-omr-sheet"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('cuet-omr-sheet');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              CUET OMR Sheet Guide
+            </a>{' '}
+            for cross-exam preparation.
           </p>
         </div>
 
@@ -99,20 +192,34 @@ export const JeeOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
           </div>
         </div>
 
+        {/* Related Exam OMR Sheets Section */}
+        <RelatedToolsSection
+          title="Related Exam OMR Sheets &amp; Tools"
+          subtitle="Explore mock formats for medical, central university, and competitive exams."
+          links={relatedExamsAndTools}
+          onNavigate={onNavigate}
+        />
+
         <div className="p-6 sm:p-8 bg-blue-700 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Generate Custom JEE Practice Sheet</h2>
           <p className="text-sm sm:text-base text-blue-100 max-w-xl mx-auto">
             Design your PCM question layout and download a vector A4 PDF in seconds.
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('creator')}
-            className="px-6 py-3 bg-white text-blue-700 hover:bg-blue-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+          <a
+            href="https://omrwallah.in/omr-sheet-generator"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                onNavigate('creator');
+              }
+            }}
+            className="inline-block px-6 py-3 bg-white text-blue-700 hover:bg-blue-50 font-bold text-sm rounded-xl transition shadow-xs"
           >
             Create Engineering Mock Sheet
-          </button>
+          </a>
         </div>
       </div>
     </div>
   );
 };
+

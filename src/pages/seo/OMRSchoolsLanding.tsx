@@ -9,6 +9,7 @@ import {
   Sparkles,
   BookOpen,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface SEOPageProps {
   onNavigate: (route: string) => void;
@@ -34,6 +35,44 @@ export const OMRSchoolsLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
     },
   ];
 
+  const relatedTools = [
+    {
+      title: 'OMR Sheet Generator',
+      desc: 'Build customized A4 answer sheets with school name, class, section, and subject tags.',
+      route: 'omr-sheet-generator',
+      path: 'omr-sheet-generator',
+      tag: 'Custom Builder',
+    },
+    {
+      title: 'Free OMR Sheet Templates',
+      desc: 'Download standardized 20, 50, and 100 question templates ready for immediate classroom printing.',
+      route: 'templates',
+      path: 'templates',
+      tag: 'Templates Library',
+    },
+    {
+      title: 'Online OMR Practice',
+      desc: 'Let students practice bubbling digitally with countdown timers and automated scorecards.',
+      route: 'practice',
+      path: 'practice',
+      tag: 'Student Practice',
+    },
+    {
+      title: 'OMR Sheet for Coaching',
+      desc: 'Enterprise multi-section formats for test series and coaching academies.',
+      route: 'omr-sheet-for-coaching',
+      path: 'omr-sheet-for-coaching',
+      tag: 'Coaching Hub',
+    },
+    {
+      title: 'OMR Sheet PDF Download',
+      desc: 'Export high-resolution blank A4 sheets compatible with school photocopy machines.',
+      route: 'omr-sheet-pdf',
+      path: 'omr-sheet-pdf',
+      tag: 'Vector PDF',
+    },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -47,24 +86,47 @@ export const OMRSchoolsLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
             OMR Sheet for Schools &amp; Teachers
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Fast, print-ready OMR answer sheets designed for classroom quizzes, term examinations, and Olympiad mock tests. Simple for students, effortless for teachers.
+            Fast, print-ready OMR answer sheets designed for classroom quizzes, term examinations, and Olympiad mock tests using our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-generator');
+                }
+              }}
+              className="text-amber-800 font-bold hover:underline"
+            >
+              OMR Sheet Generator
+            </a>
+            . Simple for students, effortless for teachers.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => onNavigate('creator')}
-              className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+            <a
+              href="https://omrwallah.in/creator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('creator');
+                }
+              }}
+              className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2"
             >
               <span>Design School OMR Sheet</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('templates')}
-              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/templates"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('templates');
+                }
+              }}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition"
             >
               Classroom Templates
-            </button>
+            </a>
           </div>
         </div>
 
@@ -90,6 +152,22 @@ export const OMRSchoolsLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
               <p className="text-xs text-slate-600">Include School Name, Class, Section, Roll Number, and Subject on every student sheet.</p>
             </div>
           </div>
+          <p className="text-xs sm:text-sm text-slate-600 pt-2 leading-relaxed">
+            Teachers can also assign self-study drills through our{' '}
+            <a
+              href="https://omrwallah.in/practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('practice');
+                }
+              }}
+              className="text-amber-800 font-bold hover:underline"
+            >
+              online OMR practice tool
+            </a>{' '}
+            to help students practice filling bubbles under timed constraints without wasting paper.
+          </p>
         </div>
 
         {/* FAQs */}
@@ -110,21 +188,35 @@ export const OMRSchoolsLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
+        {/* Related OMR Tools Section */}
+        <RelatedToolsSection
+          title="Related OMR Tools & Templates"
+          subtitle="Generate classroom answer sheets, explore school templates, and simulate tests."
+          links={relatedTools}
+          onNavigate={onNavigate}
+        />
+
         {/* CTA */}
         <div className="p-6 sm:p-8 bg-amber-600 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Empower Your School Assessments</h2>
           <p className="text-sm sm:text-base text-amber-100 max-w-xl mx-auto">
             Design, print, and administer standardized classroom evaluations with zero hassle.
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('creator')}
-            className="px-6 py-3 bg-white text-amber-800 hover:bg-amber-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+          <a
+            href="https://omrwallah.in/creator"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                onNavigate('creator');
+              }
+            }}
+            className="inline-block px-6 py-3 bg-white text-amber-800 hover:bg-amber-50 font-bold text-sm rounded-xl transition shadow-xs"
           >
             Create Free School OMR
-          </button>
+          </a>
         </div>
       </div>
     </div>
   );
 };
+

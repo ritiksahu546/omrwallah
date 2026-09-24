@@ -35,34 +35,88 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">OMR Tools</h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button type="button" onClick={() => onNavigate('omr-sheet-generator')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/omr-sheet-generator"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('omr-sheet-generator');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   OMR Sheet Generator
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('omr-sheet-maker')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/omr-sheet-maker"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('omr-sheet-maker');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   OMR Sheet Maker
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('omr-sheet-pdf')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/omr-sheet-pdf"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('omr-sheet-pdf');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   OMR Sheet PDF Download
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('online-omr-sheet')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/online-omr-sheet"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('online-omr-sheet');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   Online OMR Sheet
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('creator')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/creator"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('creator');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   Visual Sheet Designer
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('templates')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/templates"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('templates');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   Template Gallery
-                </button>
+                </a>
               </li>
             </ul>
           </div>
@@ -72,29 +126,74 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">Practice &amp; Use Cases</h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button type="button" onClick={() => onNavigate('omr-practice')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/practice"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('practice');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   Online OMR Practice
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('omr-sheet-for-coaching')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/omr-sheet-for-coaching"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('omr-sheet-for-coaching');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   For Coaching Institutes
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('omr-sheet-for-schools')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/omr-sheet-for-schools"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('omr-sheet-for-schools');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   For Schools &amp; Teachers
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('scan')} className="hover:text-white transition-colors cursor-pointer text-left">
-                  OMR Scanner (Beta)
-                </button>
+                <a
+                  href="https://omrwallah.in/omr-practice"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('omr-practice');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
+                  OMR Practice Drills
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('pricing')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/pricing"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('pricing');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   Pricing Plans
-                </button>
+                </a>
               </li>
             </ul>
           </div>
@@ -104,34 +203,88 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">Exam Guides</h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button type="button" onClick={() => onNavigate('omr-exams')} className="hover:text-white transition-colors cursor-pointer text-left font-semibold text-blue-400">
+                <a
+                  href="https://omrwallah.in/omr-exams"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('omr-exams');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left font-semibold text-blue-400 block"
+                >
                   All Exam Guides Hub →
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('neet-omr-sheet')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/neet-omr-sheet"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('neet-omr-sheet');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   NEET OMR Sheet Guide
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('jee-omr-sheet')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/jee-omr-sheet"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('jee-omr-sheet');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   JEE OMR Sheet Guide
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('ssc-omr-sheet')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/ssc-omr-sheet"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('ssc-omr-sheet');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   SSC 100Q OMR Guide
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('cuet-omr-sheet')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/cuet-omr-sheet"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('cuet-omr-sheet');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   CUET 50Q OMR Guide
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('ctet-omr-sheet')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/ctet-omr-sheet"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('ctet-omr-sheet');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   CTET 150Q OMR Guide
-                </button>
+                </a>
               </li>
             </ul>
           </div>
@@ -141,29 +294,74 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">Knowledge Base</h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button type="button" onClick={() => onNavigate('blog')} className="hover:text-white transition-colors cursor-pointer text-left font-semibold text-blue-400">
+                <a
+                  href="https://omrwallah.in/blog"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('blog');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left font-semibold text-blue-400 block"
+                >
                   OMR Knowledge Hub →
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('faq')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/faq"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('faq');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   Help Center &amp; FAQs
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('blog')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/blog"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('blog');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   How to Fill OMR Correctly
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('blog')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/blog"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('blog');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   5 Golden Printing Rules
-                </button>
+                </a>
               </li>
               <li>
-                <button type="button" onClick={() => onNavigate('blog')} className="hover:text-white transition-colors cursor-pointer text-left">
+                <a
+                  href="https://omrwallah.in/blog"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('blog');
+                    }
+                  }}
+                  className="hover:text-white transition-colors cursor-pointer text-left block"
+                >
                   How OMR Checking Works
-                </button>
+                </a>
               </li>
             </ul>
           </div>

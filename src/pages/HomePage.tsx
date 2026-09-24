@@ -123,9 +123,61 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <span className="text-blue-600">Design, Print &amp; Practice</span>
               </h1>
 
-              {/* Subheading */}
+              {/* Subheading with contextual internal links */}
               <p className="text-lg sm:text-xl text-slate-600 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                India's intuitive online OMR sheet generator and maker. Design custom answer sheets, download print-ready A4 PDFs, and practice OMR bubbling for schools, coaching institutes, and competitive exams.
+                India's intuitive online{' '}
+                <a
+                  href="https://omrwallah.in/omr-sheet-generator"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('omr-sheet-generator');
+                    }
+                  }}
+                  className="text-blue-600 hover:underline font-semibold"
+                >
+                  OMR sheet generator
+                </a>{' '}
+                and maker. Design custom answer sheets, download{' '}
+                <a
+                  href="https://omrwallah.in/templates"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('templates');
+                    }
+                  }}
+                  className="text-blue-600 hover:underline font-semibold"
+                >
+                  free OMR sheet templates
+                </a>
+                , start{' '}
+                <a
+                  href="https://omrwallah.in/practice"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('practice');
+                    }
+                  }}
+                  className="text-blue-600 hover:underline font-semibold"
+                >
+                  online OMR practice
+                </a>
+                , and access{' '}
+                <a
+                  href="https://omrwallah.in/omr-exams"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('omr-exams');
+                    }
+                  }}
+                  className="text-blue-600 hover:underline font-semibold"
+                >
+                  competitive exam guides
+                </a>
+                .
               </p>
 
               {/* Features Quick Pills */}
@@ -727,20 +779,25 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {[
-              { label: 'OMR Sheet Generator', route: 'omr-sheet-generator', desc: 'Custom question & column builder' },
-              { label: 'OMR Sheet Maker', route: 'omr-sheet-maker', desc: 'Design bubble grids & roll codes' },
-              { label: 'OMR Sheet PDF', route: 'omr-sheet-pdf', desc: 'Print-ready A4 vector downloads' },
-              { label: 'Online OMR Practice', route: 'omr-practice', desc: 'Timed mock bubbling mode' },
-              { label: 'OMR for Coaching', route: 'omr-sheet-for-coaching', desc: 'Branded test series formats' },
-              { label: 'OMR for Schools', route: 'omr-sheet-for-schools', desc: 'Classroom & term exam sheets' },
-              { label: 'Competitive Exam Hub', route: 'omr-exams', desc: 'NEET, JEE, SSC, CUET guides' },
-              { label: 'NEET OMR Guide', route: 'neet-omr-sheet', desc: '200Q Section A & B mock guide' },
+              { label: 'OMR Sheet Generator', route: 'omr-sheet-generator', path: 'omr-sheet-generator', desc: 'Custom question & column builder' },
+              { label: 'Free OMR Sheet Templates', route: 'templates', path: 'templates', desc: 'Pre-calibrated test layouts & formats' },
+              { label: 'Online OMR Practice', route: 'practice', path: 'practice', desc: 'Timed mock bubbling simulator' },
+              { label: 'Competitive Exam Hub', route: 'omr-exams', path: 'omr-exams', desc: 'NEET, JEE, SSC, CUET guides' },
+              { label: 'OMR Sheet Maker', route: 'omr-sheet-maker', path: 'omr-sheet-maker', desc: 'Design bubble grids & roll codes' },
+              { label: 'OMR Sheet PDF Download', route: 'omr-sheet-pdf', path: 'omr-sheet-pdf', desc: 'Print-ready A4 vector downloads' },
+              { label: 'OMR for Coaching', route: 'omr-sheet-for-coaching', path: 'omr-sheet-for-coaching', desc: 'Branded test series formats' },
+              { label: 'OMR for Schools', route: 'omr-sheet-for-schools', path: 'omr-sheet-for-schools', desc: 'Classroom & term exam sheets' },
             ].map((item, idx) => (
-              <button
+              <a
                 key={idx}
-                type="button"
-                onClick={() => onNavigate(item.route)}
-                className="p-3.5 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-xs text-left transition cursor-pointer group"
+                href={`https://omrwallah.in/${item.path}`}
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                    e.preventDefault();
+                    onNavigate(item.route);
+                  }
+                }}
+                className="p-3.5 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-xs text-left transition group block"
               >
                 <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors block">
                   {item.label} →
@@ -748,7 +805,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <span className="text-[11px] text-slate-500 block mt-0.5">
                   {item.desc}
                 </span>
-              </button>
+              </a>
             ))}
           </div>
         </div>

@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface ExamPageProps {
   onNavigate: (route: string) => void;
@@ -36,6 +37,51 @@ export const NeetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
     },
   ];
 
+  const relatedExamsAndTools = [
+    {
+      title: 'JEE Mock OMR Sheet',
+      desc: 'PCM engineering entrance layout with Section A MCQs and numerical value questions.',
+      route: 'jee-omr-sheet',
+      path: 'jee-omr-sheet',
+      tag: 'Related Exam',
+    },
+    {
+      title: 'CUET 50Q OMR Sheet',
+      desc: 'Standardized 50-question double-column practice sheet for CUET UG domain mock tests.',
+      route: 'cuet-omr-sheet',
+      path: 'cuet-omr-sheet',
+      tag: 'Related Exam',
+    },
+    {
+      title: 'OMR Sheet Generator',
+      desc: 'Create custom question count answer sheets with personalized coaching headers.',
+      route: 'omr-sheet-generator',
+      path: 'omr-sheet-generator',
+      tag: 'Custom Builder',
+    },
+    {
+      title: 'OMR Sheet PDF Download',
+      desc: 'Download printable vector A4 PDF sheets calibrated to standard office printers.',
+      route: 'omr-sheet-pdf',
+      path: 'omr-sheet-pdf',
+      tag: 'Printable PDF',
+    },
+    {
+      title: 'OMR Practice Speed Training',
+      desc: 'Master the "Solve 20, Bubble 20" batch strategy to eliminate negative marking and row mismatch.',
+      route: 'omr-practice',
+      path: 'omr-practice',
+      tag: 'Practice Guide',
+    },
+    {
+      title: 'All Competitive Exam OMR Sheets',
+      desc: 'Browse our full catalog of exam-specific mock practice sheets and templates.',
+      route: 'omr-exams',
+      path: 'omr-exams',
+      tag: 'Exam Hub',
+    },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -49,27 +95,61 @@ export const NeetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
             NEET OMR Sheet Format &amp; Practice Guide
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            A comprehensive guide to practicing the 200-question medical entrance mock pattern. Learn time-saving bubbling techniques, Section A/B strategies, and print practice sheets.
+            A comprehensive guide to practicing the 200-question medical entrance mock pattern. Learn time-saving bubbling techniques, Section A/B strategies, and print practice sheets using our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-generator');
+                }
+              }}
+              className="text-rose-700 font-bold hover:underline"
+            >
+              OMR Sheet Generator
+            </a>{' '}
+            or explore all{' '}
+            <a
+              href="https://omrwallah.in/omr-exams"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-exams');
+                }
+              }}
+              className="text-rose-700 font-bold hover:underline"
+            >
+              competitive exam OMR sheets
+            </a>
+            .
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                if (onSelectTemplate) onSelectTemplate('neet-200');
-                onNavigate('creator');
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onSelectTemplate) onSelectTemplate('neet-200');
+                  onNavigate('creator');
+                }
               }}
-              className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2"
             >
               <span>Download NEET 200Q Practice Sheet</span>
               <Download className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('practice')}
-              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('practice');
+                }
+              }}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition"
             >
               Practice Online With Timer
-            </button>
+            </a>
           </div>
         </div>
 
@@ -130,7 +210,7 @@ export const NeetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
             </div>
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
               <h3 className="font-bold text-slate-900">4. Finger Anchor Checkpoint</h3>
-              <p className="text-xs leading-relaxed">Keep your non-writing index finger firmly anchored on the question number in your booklet while your writing hand darkens the sheet.</p>
+              <p className="text-xs leading-relaxed">Keep your non-writing index finger firmly anchored on the question number in your booklet while your writing hand darkens the sheet. Check our complete <a href="https://omrwallah.in/omr-practice" onClick={(e) => { if (!e.ctrlKey && !e.metaKey && e.button === 0) { e.preventDefault(); onNavigate('omr-practice'); } }} className="text-rose-700 font-bold hover:underline">OMR Practice Guide</a> for more speed drills.</p>
             </div>
           </div>
         </div>
@@ -153,24 +233,36 @@ export const NeetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
           </div>
         </div>
 
+        {/* Related Exam OMR Sheets Section */}
+        <RelatedToolsSection
+          title="Related Exam OMR Sheets &amp; Tools"
+          subtitle="Explore mock formats for engineering, central university, and competitive entrance exams."
+          links={relatedExamsAndTools}
+          onNavigate={onNavigate}
+        />
+
         {/* CTA */}
         <div className="p-6 sm:p-8 bg-rose-700 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Download Your Free NEET Practice Sheet</h2>
           <p className="text-sm sm:text-base text-rose-100 max-w-xl mx-auto">
             Get an authentic A4 PDF format ready to print for your next full-length mock exam.
           </p>
-          <button
-            type="button"
-            onClick={() => {
-              if (onSelectTemplate) onSelectTemplate('neet-200');
-              onNavigate('creator');
+          <a
+            href="https://omrwallah.in/omr-sheet-generator"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                if (onSelectTemplate) onSelectTemplate('neet-200');
+                onNavigate('creator');
+              }
             }}
-            className="px-6 py-3 bg-white text-rose-700 hover:bg-rose-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+            className="inline-block px-6 py-3 bg-white text-rose-700 hover:bg-rose-50 font-bold text-sm rounded-xl transition shadow-xs"
           >
             Open NEET Template in Creator
-          </button>
+          </a>
         </div>
       </div>
     </div>
   );
 };
+

@@ -10,6 +10,7 @@ import {
   Maximize2,
   FileSpreadsheet,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface SEOPageProps {
   onNavigate: (route: string) => void;
@@ -35,6 +36,44 @@ export const OMRSheetMakerLanding: React.FC<SEOPageProps> = ({ onNavigate }) => 
     },
   ];
 
+  const relatedTools = [
+    {
+      title: 'OMR Sheet Generator',
+      desc: 'Create custom question count answer sheets with personalized coaching headers.',
+      route: 'omr-sheet-generator',
+      path: 'omr-sheet-generator',
+      tag: 'Custom Builder',
+    },
+    {
+      title: 'OMR Sheet PDF Download',
+      desc: 'Download high-resolution, print-ready vector A4 OMR PDFs for 50, 100, and 200 questions.',
+      route: 'omr-sheet-pdf',
+      path: 'omr-sheet-pdf',
+      tag: 'Printable PDF',
+    },
+    {
+      title: 'Ready OMR Templates',
+      desc: 'Browse pre-built standard formats for coaching institutes, schools, and competitive tests.',
+      route: 'templates',
+      path: 'templates',
+      tag: 'Pre-made Formats',
+    },
+    {
+      title: 'OMR Practice Speed Training',
+      desc: 'Build bubbling muscle memory and eliminate negative marking with timed speed drills.',
+      route: 'omr-practice',
+      path: 'omr-practice',
+      tag: 'Practice Guide',
+    },
+    {
+      title: 'Competitive Exam OMR Sheets',
+      desc: 'Explore mock formats for NEET UG, JEE Main, SSC CGL, CTET, and CUET.',
+      route: 'omr-exams',
+      path: 'omr-exams',
+      tag: 'Exam Hub',
+    },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -48,24 +87,60 @@ export const OMRSheetMakerLanding: React.FC<SEOPageProps> = ({ onNavigate }) => 
             OMR Sheet Maker Online
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Design professional, customized Optical Mark Recognition answer sheets with custom bubble styles, roll number grids, and institutional branding.
+            Design professional, customized Optical Mark Recognition answer sheets with custom bubble styles, roll number grids, and institutional branding. You can also export to{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-pdf"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-pdf');
+                }
+              }}
+              className="text-indigo-600 font-bold hover:underline"
+            >
+              print-ready A4 PDF
+            </a>{' '}
+            or choose from{' '}
+            <a
+              href="https://omrwallah.in/templates"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('templates');
+                }
+              }}
+              className="text-indigo-600 font-bold hover:underline"
+            >
+              ready templates
+            </a>
+            .
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => onNavigate('creator')}
-              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+            <a
+              href="https://omrwallah.in/creator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('creator');
+                }
+              }}
+              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2"
             >
               <span>Open OMR Maker</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('templates')}
-              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/templates"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('templates');
+                }
+              }}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition"
             >
               View Sample Formats
-            </button>
+            </a>
           </div>
         </div>
 
@@ -77,7 +152,7 @@ export const OMRSheetMakerLanding: React.FC<SEOPageProps> = ({ onNavigate }) => 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
               <Maximize2 className="w-5 h-5 text-indigo-600" />
-              <h3 className="font-bold text-slate-900 text-sm">Bubble Geometry & Sizing</h3>
+              <h3 className="font-bold text-slate-900 text-sm">Bubble Geometry &amp; Sizing</h3>
               <p className="text-xs text-slate-600">Select circle, square, or rounded bubbles with small, medium, or large optical radiuses.</p>
             </div>
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
@@ -88,7 +163,7 @@ export const OMRSheetMakerLanding: React.FC<SEOPageProps> = ({ onNavigate }) => 
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
               <Layers className="w-5 h-5 text-emerald-600" />
               <h3 className="font-bold text-slate-900 text-sm">Multi-Subject Sectioning</h3>
-              <p className="text-xs text-slate-600">Divide questions into sections (e.g., Section A & Section B) with individual subheadings.</p>
+              <p className="text-xs text-slate-600">Divide questions into sections (e.g., Section A &amp; Section B) with individual subheadings.</p>
             </div>
           </div>
         </div>
@@ -132,21 +207,35 @@ export const OMRSheetMakerLanding: React.FC<SEOPageProps> = ({ onNavigate }) => 
           </div>
         </div>
 
+        {/* Related Tools Section */}
+        <RelatedToolsSection
+          title="Related OMR Tools &amp; Resources"
+          subtitle="Explore complementary builders, print-ready PDFs, and exam mock templates."
+          links={relatedTools}
+          onNavigate={onNavigate}
+        />
+
         {/* CTA */}
         <div className="p-6 sm:p-8 bg-indigo-700 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Start Making Your Custom OMR Sheet</h2>
           <p className="text-sm sm:text-base text-indigo-100 max-w-xl mx-auto">
             Design custom sheets tailored to your exact syllabus and paper requirements.
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('creator')}
-            className="px-6 py-3 bg-white text-indigo-700 hover:bg-indigo-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+          <a
+            href="https://omrwallah.in/creator"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                onNavigate('creator');
+              }
+            }}
+            className="inline-block px-6 py-3 bg-white text-indigo-700 hover:bg-indigo-50 font-bold text-sm rounded-xl transition shadow-xs"
           >
             Launch OMR Sheet Maker
-          </button>
+          </a>
         </div>
       </div>
     </div>
   );
 };
+

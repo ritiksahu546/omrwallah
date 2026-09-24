@@ -11,12 +11,51 @@ import {
   ShieldCheck,
   Zap,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface SEOPageProps {
   onNavigate: (route: string) => void;
 }
 
 export const OMRSheetGeneratorLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
+  const relatedGeneratorTools = [
+    {
+      title: 'OMR Sheet Maker',
+      desc: 'Fine-tune custom bubble matrices, candidate fields, and roll code configurations.',
+      route: 'omr-sheet-maker',
+      path: 'omr-sheet-maker',
+      tag: 'Custom Builder',
+    },
+    {
+      title: 'OMR Sheet PDF Download',
+      desc: 'Export and download print-ready blank A4 answer sheets without registration.',
+      route: 'omr-sheet-pdf',
+      path: 'omr-sheet-pdf',
+      tag: 'Vector PDF',
+    },
+    {
+      title: 'Visual Sheet Designer',
+      desc: 'Interactive visual designer with real-time vector canvas and instant print preview.',
+      route: 'creator',
+      path: 'creator',
+      tag: 'Live Editor',
+    },
+    {
+      title: 'Free OMR Sheet Templates',
+      desc: 'Pre-calibrated templates for NEET, JEE, SSC, and school unit tests.',
+      route: 'templates',
+      path: 'templates',
+      tag: 'Templates',
+    },
+    {
+      title: 'Online OMR Practice',
+      desc: 'Interactive mock bubbling simulator with timer, negative marking, and score report.',
+      route: 'practice',
+      path: 'practice',
+      tag: 'Timed Test',
+    },
+  ];
+
   const faqs = [
     {
       q: 'How does the online OMR sheet generator work?',
@@ -76,7 +115,33 @@ export const OMRSheetGeneratorLanding: React.FC<SEOPageProps> = ({ onNavigate })
             What is the OMR Sheet Generator?
           </h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            The OMR Sheet Generator by OMRWallah is a browser-based utility engineered to design optical answer sheets with millimeter precision. Whether you need a short 20-question classroom quiz or a comprehensive 200-question competitive mock exam, our generator automatically balances grid density, margins, and timing tracks so your sheets scan reliably on optical evaluation software and mobile camera scanners.
+            The OMR Sheet Generator by OMRWallah is a browser-based utility engineered to design optical answer sheets with millimeter precision. If you need fine-grained bubble layout customization, pair it with our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-maker"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-maker');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              OMR Sheet Maker
+            </a>{' '}
+            or download standard blank formats from our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-pdf"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-pdf');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              OMR sheet PDF download
+            </a>{' '}
+            collection. Whether you need a short 20-question classroom quiz or a comprehensive 200-question competitive mock exam, our generator automatically balances grid density, margins, and timing tracks so your sheets scan reliably on optical evaluation software and mobile camera scanners.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
@@ -180,6 +245,14 @@ export const OMRSheetGeneratorLanding: React.FC<SEOPageProps> = ({ onNavigate })
           </div>
         </div>
 
+        {/* Related OMR Tools Section */}
+        <RelatedToolsSection
+          title="Related OMR Tools"
+          subtitle="Explore our visual maker, printable PDF formats, and online bubbling practice modes."
+          links={relatedGeneratorTools}
+          onNavigate={onNavigate}
+        />
+
         {/* Bottom CTA & Internal Links */}
         <div className="p-6 sm:p-8 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Ready to Create Your Custom OMR Sheet?</h2>
@@ -187,20 +260,30 @@ export const OMRSheetGeneratorLanding: React.FC<SEOPageProps> = ({ onNavigate })
             Design your exam sheets online without software installation. 100% free and print-ready.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => onNavigate('creator')}
-              className="px-6 py-3 bg-white text-blue-700 hover:bg-blue-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+            <a
+              href="https://omrwallah.in/creator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('creator');
+                }
+              }}
+              className="px-6 py-3 bg-white text-blue-700 hover:bg-blue-50 font-bold text-sm rounded-xl transition shadow-xs"
             >
               Create OMR Sheet Now
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('practice')}
-              className="px-6 py-3 bg-blue-800/60 hover:bg-blue-800 text-white font-bold text-sm rounded-xl border border-blue-400/40 transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('practice');
+                }
+              }}
+              className="px-6 py-3 bg-blue-800/60 hover:bg-blue-800 text-white font-bold text-sm rounded-xl border border-blue-400/40 transition"
             >
               Try Online Practice Mode
-            </button>
+            </a>
           </div>
         </div>
       </div>

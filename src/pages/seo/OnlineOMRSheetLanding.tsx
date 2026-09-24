@@ -9,6 +9,7 @@ import {
   HelpCircle,
   Eye,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface SEOPageProps {
   onNavigate: (route: string) => void;
@@ -34,6 +35,44 @@ export const OnlineOMRSheetLanding: React.FC<SEOPageProps> = ({ onNavigate }) =>
     },
   ];
 
+  const relatedTools = [
+    {
+      title: 'Online OMR Practice',
+      desc: 'Interactive timed bubbling simulator with countdown timer and automated score report.',
+      route: 'practice',
+      path: 'practice',
+      tag: 'Practice Tool',
+    },
+    {
+      title: 'OMR Practice Speed Guide',
+      desc: 'Master the "Solve 20, Bubble 20" strategy and prevent row drift in competitive exams.',
+      route: 'omr-practice',
+      path: 'omr-practice',
+      tag: 'Speed Training',
+    },
+    {
+      title: 'Competitive Exam OMR Sheets',
+      desc: 'Dedicated exam-specific guides and bubble layouts for NEET, JEE, SSC, and CTET.',
+      route: 'omr-exams',
+      path: 'omr-exams',
+      tag: 'Exam Guides',
+    },
+    {
+      title: 'OMR Sheet Generator',
+      desc: 'Generate customized A4 answer sheets with custom subjects and roll number grids.',
+      route: 'omr-sheet-generator',
+      path: 'omr-sheet-generator',
+      tag: 'Generator',
+    },
+    {
+      title: 'Free OMR Sheet Templates',
+      desc: 'Browse and print standardized 20 to 200 questions blank OMR answer sheets.',
+      route: 'templates',
+      path: 'templates',
+      tag: 'Templates',
+    },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -47,24 +86,47 @@ export const OnlineOMRSheetLanding: React.FC<SEOPageProps> = ({ onNavigate }) =>
             Online OMR Sheet – Practice &amp; Evaluate Digitally
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Experience realistic OMR bubbling directly on your phone, tablet, or desktop. Practice time management with countdown timers and instant automated scoring.
+            Experience realistic OMR bubbling directly on your phone, tablet, or desktop. Practice time management with countdown timers and instant automated scoring using our{' '}
+            <a
+              href="https://omrwallah.in/practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('practice');
+                }
+              }}
+              className="text-emerald-700 font-bold hover:underline"
+            >
+              online OMR practice tool
+            </a>
+            .
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => onNavigate('practice')}
-              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+            <a
+              href="https://omrwallah.in/practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('practice');
+                }
+              }}
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2"
             >
               <span>Start Online OMR Practice</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('creator')}
-              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-generator');
+                }
+              }}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition"
             >
               Print Paper OMR Sheet
-            </button>
+            </a>
           </div>
         </div>
 
@@ -99,10 +161,36 @@ export const OnlineOMRSheetLanding: React.FC<SEOPageProps> = ({ onNavigate }) =>
           </h2>
           <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
             <p>
-              1. <strong>Select Your Question Count:</strong> Choose between quick 20-question speed drills, 50-question chapter mocks, or full 180-200 question simulations.
+              1. <strong>Select Your Question Count:</strong> Choose between quick 20-question speed drills, 50-question chapter mocks, or full 180-200 question simulations. If you need exam-specific guidelines, explore our{' '}
+              <a
+                href="https://omrwallah.in/omr-exams"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                    e.preventDefault();
+                    onNavigate('omr-exams');
+                  }
+                }}
+                className="text-emerald-700 font-bold hover:underline"
+              >
+                Competitive Exam OMR Sheets
+              </a>{' '}
+              hub.
             </p>
             <p>
-              2. <strong>Tap to Darken Bubbles:</strong> As you solve questions from your practice test booklet or PDF, tap the corresponding circle (A, B, C, D) just as you would darken a physical paper sheet.
+              2. <strong>Tap to Darken Bubbles:</strong> As you solve questions from your practice test booklet or PDF, tap the corresponding circle (A, B, C, D) just as you would darken a physical paper sheet. Check our{' '}
+              <a
+                href="https://omrwallah.in/omr-practice"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                    e.preventDefault();
+                    onNavigate('omr-practice');
+                  }
+                }}
+                className="text-emerald-700 font-bold hover:underline"
+              >
+                OMR practice speed training guide
+              </a>{' '}
+              to optimize bubbling rhythm.
             </p>
             <p>
               3. <strong>Submit for Detailed Analysis:</strong> Click Complete Test to generate an instantaneous digital scorecard highlighting accuracy, time elapsed, and skipped items.
@@ -128,21 +216,35 @@ export const OnlineOMRSheetLanding: React.FC<SEOPageProps> = ({ onNavigate }) =>
           </div>
         </div>
 
+        {/* Related OMR Tools Section */}
+        <RelatedToolsSection
+          title="Related OMR Tools & Exam Guides"
+          subtitle="Discover custom sheet generators, printable templates, and exam practice resources."
+          links={relatedTools}
+          onNavigate={onNavigate}
+        />
+
         {/* CTA */}
         <div className="p-6 sm:p-8 bg-emerald-700 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Ready to Practice Online?</h2>
           <p className="text-sm sm:text-base text-emerald-100 max-w-xl mx-auto">
             Improve your answering speed and accuracy with interactive digital OMR sheets.
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('practice')}
-            className="px-6 py-3 bg-white text-emerald-800 hover:bg-emerald-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+          <a
+            href="https://omrwallah.in/practice"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                onNavigate('practice');
+              }
+            }}
+            className="inline-block px-6 py-3 bg-white text-emerald-800 hover:bg-emerald-50 font-bold text-sm rounded-xl transition shadow-xs"
           >
             Launch Online OMR Practice
-          </button>
+          </a>
         </div>
       </div>
     </div>
   );
 };
+

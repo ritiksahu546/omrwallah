@@ -1159,6 +1159,56 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
                 </button>
               </div>
 
+              {/* Helpful Guides & Exam Hub Links */}
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-xs text-slate-600">
+                <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider block">
+                  Related Practice Guides &amp; Exam Formats
+                </span>
+                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 pt-1 text-[11px]">
+                  <a
+                    href="https://omrwallah.in/omr-practice"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                        e.preventDefault();
+                        setShowExamSelectorModal(false);
+                        onNavigate('omr-practice');
+                      }
+                    }}
+                    className="text-blue-600 hover:underline font-semibold"
+                  >
+                    OMR Speed Practice Guide &rarr;
+                  </a>
+                  <span className="text-slate-300">•</span>
+                  <a
+                    href="https://omrwallah.in/online-omr-sheet"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                        e.preventDefault();
+                        setShowExamSelectorModal(false);
+                        onNavigate('online-omr-sheet');
+                      }
+                    }}
+                    className="text-blue-600 hover:underline font-semibold"
+                  >
+                    Online OMR Simulator &rarr;
+                  </a>
+                  <span className="text-slate-300">•</span>
+                  <a
+                    href="https://omrwallah.in/omr-exams"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                        e.preventDefault();
+                        setShowExamSelectorModal(false);
+                        onNavigate('omr-exams');
+                      }
+                    }}
+                    className="text-blue-600 hover:underline font-semibold"
+                  >
+                    Competitive Exam Formats &rarr;
+                  </a>
+                </div>
+              </div>
+
             </div>
 
             <div className="pt-3 border-t border-slate-200 flex justify-end">

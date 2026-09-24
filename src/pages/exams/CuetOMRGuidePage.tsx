@@ -7,6 +7,7 @@ import {
   HelpCircle,
   Sparkles,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface ExamPageProps {
   onNavigate: (route: string) => void;
@@ -29,6 +30,51 @@ export const CuetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
     },
   ];
 
+  const relatedExamsAndTools = [
+    {
+      title: 'NEET OMR Sheet Guide',
+      desc: '200-question medical entrance mock format with Physics, Chemistry, Botany, and Zoology sections.',
+      route: 'neet-omr-sheet',
+      path: 'neet-omr-sheet',
+      tag: 'Related Exam',
+    },
+    {
+      title: 'JEE Mock OMR Sheet',
+      desc: 'PCM engineering entrance layout with Section A MCQs and numerical value questions.',
+      route: 'jee-omr-sheet',
+      path: 'jee-omr-sheet',
+      tag: 'Related Exam',
+    },
+    {
+      title: 'All Competitive Exam OMR Sheets',
+      desc: 'Browse complete catalog of national entrance exam practice sheets and formats.',
+      route: 'omr-exams',
+      path: 'omr-exams',
+      tag: 'Exam Hub',
+    },
+    {
+      title: 'OMR Sheet Generator',
+      desc: 'Design custom 50-question domain test sheets with your coaching name and test series code.',
+      route: 'omr-sheet-generator',
+      path: 'omr-sheet-generator',
+      tag: 'Custom Builder',
+    },
+    {
+      title: 'OMR Sheet PDF Download',
+      desc: 'Download instant print-ready vector A4 PDFs without watermarks.',
+      route: 'omr-sheet-pdf',
+      path: 'omr-sheet-pdf',
+      tag: 'Printable PDF',
+    },
+    {
+      title: 'OMR Practice Speed Training',
+      desc: 'Practice rapid bubbling to complete domain subjects with maximum accuracy.',
+      route: 'omr-practice',
+      path: 'omr-practice',
+      tag: 'Practice Guide',
+    },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -41,27 +87,48 @@ export const CuetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
             CUET 50-Question OMR Practice Sheet &amp; Guide
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Download 50-question mock OMR answer sheets for Common University Entrance Test (CUET UG) domain and general test preparation.
+            Download 50-question mock OMR answer sheets for Common University Entrance Test (CUET UG) domain and general test preparation using our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-generator');
+                }
+              }}
+              className="text-violet-700 font-bold hover:underline"
+            >
+              OMR Sheet Generator
+            </a>
+            .
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                if (onSelectTemplate) onSelectTemplate('standard-50');
-                onNavigate('creator');
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onSelectTemplate) onSelectTemplate('standard-50');
+                  onNavigate('creator');
+                }
               }}
-              className="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2"
             >
               <span>Download 50Q CUET Practice Sheet</span>
               <Download className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('practice')}
-              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('practice');
+                }
+              }}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition"
             >
               Practice Online
-            </button>
+            </a>
           </div>
         </div>
 
@@ -89,23 +156,35 @@ export const CuetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
           </div>
         </div>
 
+        {/* Related Exam OMR Sheets Section */}
+        <RelatedToolsSection
+          title="Related Exam OMR Sheets &amp; Tools"
+          subtitle="Explore mock formats for medical, engineering, and central entrance exams."
+          links={relatedExamsAndTools}
+          onNavigate={onNavigate}
+        />
+
         <div className="p-6 sm:p-8 bg-violet-700 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Generate CUET Mock Practice Sheet</h2>
           <p className="text-sm sm:text-base text-violet-100 max-w-xl mx-auto">
             Get instant print-ready A4 PDFs for your domain mock tests.
           </p>
-          <button
-            type="button"
-            onClick={() => {
-              if (onSelectTemplate) onSelectTemplate('standard-50');
-              onNavigate('creator');
+          <a
+            href="https://omrwallah.in/omr-sheet-generator"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                if (onSelectTemplate) onSelectTemplate('standard-50');
+                onNavigate('creator');
+              }
             }}
-            className="px-6 py-3 bg-white text-violet-800 hover:bg-violet-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+            className="inline-block px-6 py-3 bg-white text-violet-800 hover:bg-violet-50 font-bold text-sm rounded-xl transition shadow-xs"
           >
             Create CUET Practice Sheet
-          </button>
+          </a>
         </div>
       </div>
     </div>
   );
 };
+

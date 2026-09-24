@@ -7,6 +7,7 @@ import {
   HelpCircle,
   Sparkles,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface ExamPageProps {
   onNavigate: (route: string) => void;
@@ -29,6 +30,44 @@ export const CtetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
     },
   ];
 
+  const relatedExamsAndTools = [
+    {
+      title: 'SSC 100Q OMR Sheet',
+      desc: 'Standardized 100-question 4-column answer sheet format for SSC and State PSC recruitment tests.',
+      route: 'ssc-omr-sheet',
+      path: 'ssc-omr-sheet',
+      tag: 'Related Exam',
+    },
+    {
+      title: 'All Competitive Exam OMR Sheets',
+      desc: 'Browse complete catalog of exam mock sheets including CTET, SSC, NEET, and JEE.',
+      route: 'omr-exams',
+      path: 'omr-exams',
+      tag: 'Exam Hub',
+    },
+    {
+      title: 'OMR Sheet Generator',
+      desc: 'Create custom 150-question answer sheets with section titles and student roll numbers.',
+      route: 'omr-sheet-generator',
+      path: 'omr-sheet-generator',
+      tag: 'Custom Builder',
+    },
+    {
+      title: 'OMR Sheet PDF Download',
+      desc: 'Export high-definition printable A4 sheets without watermarks.',
+      route: 'omr-sheet-pdf',
+      path: 'omr-sheet-pdf',
+      tag: 'Printable PDF',
+    },
+    {
+      title: 'OMR Practice Speed Training',
+      desc: 'Build bubbling muscle memory to complete 150 questions comfortably within time limits.',
+      route: 'omr-practice',
+      path: 'omr-practice',
+      tag: 'Practice Guide',
+    },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -41,27 +80,48 @@ export const CtetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
             CTET 150-Question OMR Practice Sheet &amp; Guide
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Download print-ready 150-question A4 OMR answer sheets for CTET and State TET mock examinations.
+            Download print-ready 150-question A4 OMR answer sheets for CTET and State TET mock examinations using our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-generator');
+                }
+              }}
+              className="text-teal-700 font-bold hover:underline"
+            >
+              OMR Sheet Generator
+            </a>
+            .
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                if (onSelectTemplate) onSelectTemplate('standard-100'); // Or custom 150
-                onNavigate('creator');
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  if (onSelectTemplate) onSelectTemplate('standard-100');
+                  onNavigate('creator');
+                }
               }}
-              className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2"
             >
               <span>Design 150Q CTET Sheet</span>
               <Download className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('practice')}
-              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('practice');
+                }
+              }}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition"
             >
               Practice Online
-            </button>
+            </a>
           </div>
         </div>
 
@@ -89,20 +149,34 @@ export const CtetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
           </div>
         </div>
 
+        {/* Related Exam OMR Sheets Section */}
+        <RelatedToolsSection
+          title="Related Exam OMR Sheets &amp; Tools"
+          subtitle="Explore mock formats for government recruitment, universities, and practice tools."
+          links={relatedExamsAndTools}
+          onNavigate={onNavigate}
+        />
+
         <div className="p-6 sm:p-8 bg-teal-700 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Design CTET Practice Sheet</h2>
           <p className="text-sm sm:text-base text-teal-100 max-w-xl mx-auto">
             Customize headers, subject sections, and candidate details in minutes.
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('creator')}
-            className="px-6 py-3 bg-white text-teal-800 hover:bg-teal-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+          <a
+            href="https://omrwallah.in/omr-sheet-generator"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                onNavigate('creator');
+              }
+            }}
+            className="inline-block px-6 py-3 bg-white text-teal-800 hover:bg-teal-50 font-bold text-sm rounded-xl transition shadow-xs"
           >
             Open OMR Creator
-          </button>
+          </a>
         </div>
       </div>
     </div>
   );
 };
+

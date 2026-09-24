@@ -10,6 +10,7 @@ import {
   Printer,
   FileSpreadsheet,
 } from 'lucide-react';
+import { RelatedToolsSection } from '../../components/common/RelatedToolsSection';
 
 interface SEOPageProps {
   onNavigate: (route: string) => void;
@@ -35,6 +36,44 @@ export const OMRCoachingLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
     },
   ];
 
+  const relatedTools = [
+    {
+      title: 'OMR Sheet Generator',
+      desc: 'Build customized A4 answer sheets with your academy logo, subject sections, and roll code grids.',
+      route: 'omr-sheet-generator',
+      path: 'omr-sheet-generator',
+      tag: 'Custom Generator',
+    },
+    {
+      title: 'Free OMR Sheet Templates',
+      desc: 'Download ready-made 20 to 200 question answer sheet templates for immediate printing.',
+      route: 'templates',
+      path: 'templates',
+      tag: 'Templates Library',
+    },
+    {
+      title: 'OMR Practice & Speed Training',
+      desc: 'Guide students on timed bubbling techniques and avoiding negative marking pitfalls.',
+      route: 'omr-practice',
+      path: 'omr-practice',
+      tag: 'Student Practice',
+    },
+    {
+      title: 'OMR Sheet PDF Download',
+      desc: 'Print-ready vector PDF sheets calibrated to laser and photocopy standards.',
+      route: 'omr-sheet-pdf',
+      path: 'omr-sheet-pdf',
+      tag: 'Printable PDF',
+    },
+    {
+      title: 'Competitive Exam OMR Sheets',
+      desc: 'Official mock formats for NEET UG, JEE Main, SSC CGL, and State PSC test series.',
+      route: 'omr-exams',
+      path: 'omr-exams',
+      tag: 'Exam Hub',
+    },
+  ];
+
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -48,24 +87,47 @@ export const OMRCoachingLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
             OMR Sheet for Coaching Institutes
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Design, brand, and print customized A4 OMR answer sheets for weekly test series, rank booster mock exams, and batch-wise assessments.
+            Design, brand, and print customized A4 OMR answer sheets for weekly test series, rank booster mock exams, and batch-wise assessments using our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-generator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-generator');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              OMR Sheet Generator
+            </a>
+            .
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => onNavigate('creator')}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+            <a
+              href="https://omrwallah.in/creator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('creator');
+                }
+              }}
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2"
             >
               <span>Design Institute OMR Sheet</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('pricing')}
-              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition cursor-pointer"
+            </a>
+            <a
+              href="https://omrwallah.in/templates"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('templates');
+                }
+              }}
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm rounded-xl border border-slate-300 shadow-xs transition"
             >
-              Explore Coaching Plans
-            </button>
+              Explore Ready Templates
+            </a>
           </div>
         </div>
 
@@ -99,7 +161,33 @@ export const OMRCoachingLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
             Supported Competitive Exam Formats
           </h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Coaching centers across India use OMRWallah to prepare mock tests for NEET (UG) 200-question formats, JEE Main 75-question formats, UPSC Prelims 100-question General Studies papers, and State PSC test series.
+            Coaching centers across India use OMRWallah to prepare mock tests for NEET (UG) 200-question formats, JEE Main 75-question formats, UPSC Prelims 100-question General Studies papers, and State PSC test series. You can download ready-to-print formats from our{' '}
+            <a
+              href="https://omrwallah.in/templates"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('templates');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              free OMR sheet templates
+            </a>{' '}
+            or guide students through speed drills with{' '}
+            <a
+              href="https://omrwallah.in/omr-practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-practice');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              OMR practice speed training
+            </a>
+            .
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-center">
@@ -139,21 +227,35 @@ export const OMRCoachingLanding: React.FC<SEOPageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
+        {/* Related OMR Tools Section */}
+        <RelatedToolsSection
+          title="Related OMR Tools & Templates"
+          subtitle="Generate branded answer sheets, print templates, and explore exam layouts."
+          links={relatedTools}
+          onNavigate={onNavigate}
+        />
+
         {/* CTA */}
         <div className="p-6 sm:p-8 bg-blue-700 rounded-2xl text-white text-center space-y-4 shadow-md">
           <h2 className="text-2xl sm:text-3xl font-black">Upgrade Your Coaching Test Series Today</h2>
           <p className="text-sm sm:text-base text-blue-100 max-w-xl mx-auto">
             Design branded test papers that provide students with genuine exam-hall practice.
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('creator')}
-            className="px-6 py-3 bg-white text-blue-700 hover:bg-blue-50 font-bold text-sm rounded-xl transition cursor-pointer shadow-xs"
+          <a
+            href="https://omrwallah.in/creator"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                onNavigate('creator');
+              }
+            }}
+            className="inline-block px-6 py-3 bg-white text-blue-700 hover:bg-blue-50 font-bold text-sm rounded-xl transition shadow-xs"
           >
             Create Institute OMR Sheet
-          </button>
+          </a>
         </div>
       </div>
     </div>
   );
 };
+
