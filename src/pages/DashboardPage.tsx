@@ -73,10 +73,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6 min-w-0 box-border">
       
-      {/* Top Welcome Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 min-w-0">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
+      {/* Top Welcome Header & Integrated Role Switcher (Issue 9, 13) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 min-w-0">
+        <div className="min-w-0 space-y-1.5">
+          <div className="flex flex-wrap items-center gap-2.5">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-1.5">
               <span>Hello, {userRole === 'student' ? studentName : professorName} 👋</span>
               <button
@@ -88,140 +88,133 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 <Edit3 className="w-4 h-4" />
               </button>
             </h1>
-            <span className="text-[11px] sm:text-xs font-bold px-2.5 py-0.5 sm:py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
               {userProfile?.targetExam || (userRole === 'student' ? 'NEET Aspirant' : 'Coaching Faculty')}
             </span>
+
+            {/* Role Switcher positioned immediately adjacent to user identity (Issue 13) */}
+            <div className="bg-slate-100 p-0.5 rounded-xl border border-slate-200/80 flex items-center text-xs font-bold shrink-0" role="tablist" aria-label="Dashboard role view">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={userRole === 'student'}
+                onClick={() => setUserRole('student')}
+                className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                  userRole === 'student' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Student View
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={userRole === 'teacher'}
+                onClick={() => setUserRole('teacher')}
+                className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                  userRole === 'teacher' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Teacher View
+              </button>
+            </div>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500">
             Keep practicing, keep improving! Consistent bubbling builds exam speed.
           </p>
         </div>
-
-        {/* Quick Actions & Role Switcher */}
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="bg-slate-200/80 p-1 rounded-xl flex items-center text-xs font-bold">
-            <button
-              type="button"
-              onClick={() => setUserRole('student')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                userRole === 'student' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600'
-              }`}
-            >
-              Student View
-            </button>
-            <button
-              type="button"
-              onClick={() => setUserRole('teacher')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                userRole === 'teacher' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600'
-              }`}
-            >
-              Teacher View
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('creator')}
-            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs shadow-blue-500/20 transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">Create OMR</span>
-          </button>
-        </div>
       </div>
 
-      {/* 4 Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 w-full min-w-0">
+      {/* 4 Stat Cards - Elevated Visual Weight (Issue 12) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full min-w-0">
         {userRole === 'student' ? (
           <>
-            <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-5 shadow-xs flex items-center gap-2.5 sm:gap-3.5 min-w-0 overflow-hidden">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex items-center gap-3 sm:gap-4 min-w-0 overflow-hidden">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-lg sm:text-2xl font-black text-slate-900 truncate">
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none truncate">
                   {MOCK_STUDENT_STATS.testsTaken}
                 </div>
-                <div className="text-[11px] sm:text-xs font-semibold text-slate-500 truncate">Tests Taken</div>
+                <div className="text-xs font-medium text-slate-500 mt-1 truncate">Tests Taken</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-5 shadow-xs flex items-center gap-2.5 sm:gap-3.5 min-w-0 overflow-hidden">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex items-center gap-3 sm:gap-4 min-w-0 overflow-hidden">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-lg sm:text-2xl font-black text-slate-900 truncate">
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none truncate">
                   {MOCK_STUDENT_STATS.averageScore}%
                 </div>
-                <div className="text-[11px] sm:text-xs font-semibold text-slate-500 truncate">Average Score</div>
+                <div className="text-xs font-medium text-slate-500 mt-1 truncate">Average Score</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-5 shadow-xs flex items-center gap-2.5 sm:gap-3.5 min-w-0 overflow-hidden">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                <Award className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex items-center gap-3 sm:gap-4 min-w-0 overflow-hidden">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <Award className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-lg sm:text-2xl font-black text-slate-900 truncate">
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none truncate">
                   {MOCK_STUDENT_STATS.bestScore}%
                 </div>
-                <div className="text-[11px] sm:text-xs font-semibold text-slate-500 truncate">Best Score</div>
+                <div className="text-xs font-medium text-slate-500 mt-1 truncate">Best Score</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-5 shadow-xs flex items-center gap-2.5 sm:gap-3.5 min-w-0 overflow-hidden">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex items-center gap-3 sm:gap-4 min-w-0 overflow-hidden">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-lg sm:text-2xl font-black text-slate-900 truncate">
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none truncate">
                   {MOCK_STUDENT_STATS.practiceTime}
                 </div>
-                <div className="text-[11px] sm:text-xs font-semibold text-slate-500 truncate">Practice Time</div>
+                <div className="text-xs font-medium text-slate-500 mt-1 truncate">Practice Time</div>
               </div>
             </div>
           </>
         ) : (
           <>
-            <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-5 shadow-xs flex items-center gap-2.5 sm:gap-3.5 min-w-0 overflow-hidden">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex items-center gap-3 sm:gap-4 min-w-0 overflow-hidden">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-lg sm:text-2xl font-black text-slate-900 truncate">0</div>
-                <div className="text-[11px] sm:text-xs font-semibold text-slate-500 truncate">Tests Created</div>
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none truncate">0</div>
+                <div className="text-xs font-medium text-slate-500 mt-1 truncate">Tests Created</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-5 shadow-xs flex items-center gap-2.5 sm:gap-3.5 min-w-0 overflow-hidden">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
-                <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex items-center gap-3 sm:gap-4 min-w-0 overflow-hidden">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-lg sm:text-2xl font-black text-slate-900 truncate">0</div>
-                <div className="text-[11px] sm:text-xs font-semibold text-slate-500 truncate">Students Enrolled</div>
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none truncate">0</div>
+                <div className="text-xs font-medium text-slate-500 mt-1 truncate">Students Enrolled</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-5 shadow-xs flex items-center gap-2.5 sm:gap-3.5 min-w-0 overflow-hidden">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex items-center gap-3 sm:gap-4 min-w-0 overflow-hidden">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-lg sm:text-2xl font-black text-slate-900 truncate">0</div>
-                <div className="text-[11px] sm:text-xs font-semibold text-slate-500 truncate">Sheets Evaluated</div>
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none truncate">0</div>
+                <div className="text-xs font-medium text-slate-500 mt-1 truncate">Sheets Evaluated</div>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-5 shadow-xs flex items-center gap-2.5 sm:gap-3.5 min-w-0 overflow-hidden">
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex items-center gap-3 sm:gap-4 min-w-0 overflow-hidden">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="text-lg sm:text-2xl font-black text-slate-900 truncate">0%</div>
-                <div className="text-[11px] sm:text-xs font-semibold text-slate-500 truncate">Class Avg Score</div>
+                <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none truncate">0%</div>
+                <div className="text-xs font-medium text-slate-500 mt-1 truncate">Class Avg Score</div>
               </div>
             </div>
           </>
@@ -273,18 +266,18 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         </button>
       </div>
 
-      {/* Recent Tests Table Card */}
+      {/* Recent Tests Table Card (Issue 7: H2 heading hierarchy) */}
       <div className="w-full min-w-0 max-w-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
         <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between min-w-0">
           <div className="min-w-0 flex-1 pr-2">
-            <h3 className="font-extrabold text-base text-slate-900 truncate">Recent Tests</h3>
+            <h2 className="font-extrabold text-base text-slate-900 truncate">Recent Tests</h2>
             <p className="text-xs text-slate-500 truncate">Your latest evaluated assessments and mock scores</p>
           </div>
 
           <button
             type="button"
             onClick={() => onNavigate('results')}
-            className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer shrink-0"
+            className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer shrink-0"
           >
             <span>View All</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -305,7 +298,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('practice')}
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-4 py-2 rounded-xl border border-blue-200 hover:border-blue-300 transition-colors cursor-pointer"
+              className="text-xs font-bold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl border border-blue-200 transition-colors cursor-pointer"
             >
               Start First Practice Test →
             </button>
@@ -354,7 +347,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                       <button
                         type="button"
                         onClick={() => onViewResult(t.id)}
-                        className="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors cursor-pointer"
+                        className="text-xs font-bold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl border border-blue-200 transition-colors cursor-pointer"
                       >
                         View
                       </button>
@@ -370,11 +363,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       {/* Lower Row: Progress Chart & Subject Performance */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 w-full min-w-0">
         
-        {/* Your Progress Line Visual */}
+        {/* Your Progress Line Visual (Issue 7: H2 heading hierarchy) */}
         <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs min-w-0 overflow-hidden">
           <div className="flex items-center justify-between mb-4 min-w-0">
             <div className="min-w-0 flex-1 pr-2">
-              <h3 className="font-extrabold text-base text-slate-900 truncate">Your Progress</h3>
+              <h2 className="font-extrabold text-base text-slate-900 truncate">Your Progress</h2>
               <p className="text-xs text-slate-500 truncate">Monthly score progression (Target: 85%+)</p>
             </div>
             <span className="text-xs font-black px-2.5 py-1 bg-slate-100 text-slate-600 border border-slate-200 rounded-full shrink-0">
@@ -386,16 +379,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="h-40 sm:h-44 w-full flex flex-col items-center justify-center p-4 text-center border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
             <TrendingUp className="w-8 h-8 text-slate-300 mb-2" />
             <p className="text-xs font-bold text-slate-700">No Score History Yet</p>
-            <p className="text-[11px] text-slate-400 max-w-xs mt-0.5">
+            <p className="text-xs text-slate-400 max-w-xs mt-0.5">
               Take practice tests to plot your monthly accuracy and score trend graph automatically.
             </p>
           </div>
         </div>
 
-        {/* Subject Performance Bars */}
+        {/* Subject Performance Bars (Issue 7: H2 heading hierarchy) */}
         <div className="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs min-w-0 overflow-hidden">
           <div className="mb-4 min-w-0">
-            <h3 className="font-extrabold text-base text-slate-900 truncate">Subject Performance</h3>
+            <h2 className="font-extrabold text-base text-slate-900 truncate">Subject Performance</h2>
             <p className="text-xs text-slate-500 truncate">Average accuracy across test topics</p>
           </div>
 
@@ -424,7 +417,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('practice')}
-            className="w-full mt-5 py-2.5 text-center text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl border border-blue-200 transition-colors cursor-pointer"
+            className="w-full mt-5 py-2.5 text-center text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl border border-blue-200 transition-colors cursor-pointer"
           >
             Start Practice Test →
           </button>

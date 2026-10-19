@@ -1,8 +1,48 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
-import {defineConfig} from 'vite';
+import fs from 'node:fs';
+import path from 'node:path';
+import { defineConfig, Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { BASE_URL, PUBLIC_SITEMAP_ROUTES } from './src/utils/seo';
+
+/**
+ * Custom Vite plugin that automatically generates sitemap.xml inside dist/
+ * during every production build containing all 19 public routes (Home + 18 internal pages).
+ */
+function omrSitemapPlugin(): Plugin {
+  return {
+    name: 'omr-sitemap-generator',
+    apply: 'build',
+    closeBundle() {
+      const today = new Date().toISOString().split('T')[0];
+      const urlEntries = PUBLIC_SITEMAP_ROUTES.map((route) => {
+        const loc = route.path === '/' ? `${BASE_URL}/` : `${BASE_URL}${route.path}`;
+        return [
+          '  <url>',
+          `    <loc>${loc}</loc>`,
+          `    <lastmod>${today}</lastmod>`,
+          `    <changefreq>${route.changefreq}</changefreq>`,
+          `    <priority>${route.priority}</priority>`,
+          '  </url>',
+        ].join('\n');
+      }).join('\n');
+
+      const xml = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        urlEntries,
+        '</urlset>',
+        '',
+      ].join('\n');
+
+      const distDir = path.resolve(__dirname, 'dist');
+      if (fs.existsSync(distDir)) {
+        fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml, 'utf-8');
+      }
+    },
+  };
+}
 
 export default defineConfig(() => {
   return {
@@ -47,6 +87,7 @@ export default defineConfig(() => {
         workbox: {
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+          navigateFallbackDenylist: [/^\/sitemap\.xml$/, /^\/robots\.txt$/],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -83,6 +124,7 @@ export default defineConfig(() => {
           type: 'module',
         },
       }),
+      omrSitemapPlugin(),
     ],
     resolve: {
       alias: {
@@ -91,10 +133,11 @@ export default defineConfig(() => {
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };
 });
+

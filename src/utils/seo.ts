@@ -74,16 +74,41 @@ export function updatePageSEO(seo: SEOProps) {
   updateStructuredData(seo, canonicalUrl);
 }
 
-function updateStructuredData(seo: SEOProps, currentUrl: string) {
-  const schemaId = 'omrwallah-schema-jsonld';
-  let scriptEl = document.getElementById(schemaId) as HTMLScriptElement | null;
-  if (!scriptEl) {
-    scriptEl = document.createElement('script');
-    scriptEl.id = schemaId;
-    scriptEl.type = 'application/ld+json';
-    document.head.appendChild(scriptEl);
-  }
+export interface SitemapRouteEntry {
+  routeKey: string;
+  path: string;
+  changefreq: 'daily' | 'weekly' | 'monthly';
+  priority: number;
+}
 
+/**
+ * Canonical list of all 19 public indexable routes (Home + 18 internal pages)
+ * used by both automated sitemap.xml generation and build-time SSG pre-rendering.
+ */
+export const PUBLIC_SITEMAP_ROUTES: SitemapRouteEntry[] = [
+  { routeKey: 'home', path: '/', changefreq: 'daily', priority: 1.0 },
+  { routeKey: 'omr-sheet-generator', path: '/omr-sheet-generator', changefreq: 'weekly', priority: 0.9 },
+  { routeKey: 'omr-sheet-maker', path: '/omr-sheet-maker', changefreq: 'weekly', priority: 0.9 },
+  { routeKey: 'omr-sheet-pdf', path: '/omr-sheet-pdf', changefreq: 'weekly', priority: 0.9 },
+  { routeKey: 'online-omr-sheet', path: '/online-omr-sheet', changefreq: 'weekly', priority: 0.9 },
+  { routeKey: 'creator', path: '/creator', changefreq: 'weekly', priority: 0.9 },
+  { routeKey: 'templates', path: '/templates', changefreq: 'weekly', priority: 0.9 },
+  { routeKey: 'omr-practice', path: '/omr-practice', changefreq: 'weekly', priority: 0.85 },
+  { routeKey: 'practice', path: '/practice', changefreq: 'weekly', priority: 0.85 },
+  { routeKey: 'omr-sheet-for-coaching', path: '/omr-sheet-for-coaching', changefreq: 'monthly', priority: 0.8 },
+  { routeKey: 'omr-sheet-for-schools', path: '/omr-sheet-for-schools', changefreq: 'monthly', priority: 0.8 },
+  { routeKey: 'omr-exams', path: '/omr-exams', changefreq: 'weekly', priority: 0.85 },
+  { routeKey: 'neet-omr-sheet', path: '/neet-omr-sheet', changefreq: 'weekly', priority: 0.85 },
+  { routeKey: 'jee-omr-sheet', path: '/jee-omr-sheet', changefreq: 'weekly', priority: 0.85 },
+  { routeKey: 'ssc-omr-sheet', path: '/ssc-omr-sheet', changefreq: 'weekly', priority: 0.85 },
+  { routeKey: 'cuet-omr-sheet', path: '/cuet-omr-sheet', changefreq: 'weekly', priority: 0.85 },
+  { routeKey: 'ctet-omr-sheet', path: '/ctet-omr-sheet', changefreq: 'weekly', priority: 0.85 },
+  { routeKey: 'blog', path: '/blog', changefreq: 'weekly', priority: 0.8 },
+  { routeKey: 'faq', path: '/faq', changefreq: 'monthly', priority: 0.7 },
+  { routeKey: 'pricing', path: '/pricing', changefreq: 'monthly', priority: 0.7 },
+];
+
+export function buildStructuredDataJson(seo: SEOProps, currentUrl: string): string {
   const graphs: Record<string, unknown>[] = [
     // Organization schema
     {
@@ -110,6 +135,21 @@ function updateStructuredData(seo: SEOProps, currentUrl: string) {
           urlTemplate: `${BASE_URL}/templates?q={search_term_string}`,
         },
         'query-input': 'required name=search_term_string',
+      },
+    },
+    // WebApplication schema
+    {
+      '@type': 'WebApplication',
+      '@id': `${BASE_URL}/#webapp`,
+      name: 'OMRWallah - OMR Sheet Generator & Practice Platform',
+      url: currentUrl,
+      applicationCategory: 'EducationalApplication',
+      operatingSystem: 'All',
+      description: seo.description,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'INR',
       },
     },
   ];
@@ -169,8 +209,22 @@ function updateStructuredData(seo: SEOProps, currentUrl: string) {
     });
   }
 
-  scriptEl.textContent = JSON.stringify({
+  return JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': graphs,
   });
 }
+
+function updateStructuredData(seo: SEOProps, currentUrl: string) {
+  const schemaId = 'omrwallah-schema-jsonld';
+  let scriptEl = document.getElementById(schemaId) as HTMLScriptElement | null;
+  if (!scriptEl) {
+    scriptEl = document.createElement('script');
+    scriptEl.id = schemaId;
+    scriptEl.type = 'application/ld+json';
+    document.head.appendChild(scriptEl);
+  }
+
+  scriptEl.textContent = buildStructuredDataJson(seo, currentUrl);
+}
+

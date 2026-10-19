@@ -99,32 +99,34 @@ export const Navbar: React.FC<NavbarProps> = ({
                   AI Suite
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 font-semibold tracking-tight mt-0.5 hidden xl:block whitespace-nowrap">
+              <p className="text-xs text-slate-500 font-medium tracking-tight mt-0.5 hidden xl:block whitespace-nowrap">
                 Create • Practice • Scan • Evaluate
               </p>
             </div>
           </button>
 
-          {/* Desktop Nav Links (Visible on large screens xl 1280px+; tablet uses clean controls & drawer/sidebar) */}
-          <nav className="hidden xl:flex items-center gap-1">
-            {navLinks.map((link) => {
-              const isActive = currentRoute === link.route;
-              return (
-                <button
-                  key={link.route}
-                  type="button"
-                  onClick={() => onNavigate(link.route)}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-                    isActive
-                      ? 'text-blue-600 bg-blue-50/90'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
-                  }`}
-                >
-                  {link.label}
-                </button>
-              );
-            })}
-          </nav>
+          {/* Desktop Nav Links (Visible for visitors; authenticated workspace uses the sidebar to avoid redundant navigation) */}
+          {!user && (
+            <nav className="hidden xl:flex items-center gap-1" aria-label="Main Navigation">
+              {navLinks.map((link) => {
+                const isActive = currentRoute === link.route;
+                return (
+                  <button
+                    key={link.route}
+                    type="button"
+                    onClick={() => onNavigate(link.route)}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+                      isActive
+                        ? 'text-blue-600 bg-blue-50/90'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                    }`}
+                  >
+                    {link.label}
+                  </button>
+                );
+              })}
+            </nav>
+          )}
 
           {/* Action Buttons (Desktop & Tablet) */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">

@@ -123,7 +123,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
           {/* Solutions & Practice */}
           <div>
-            <h4 className="text-white font-bold text-xs uppercase tracking-wider mb-3">Practice &amp; Use Cases</h4>
+            <h4 className="text-white font-semibold text-xs mb-3">Practice &amp; Use Cases</h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <a

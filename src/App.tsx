@@ -88,7 +88,10 @@ const VALID_PUBLIC_ROUTES = [
   'ctet-omr-sheet',
 ];
 
-const getInitialRoute = (): string => {
+const getInitialRoute = (overrideRoute?: string): string => {
+  if (overrideRoute && VALID_PUBLIC_ROUTES.includes(overrideRoute)) {
+    return overrideRoute;
+  }
   if (typeof window === 'undefined') return 'home';
   const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
   if (!rawPath) return 'home';
@@ -98,12 +101,13 @@ const getInitialRoute = (): string => {
   return 'home';
 };
 
-function AppMain() {
+function AppMain({ initialRoute }: { initialRoute?: string }) {
   const { user, loading } = useAuth();
-  const [currentRoute, setCurrentRoute] = useState<string>(getInitialRoute);
+  const [currentRoute, setCurrentRoute] = useState<string>(() => getInitialRoute(initialRoute));
   const [activeEditorConfig, setActiveEditorConfig] = useState<OMRConfig>(DEFAULT_OMR_CONFIG);
   
   const [savedSheets, setSavedSheets] = useState<OMRConfig[]>(() => {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') return [];
     const cached = localStorage.getItem('omrwallah_saved_sheets');
     if (cached) {
       try {
@@ -725,10 +729,10 @@ function AppMain() {
   );
 }
 
-export default function App() {
+export default function App({ initialRoute }: { initialRoute?: string } = {}) {
   return (
     <AuthProvider>
-      <AppMain />
+      <AppMain initialRoute={initialRoute} />
     </AuthProvider>
   );
 }

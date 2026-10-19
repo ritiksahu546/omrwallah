@@ -37,10 +37,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'creator', label: 'Create OMR', icon: FileEdit },
     { id: 'templates', label: 'Templates', icon: Layers },
     { id: 'saved', label: 'Saved Sheets', icon: FolderOpen },
-    { id: 'tests', label: 'My Tests', icon: BookOpenCheck },
     { id: 'practice', label: 'Practice OMR', icon: PenTool },
     { id: 'scan', label: 'Scan OMR', icon: ScanLine },
-    { id: 'results', label: 'Results', icon: Award },
+    { id: 'results', label: 'Results & Tests', icon: Award },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'settings', label: 'Settings', icon: Settings },
@@ -67,10 +66,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="flex items-center gap-2.5 overflow-hidden">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50 animate-pulse shrink-0" />
               <div className="min-w-0">
-                <span className="text-[11px] sm:text-xs font-black tracking-wide uppercase text-slate-300 block truncate whitespace-nowrap">
+                <span className="text-xs font-bold text-slate-200 block truncate whitespace-nowrap">
                   Student Workspace
                 </span>
-                <span className="text-[10px] text-slate-500 font-medium block truncate">
+                <span className="text-[10px] text-slate-400 font-medium block truncate">
                   Portal Navigation
                 </span>
               </div>
@@ -128,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Crown className="w-4 h-4" />
             </div>
             <h4 className="text-white font-bold text-sm">Upgrade to Pro</h4>
-            <p className="text-[11px] text-slate-400 mt-0.5 mb-3 leading-snug">
+            <p className="text-xs text-slate-300 mt-1 mb-3 leading-relaxed">
               Unlock advanced scanner, unlimited sheets & detailed analytics.
             </p>
             <button

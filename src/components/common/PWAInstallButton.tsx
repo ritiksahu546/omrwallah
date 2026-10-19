@@ -86,23 +86,23 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
         </button>
       )}
 
-      {/* 3. Bottom Mobile Banner (dismissible) */}
+      {/* 3. Global App Install Banner (dismissible, placed in global utility area away from content lists) */}
       {variant === 'banner' && (
         <aside
           aria-label="App installation prompt"
-          className={`fixed bottom-16 sm:bottom-3 left-3 right-3 sm:left-auto sm:right-4 sm:max-w-sm z-40 bg-slate-900/95 backdrop-blur-md text-white p-3.5 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300 ${className}`}
+          className={`fixed top-18 right-3 sm:top-20 sm:right-6 z-50 max-w-sm bg-slate-900/95 backdrop-blur-md text-white p-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300 ${className}`}
         >
           <div className="flex items-center gap-3 min-w-0">
             <img
               src="/pwa-192x192.png"
               alt="OMRWallah App"
-              className="w-10 h-10 rounded-xl shadow-md border border-white/10 shrink-0"
+              className="w-9 h-9 rounded-xl shadow-md border border-white/10 shrink-0"
             />
             <div className="min-w-0">
               <h3 className="font-bold text-xs tracking-tight text-white truncate">
                 Install OMRWallah App
               </h3>
-              <p className="text-[11px] text-slate-300 truncate">
+              <p className="text-xs text-slate-300 truncate">
                 Scan sheets faster & practice offline
               </p>
             </div>
