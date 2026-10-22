@@ -490,12 +490,16 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
 
   return (
     <div
-      className={`flex flex-col h-full w-full ${
+      className={`flex flex-col flex-1 w-full ${
         paperTheme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'
-      } overflow-hidden relative select-none`}
+      } relative select-none`}
     >
       {/* Top Test Control Bar */}
-      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-2.5 sm:px-6 py-2 shadow-xs z-20 shrink-0">
+      <header
+        className={`sticky ${
+          isZenMode ? 'top-0' : 'top-16'
+        } bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-2.5 sm:px-6 py-2 shadow-xs z-30 shrink-0`}
+      >
         
         {/* ROW 1: Exit, Exam Preset, Timer, and Primary SUBMIT (Always visible, Never cut off!) */}
         <div className="flex items-center justify-between gap-2">
@@ -786,13 +790,13 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
       </header>
 
       {/* Main Workspace Body */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 flex relative pb-20 sm:pb-24">
         
         {/* Canvas Area with Centered Interactive OMR Sheet */}
         <div
           ref={containerRef}
-          className={`flex-1 overflow-auto p-1.5 sm:p-4 flex flex-col items-center justify-start gap-8 min-w-0 ${
-            paperTheme === 'paper' ? 'bg-slate-100' : 'bg-slate-950'
+          className={`flex-1 overflow-x-auto p-1.5 sm:p-4 flex flex-col items-center justify-start gap-5 min-w-0 ${
+            paperTheme === 'paper' ? 'bg-slate-100 dark:bg-slate-950' : 'bg-slate-950'
           }`}
         >
           <div className="flex justify-center items-start transition-all duration-150 py-1">
@@ -802,350 +806,400 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
               markedAnswers={markedAnswers}
               onAnswerChange={handleBubbleClick}
               scale={zoomScale}
+              activeQuestion={currentActiveQ}
+              onQuestionFocus={(qNum) => setCurrentActiveQ(qNum)}
             />
           </div>
 
-          {/* Crawlable SEO Practice Guide, Exam Presets & Internal Links (Hidden during Print) */}
-          <section
+          {/* Collapsible Crawlable SEO Practice Guide, Exam Presets & Internal Links (Hidden during Print, collapsed by default to keep workspace clean) */}
+          <details
             aria-label="Online OMR Practice Guide & Competitive Exam Formats"
-            className="no-print w-full max-w-4xl bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs space-y-5 text-slate-700 mb-6"
+            className="no-print w-full max-w-4xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs text-slate-700 dark:text-slate-300 mb-4 group overflow-hidden"
           >
-            <div className="space-y-2">
-              <h2 className="text-base sm:text-lg font-extrabold text-slate-900">
-                Interactive Online OMR Sheet Practice with Exam Timer &amp; Instant Evaluation
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Practice filling OMR bubbles digitally under realistic examination time limits. Select from pre-configured national entrance formats—including NEET UG (180 &amp; 200 questions), JEE Main (90 questions), UPSC &amp; SSC CGL (100 questions), CTET &amp; Police SI (150 questions), or CUET (50 questions)—or set any custom question count between 5 and 200. Enter your official answer key using the <strong>Key</strong> button above to evaluate net score (+4 / -1 negative marking), accuracy percentage, and subject-wise performance immediately upon submission.
-              </p>
-            </div>
+            <summary className="px-4 sm:px-5 py-3.5 cursor-pointer list-none flex items-center justify-between gap-3 font-extrabold text-xs sm:text-sm text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors select-none">
+              <div className="flex items-center gap-2 min-w-0">
+                <Sparkles className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0" />
+                <span className="truncate">
+                  Online OMR Practice Guide, Keyboard Shortcuts &amp; Competitive Exam Formats
+                </span>
+              </div>
+              <ChevronDown className="w-4 h-4 text-slate-400 transition-transform duration-200 group-open:rotate-180 shrink-0" />
+            </summary>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-                <h3 className="font-bold text-slate-900">Speed Keyboard Controls</h3>
-                <p className="text-slate-600">
-                  Press <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">A</kbd>–<kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">D</kbd> or <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">1</kbd>–<kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">4</kbd> to darken bubbles rapidly, arrow keys to navigate questions, and <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">R</kbd> to flag items for review.
+            <div className="p-4 sm:p-6 pt-2 border-t border-slate-100 dark:border-slate-800 space-y-5">
+              <div className="space-y-2">
+                <h2 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
+                  Interactive Online OMR Sheet Practice with Exam Timer &amp; Instant Evaluation
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Practice filling OMR bubbles digitally under realistic examination time limits. Select from pre-configured national entrance formats—including NEET UG (180 &amp; 200 questions), JEE Main (90 questions), UPSC &amp; SSC CGL (100 questions), CTET &amp; Police SI (150 questions), or CUET (50 questions)—or set any custom question count between 5 and 200. Enter your official answer key using the <strong>Key</strong> button above to evaluate net score (+4 / -1 negative marking), accuracy percentage, and subject-wise performance immediately upon submission.
                 </p>
               </div>
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-                <h3 className="font-bold text-slate-900">Master Bubbling Strategy</h3>
-                <p className="text-slate-600">
-                  Prevent row-shift errors and last-minute panic with our{' '}
-                  <a
-                    href="https://omrwallah.in/omr-practice"
-                    onClick={(e) => {
-                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
-                        e.preventDefault();
-                        onNavigate('omr-practice');
-                      }
-                    }}
-                    className="text-blue-600 font-bold hover:underline"
-                  >
-                    OMR Speed Training Guide
-                  </a>{' '}
-                  and{' '}
-                  <a
-                    href="https://omrwallah.in/online-omr-sheet"
-                    onClick={(e) => {
-                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
-                        e.preventDefault();
-                        onNavigate('online-omr-sheet');
-                      }
-                    }}
-                    className="text-blue-600 font-bold hover:underline"
-                  >
-                    Online OMR Simulator Overview
-                  </a>
-                  .
-                </p>
-              </div>
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-                <h3 className="font-bold text-slate-900">Prefer Physical Paper OMR?</h3>
-                <p className="text-slate-600">
-                  Download print-ready A4 PDFs from our{' '}
-                  <a
-                    href="https://omrwallah.in/templates"
-                    onClick={(e) => {
-                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
-                        e.preventDefault();
-                        onNavigate('templates');
-                      }
-                    }}
-                    className="text-blue-600 font-bold hover:underline"
-                  >
-                    OMR Template Library
-                  </a>{' '}
-                  or design a custom layout in the{' '}
-                  <a
-                    href="https://omrwallah.in/creator"
-                    onClick={(e) => {
-                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
-                        e.preventDefault();
-                        onNavigate('creator');
-                      }
-                    }}
-                    className="text-blue-600 font-bold hover:underline"
-                  >
-                    OMR Sheet Creator
-                  </a>
-                  .
-                </p>
-              </div>
-            </div>
 
-            <div className="pt-3 border-t border-slate-200 space-y-2">
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
-                Exam-Specific OMR Practice Guides &amp; Printable Sheets
-              </h3>
-              <div className="flex flex-wrap gap-2 text-xs">
-                {[
-                  { label: 'All Competitive Exam OMR Sheets', route: 'omr-exams' },
-                  { label: 'NEET 200Q OMR Sheet', route: 'neet-omr-sheet' },
-                  { label: 'JEE Mock OMR Sheet', route: 'jee-omr-sheet' },
-                  { label: 'SSC & PSC 100Q OMR Sheet', route: 'ssc-omr-sheet' },
-                  { label: 'CUET 50Q OMR Sheet', route: 'cuet-omr-sheet' },
-                  { label: 'CTET 150Q OMR Sheet', route: 'ctet-omr-sheet' },
-                  { label: 'OMR Sheet PDF Download', route: 'omr-sheet-pdf' },
-                  { label: 'OMR Sheet Generator', route: 'omr-sheet-generator' },
-                ].map((item) => (
-                  <a
-                    key={item.route}
-                    href={`https://omrwallah.in/${item.route}`}
-                    onClick={(e) => {
-                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
-                        e.preventDefault();
-                        onNavigate(item.route);
-                      }
-                    }}
-                    className="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold rounded-lg border border-slate-200 transition-colors"
-                  >
-                    {item.label}
-                  </a>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 rounded-xl space-y-1">
+                  <h3 className="font-bold text-slate-900 dark:text-white">Speed Keyboard Controls</h3>
+                  <p className="text-slate-600 dark:text-slate-300">
+                    Press <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded font-mono text-slate-800 dark:text-slate-200">A</kbd>–<kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded font-mono text-slate-800 dark:text-slate-200">D</kbd> or <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded font-mono text-slate-800 dark:text-slate-200">1</kbd>–<kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded font-mono text-slate-800 dark:text-slate-200">4</kbd> to darken bubbles rapidly, arrow keys to navigate questions, and <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded font-mono text-slate-800 dark:text-slate-200">R</kbd> to flag items for review.
+                  </p>
+                </div>
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 rounded-xl space-y-1">
+                  <h3 className="font-bold text-slate-900 dark:text-white">Master Bubbling Strategy</h3>
+                  <p className="text-slate-600 dark:text-slate-300">
+                    Prevent row-shift errors and last-minute panic with our{' '}
+                    <a
+                      href="https://omrwallah.in/omr-practice"
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                          e.preventDefault();
+                          onNavigate('omr-practice');
+                        }
+                      }}
+                      className="text-blue-600 dark:text-sky-400 font-bold hover:underline"
+                    >
+                      OMR Speed Training Guide
+                    </a>{' '}
+                    and{' '}
+                    <a
+                      href="https://omrwallah.in/online-omr-sheet"
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                          e.preventDefault();
+                          onNavigate('online-omr-sheet');
+                        }
+                      }}
+                      className="text-blue-600 dark:text-sky-400 font-bold hover:underline"
+                    >
+                      Online OMR Simulator Overview
+                    </a>
+                    .
+                  </p>
+                </div>
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 rounded-xl space-y-1">
+                  <h3 className="font-bold text-slate-900 dark:text-white">Prefer Physical Paper OMR?</h3>
+                  <p className="text-slate-600 dark:text-slate-300">
+                    Download print-ready A4 PDFs from our{' '}
+                    <a
+                      href="https://omrwallah.in/templates"
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                          e.preventDefault();
+                          onNavigate('templates');
+                        }
+                      }}
+                      className="text-blue-600 dark:text-sky-400 font-bold hover:underline"
+                    >
+                      OMR Template Library
+                    </a>{' '}
+                    or design a custom layout in the{' '}
+                    <a
+                      href="https://omrwallah.in/creator"
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                          e.preventDefault();
+                          onNavigate('creator');
+                        }
+                      }}
+                      className="text-blue-600 dark:text-sky-400 font-bold hover:underline"
+                    >
+                      OMR Sheet Creator
+                    </a>
+                    .
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Exam-Specific OMR Practice Guides &amp; Printable Sheets
+                </h3>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {[
+                    { label: 'All Competitive Exam OMR Sheets', route: 'omr-exams' },
+                    { label: 'NEET 200Q OMR Sheet', route: 'neet-omr-sheet' },
+                    { label: 'JEE Mock OMR Sheet', route: 'jee-omr-sheet' },
+                    { label: 'SSC & PSC 100Q OMR Sheet', route: 'ssc-omr-sheet' },
+                    { label: 'CUET 50Q OMR Sheet', route: 'cuet-omr-sheet' },
+                    { label: 'CTET 150Q OMR Sheet', route: 'ctet-omr-sheet' },
+                    { label: 'OMR Sheet PDF Download', route: 'omr-sheet-pdf' },
+                    { label: 'OMR Sheet Generator', route: 'omr-sheet-generator' },
+                  ].map((item) => (
+                    <a
+                      key={item.route}
+                      href={`https://omrwallah.in/${item.route}`}
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                          e.preventDefault();
+                          onNavigate(item.route);
+                        }
+                      }}
+                      className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-blue-700 dark:hover:text-sky-300 font-semibold rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
-          </section>
+          </details>
         </div>
 
-        {/* Question Palette Sidebar (Right Panel) */}
+        {/* Question Palette Sidebar Drawer (Right Panel Overlay) */}
         {showPalette && (
-          <aside className="w-72 sm:w-80 bg-white border-l border-slate-200 shadow-2xl flex flex-col z-30 shrink-0 animate-in slide-in-from-right duration-200">
-            <div className="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between">
-              <div>
-                <h3 className="font-extrabold text-sm text-slate-900">Question Palette</h3>
-                <p className="text-xs text-slate-500">
-                  {questionsCount} Questions • {examName}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowPalette(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Status Legend */}
-            <div className="px-3 sm:px-4 py-2.5 bg-slate-50 border-b border-slate-200 grid grid-cols-3 gap-1.5 text-center text-xs">
-              <button
-                type="button"
-                onClick={() => setPaletteFilter(paletteFilter === 'answered' ? 'all' : 'answered')}
-                className={`border rounded-lg p-1.5 cursor-pointer transition-colors ${
-                  paletteFilter === 'answered'
-                    ? 'bg-emerald-600 text-white border-emerald-600'
-                    : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
-                }`}
-              >
-                <div className="font-black text-sm">{attemptedCount}</div>
-                <div className="text-[10px] font-semibold">Answered</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setPaletteFilter(paletteFilter === 'flagged' ? 'all' : 'flagged')}
-                className={`border rounded-lg p-1.5 cursor-pointer transition-colors ${
-                  paletteFilter === 'flagged'
-                    ? 'bg-purple-600 text-white border-purple-600'
-                    : 'bg-purple-50 border-purple-200 text-purple-800 hover:bg-purple-100'
-                }`}
-              >
-                <div className="font-black text-sm">{reviewCount}</div>
-                <div className="text-[10px] font-semibold">Flagged</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setPaletteFilter(paletteFilter === 'unanswered' ? 'all' : 'unanswered')}
-                className={`border rounded-lg p-1.5 cursor-pointer transition-colors ${
-                  paletteFilter === 'unanswered'
-                    ? 'bg-slate-700 text-white border-slate-700'
-                    : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
-                }`}
-              >
-                <div className="font-black text-sm">{unattemptedCount}</div>
-                <div className="text-[10px] font-semibold">Left</div>
-              </button>
-            </div>
-
-            {/* Section Quick Jump Pills (for NEET / JEE / Multi-section papers) */}
-            {practiceConfig.sections && practiceConfig.sections.length > 0 && (
-              <div className="px-3 py-2 bg-slate-100/70 border-b border-slate-200 flex gap-1 overflow-x-auto">
-                {practiceConfig.sections.map((sec) => (
-                  <button
-                    key={sec.id}
-                    type="button"
-                    onClick={() => setCurrentActiveQ(sec.startQuestion || (sec as any).startQ)}
-                    className="text-[10px] font-bold px-2 py-1 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-colors whitespace-nowrap cursor-pointer shrink-0"
-                  >
-                    {sec.name} ({sec.startQuestion || (sec as any).startQ}-{sec.endQuestion || (sec as any).endQ})
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Questions Grid 1 to questionsCount */}
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4">
-              <div className="grid grid-cols-5 gap-1.5">
-                {Array.from({ length: questionsCount }).map((_, idx) => {
-                  const qNum = idx + 1;
-                  const isAnswered = Boolean(markedAnswers[qNum]);
-                  const isFlagged = Boolean(markedForReview[qNum]);
-                  const isActive = currentActiveQ === qNum;
-
-                  // Filter visibility
-                  if (paletteFilter === 'answered' && !isAnswered) return null;
-                  if (paletteFilter === 'flagged' && !isFlagged) return null;
-                  if (paletteFilter === 'unanswered' && isAnswered) return null;
-
-                  return (
-                    <button
-                      key={qNum}
-                      type="button"
-                      onClick={() => {
-                        setCurrentActiveQ(qNum);
-                      }}
-                      className={`h-9 rounded-xl text-xs font-bold flex flex-col items-center justify-center transition-all cursor-pointer relative ${
-                        isActive
-                          ? 'ring-2 ring-blue-600 ring-offset-2 scale-105 z-10'
-                          : ''
-                      } ${
-                        isFlagged
-                          ? 'bg-purple-600 text-white shadow-xs'
-                          : isAnswered
-                          ? 'bg-emerald-600 text-white shadow-xs'
-                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
-                      }`}
-                    >
-                      <span>{qNum}</span>
-                      {isAnswered && (
-                        <span className="text-[8.5px] font-black -mt-0.5 opacity-90">
-                          {markedAnswers[qNum]}
-                        </span>
-                      )}
-                      {isFlagged && (
-                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full border border-white" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Bottom Actions in Palette */}
-            <div className="p-3 border-t border-slate-200 bg-slate-50 space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-600">
-                <span>
-                  Selected: <strong>Q.{currentActiveQ}</strong>
-                </span>
+          <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-2xs animate-in fade-in duration-150">
+            <aside className="w-72 sm:w-80 h-full bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col z-50 shrink-0 animate-in slide-in-from-right duration-200">
+              <div className="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Question Palette</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {questionsCount} Questions • {examName}
+                  </p>
+                </div>
                 <button
                   type="button"
-                  onClick={() => toggleReviewFlag(currentActiveQ)}
-                  className="font-bold text-purple-600 hover:underline cursor-pointer"
+                  onClick={() => setShowPalette(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
-                  {markedForReview[currentActiveQ] ? 'Remove Flag' : 'Flag This Q'}
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>Submit Assessment</span>
-              </button>
-            </div>
-          </aside>
+              {/* Status Legend */}
+              <div className="px-3 sm:px-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-1.5 text-center text-xs">
+                <button
+                  type="button"
+                  onClick={() => setPaletteFilter(paletteFilter === 'answered' ? 'all' : 'answered')}
+                  className={`border rounded-lg p-1.5 cursor-pointer transition-colors ${
+                    paletteFilter === 'answered'
+                      ? 'bg-emerald-600 text-white border-emerald-600'
+                      : 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100'
+                  }`}
+                >
+                  <div className="font-black text-sm">{attemptedCount}</div>
+                  <div className="text-[10px] font-semibold">Answered</div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPaletteFilter(paletteFilter === 'flagged' ? 'all' : 'flagged')}
+                  className={`border rounded-lg p-1.5 cursor-pointer transition-colors ${
+                    paletteFilter === 'flagged'
+                      ? 'bg-purple-600 text-white border-purple-600'
+                      : 'bg-purple-50 dark:bg-purple-950/50 border-purple-200 dark:border-purple-800 text-purple-800 dark:text-purple-300 hover:bg-purple-100'
+                  }`}
+                >
+                  <div className="font-black text-sm">{reviewCount}</div>
+                  <div className="text-[10px] font-semibold">Flagged</div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPaletteFilter(paletteFilter === 'unanswered' ? 'all' : 'unanswered')}
+                  className={`border rounded-lg p-1.5 cursor-pointer transition-colors ${
+                    paletteFilter === 'unanswered'
+                      ? 'bg-slate-700 text-white border-slate-700'
+                      : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
+                  }`}
+                >
+                  <div className="font-black text-sm">{unattemptedCount}</div>
+                  <div className="text-[10px] font-semibold">Left</div>
+                </button>
+              </div>
+
+              {/* Section Quick Jump Pills (for NEET / JEE / Multi-section papers) */}
+              {practiceConfig.sections && practiceConfig.sections.length > 0 && (
+                <div className="px-3 py-2 bg-slate-100/70 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex gap-1 overflow-x-auto">
+                  {practiceConfig.sections.map((sec) => (
+                    <button
+                      key={sec.id}
+                      type="button"
+                      onClick={() => setCurrentActiveQ(sec.startQuestion || (sec as any).startQ)}
+                      className="text-[10px] font-bold px-2 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-colors whitespace-nowrap cursor-pointer shrink-0"
+                    >
+                      {sec.name} ({sec.startQuestion || (sec as any).startQ}-{sec.endQuestion || (sec as any).endQ})
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Questions Grid 1 to questionsCount */}
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4">
+                <div className="grid grid-cols-5 gap-1.5">
+                  {Array.from({ length: questionsCount }).map((_, idx) => {
+                    const qNum = idx + 1;
+                    const isAnswered = Boolean(markedAnswers[qNum]);
+                    const isFlagged = Boolean(markedForReview[qNum]);
+                    const isActive = currentActiveQ === qNum;
+
+                    // Filter visibility
+                    if (paletteFilter === 'answered' && !isAnswered) return null;
+                    if (paletteFilter === 'flagged' && !isFlagged) return null;
+                    if (paletteFilter === 'unanswered' && isAnswered) return null;
+
+                    return (
+                      <button
+                        key={qNum}
+                        type="button"
+                        onClick={() => {
+                          setCurrentActiveQ(qNum);
+                          setShowPalette(false);
+                        }}
+                        className={`h-9 rounded-xl text-xs font-bold flex flex-col items-center justify-center transition-all cursor-pointer relative ${
+                          isActive
+                            ? 'ring-2 ring-blue-600 ring-offset-1 z-10'
+                            : ''
+                        } ${
+                          isFlagged
+                            ? 'bg-purple-600 text-white shadow-xs'
+                            : isAnswered
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                        }`}
+                      >
+                        <span>{qNum}</span>
+                        {isAnswered && (
+                          <span className="text-[8.5px] font-black -mt-0.5 opacity-90">
+                            {markedAnswers[qNum]}
+                          </span>
+                        )}
+                        {isFlagged && (
+                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full border border-white" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bottom Actions in Palette */}
+              <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300">
+                  <span>
+                    Selected: <strong>Q.{currentActiveQ}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => toggleReviewFlag(currentActiveQ)}
+                    className="font-bold text-purple-600 dark:text-purple-400 hover:underline cursor-pointer"
+                  >
+                    {markedForReview[currentActiveQ] ? 'Remove Flag' : 'Flag This Q'}
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Submit Assessment</span>
+                </button>
+              </div>
+            </aside>
+          </div>
         )}
 
       </div>
 
-      {/* Mobile Floating Quick-Answer & Navigation Bar (only visible on mobile screens) */}
-      <div className="sm:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center justify-between gap-1 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] z-30 shrink-0">
-        
-        {/* Previous Question Button */}
-        <button
-          type="button"
-          onClick={() => setCurrentActiveQ((p) => Math.max(1, p - 1))}
-          disabled={currentActiveQ <= 1}
-          className="p-2 rounded-xl text-slate-700 dark:text-slate-200 disabled:opacity-30 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center gap-1 font-bold text-xs shrink-0"
-          title="Previous Question"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          <span className="hidden xs:inline">Prev</span>
-        </button>
+      {/* Fixed Bottom Quick-Answer & Question Control Dock (Always pinned at bottom of screen) */}
+      <div className="no-print fixed bottom-0 inset-x-0 z-40 bg-[#0b132b]/95 backdrop-blur-md border-t border-slate-800 px-2.5 sm:px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-[0_-8px_25px_rgba(0,0,0,0.3)]">
+        <div className="max-w-xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3">
+          
+          {/* Previous Question Button */}
+          <button
+            type="button"
+            onClick={() => setCurrentActiveQ((p) => Math.max(1, p - 1))}
+            disabled={currentActiveQ <= 1}
+            className="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 border border-slate-700 disabled:opacity-35 cursor-pointer flex items-center justify-center gap-1 font-bold text-xs shrink-0 transition-colors active:scale-95"
+            title="Previous Question"
+            aria-label="Previous Question"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Prev</span>
+          </button>
 
-        {/* Center: Active Question Badge & Quick Option Buttons */}
-        <div className="flex items-center gap-1.5 min-w-0">
-          <div className="px-2 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 rounded-lg text-center shrink-0">
-            <span className="text-[11px] font-black text-blue-700 dark:text-blue-300 block leading-tight">
-              Q.{currentActiveQ}
-            </span>
-            <span className="text-[8px] text-slate-500 dark:text-slate-400 font-bold block">
-              {markedAnswers[currentActiveQ] ? `Ans: ${markedAnswers[currentActiveQ]}` : 'Unfilled'}
-            </span>
+          {/* Center: Clickable Active Question Badge + Uniform A, B, C, D Bubbles */}
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2.5 min-w-0">
+            <button
+              type="button"
+              onClick={() => setShowPalette((p) => !p)}
+              className="px-2.5 py-1 bg-slate-800/90 hover:bg-slate-800 border border-blue-500/40 rounded-xl text-center shrink-0 cursor-pointer transition-colors"
+              title="Tap to open Question Palette & jump to any question"
+            >
+              <span className="text-[11px] sm:text-xs font-black text-sky-400 block leading-tight whitespace-nowrap">
+                Q.{currentActiveQ}
+              </span>
+              <span className="text-[9px] text-slate-300 font-bold block leading-tight whitespace-nowrap">
+                {markedAnswers[currentActiveQ] ? `Ans: ${markedAnswers[currentActiveQ]}` : 'Tap Q#'}
+              </span>
+            </button>
+
+            {/* Uniform Option Bubbles A, B, C, D */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              {['A', 'B', 'C', 'D'].map((opt) => {
+                const isSelected = markedAnswers[currentActiveQ] === opt;
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => {
+                      handleBubbleClick(currentActiveQ, opt);
+                      if (!isSelected && currentActiveQ < questionsCount) {
+                        setTimeout(() => setCurrentActiveQ((p) => Math.min(questionsCount, p + 1)), 220);
+                      }
+                    }}
+                    style={{
+                      width: '38px',
+                      height: '38px',
+                      minWidth: '38px',
+                      minHeight: '38px',
+                    }}
+                    className={`rounded-full font-black text-xs sm:text-sm flex items-center justify-center transition-all cursor-pointer shrink-0 select-none ${
+                      isSelected
+                        ? 'bg-blue-600 text-white border-2 border-amber-400 shadow-md shadow-blue-500/30'
+                        : 'bg-slate-800/90 text-slate-200 border-2 border-slate-600 hover:border-sky-400 hover:text-white active:scale-95'
+                    }`}
+                    title={`Mark Option ${opt} for Question ${currentActiveQ}`}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Quick Flag Toggle on Bottom Bar */}
+            <button
+              type="button"
+              onClick={() => toggleReviewFlag(currentActiveQ)}
+              className={`hidden xs:flex w-9 h-9 rounded-xl border items-center justify-center shrink-0 cursor-pointer transition-colors ${
+                markedForReview[currentActiveQ]
+                  ? 'bg-purple-600 text-white border-purple-400'
+                  : 'bg-slate-800/90 text-slate-400 border-slate-700 hover:text-white'
+              }`}
+              title={markedForReview[currentActiveQ] ? 'Unflag Question' : 'Flag Question for Review'}
+            >
+              {markedForReview[currentActiveQ] ? (
+                <BookmarkCheck className="w-4 h-4" />
+              ) : (
+                <Bookmark className="w-4 h-4" />
+              )}
+            </button>
           </div>
 
-          {/* Bubbles A, B, C, D */}
-          <div className="flex items-center gap-1.5">
-            {['A', 'B', 'C', 'D'].map((opt) => {
-              const isSelected = markedAnswers[currentActiveQ] === opt;
-              return (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => {
-                    handleBubbleClick(currentActiveQ, opt);
-                    if (currentActiveQ < questionsCount) {
-                      setTimeout(() => setCurrentActiveQ((p) => Math.min(questionsCount, p + 1)), 250);
-                    }
-                  }}
-                  className={`w-9 h-9 rounded-full font-black text-xs flex items-center justify-center transition-all cursor-pointer ${
-                    isSelected
-                      ? 'bg-slate-900 text-white ring-2 ring-blue-500 ring-offset-1 scale-105 shadow-sm'
-                      : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border-2 border-slate-300 dark:border-slate-600 hover:border-blue-400 active:scale-95'
-                  }`}
-                  title={`Select Option ${opt}`}
-                >
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
+          {/* Next Question Button */}
+          <button
+            type="button"
+            onClick={() => setCurrentActiveQ((p) => Math.min(questionsCount, p + 1))}
+            disabled={currentActiveQ >= questionsCount}
+            className="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-100 border border-slate-700 disabled:opacity-35 cursor-pointer flex items-center justify-center gap-1 font-bold text-xs shrink-0 transition-colors active:scale-95"
+            title="Next Question"
+            aria-label="Next Question"
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
         </div>
-
-        {/* Next Question Button */}
-        <button
-          type="button"
-          onClick={() => setCurrentActiveQ((p) => Math.min(questionsCount, p + 1))}
-          disabled={currentActiveQ >= questionsCount}
-          className="p-2 rounded-xl text-slate-700 dark:text-slate-200 disabled:opacity-30 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer flex items-center gap-1 font-bold text-xs shrink-0"
-          title="Next Question"
-        >
-          <span className="hidden xs:inline">Next</span>
-          <ChevronRight className="w-4 h-4" />
-        </button>
-
       </div>
 
       {/* Exam Pattern & Question Count Selector Modal */}

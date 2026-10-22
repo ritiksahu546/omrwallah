@@ -11,6 +11,8 @@ interface OMRSheetRendererProps {
   onAnswerChange?: (qNo: number, option: string) => void;
   scale?: number;
   highlightQuestions?: Record<number, 'correct' | 'wrong' | 'skipped'>;
+  activeQuestion?: number;
+  onQuestionFocus?: (qNo: number) => void;
 }
 
 export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
@@ -22,6 +24,8 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
   onAnswerChange,
   scale = 1,
   highlightQuestions = {},
+  activeQuestion,
+  onQuestionFocus,
 }) => {
   const sheetRef = useRef<HTMLDivElement>(null);
   const [measuredHeight, setMeasuredHeight] = useState<number>(1123);
@@ -231,6 +235,8 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
       pad = '2px 4px';
     }
 
+    const isActiveRow = interactive && activeQuestion === qNum;
+
     return {
       display: 'flex',
       alignItems: 'center',
@@ -240,10 +246,13 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
           ? '#ecfdf5'
           : qHighlight === 'wrong'
           ? '#fff1f2'
+          : isActiveRow
+          ? '#dbeafe'
           : qNum % 2 === 0
           ? '#f8fafc'
           : '#ffffff',
       borderBottom: '1px solid #e2e8f0',
+      boxShadow: isActiveRow ? 'inset 2.5px 0 0 #2563eb' : undefined,
       padding: pad,
       boxSizing: 'border-box' as const,
     };
@@ -1004,18 +1013,26 @@ export const OMRSheetRenderer: React.FC<OMRSheetRendererProps> = ({
                         <div
                           className="flex items-center justify-between transition-colors"
                           style={getRowStyle(qNum, qHighlight)}
+                          onClick={() => {
+                            if (interactive && onQuestionFocus) {
+                              onQuestionFocus(qNum);
+                            }
+                          }}
                         >
                           {/* Question Number */}
                           <span
-                            className="font-mono font-extrabold text-center text-slate-800"
+                            className={`font-mono font-extrabold text-center ${
+                              interactive && activeQuestion === qNum ? 'text-blue-700' : 'text-slate-800'
+                            }`}
                             style={{
                               width: isHighDensity ? '22px' : '26px',
                               fontFamily: 'monospace',
                               fontWeight: 800,
                               fontSize: isHighDensity ? '8.5px' : '9.5px',
                               textAlign: 'center',
-                              color: '#1e293b',
+                              color: interactive && activeQuestion === qNum ? '#1d4ed8' : '#1e293b',
                               lineHeight: 1,
+                              cursor: interactive ? 'pointer' : 'default',
                             }}
                           >
                             {formatQNum(qNum)}
