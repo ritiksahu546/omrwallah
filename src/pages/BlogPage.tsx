@@ -97,31 +97,42 @@ export const BlogPage: React.FC<BlogPageProps> = ({ showToast, onNavigate, initi
                 <span>Try Related OMR Tools on OMRWallah</span>
               </h3>
               <div className="flex flex-wrap gap-2">
-                {onNavigate && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => onNavigate('creator')}
-                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition cursor-pointer"
-                    >
-                      OMR Sheet Generator
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onNavigate('templates')}
-                      className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold transition cursor-pointer"
-                    >
-                      Template Gallery
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onNavigate('practice')}
-                      className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold transition cursor-pointer"
-                    >
-                      Online OMR Practice
-                    </button>
-                  </>
-                )}
+                <a
+                  href="https://omrwallah.in/creator"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                      e.preventDefault();
+                      onNavigate('creator');
+                    }
+                  }}
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition cursor-pointer"
+                >
+                  OMR Sheet Creator
+                </a>
+                <a
+                  href="https://omrwallah.in/templates"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                      e.preventDefault();
+                      onNavigate('templates');
+                    }
+                  }}
+                  className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold transition cursor-pointer"
+                >
+                  Template Gallery
+                </a>
+                <a
+                  href="https://omrwallah.in/practice"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                      e.preventDefault();
+                      onNavigate('practice');
+                    }
+                  }}
+                  className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold transition cursor-pointer"
+                >
+                  Online OMR Practice
+                </a>
               </div>
             </div>
 
@@ -257,6 +268,54 @@ export const BlogPage: React.FC<BlogPageProps> = ({ showToast, onNavigate, initi
           </article>
         ))}
       </div>
+
+      {/* Crawlable Tools & Exam Guides Hub on /blog */}
+      <section className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-5 mt-8">
+        <div className="space-y-1.5">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+            Explore Interactive OMR Tools &amp; Exam Preparation Guides
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600">
+            Put these exam strategies into practice using our free A4 OMR builders, printable templates, and timed online simulators:
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 text-xs">
+          {[
+            { label: 'OMR Sheet Creator', route: 'creator' },
+            { label: 'OMR Sheet Generator', route: 'omr-sheet-generator' },
+            { label: 'OMR Sheet Maker', route: 'omr-sheet-maker' },
+            { label: 'Free OMR Templates', route: 'templates' },
+            { label: 'OMR Sheet PDF Download', route: 'omr-sheet-pdf' },
+            { label: 'Online OMR Practice', route: 'practice' },
+            { label: 'Online OMR Sheet Guide', route: 'online-omr-sheet' },
+            { label: 'OMR Speed Training', route: 'omr-practice' },
+            { label: 'OMR for Schools', route: 'omr-sheet-for-schools' },
+            { label: 'OMR for Coaching', route: 'omr-sheet-for-coaching' },
+            { label: 'All Exam OMR Hub', route: 'omr-exams' },
+            { label: 'NEET 200Q OMR Guide', route: 'neet-omr-sheet' },
+            { label: 'JEE Mock OMR Guide', route: 'jee-omr-sheet' },
+            { label: 'SSC 100Q OMR Guide', route: 'ssc-omr-sheet' },
+            { label: 'CUET 50Q OMR Guide', route: 'cuet-omr-sheet' },
+            { label: 'CTET 150Q OMR Guide', route: 'ctet-omr-sheet' },
+          ].map((item) => (
+            <a
+              key={item.route}
+              href={`https://omrwallah.in/${item.route}`}
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                  e.preventDefault();
+                  onNavigate(item.route);
+                }
+              }}
+              className="p-2.5 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-xl font-bold text-slate-800 hover:text-blue-700 transition-colors flex items-center justify-between"
+            >
+              <span>{item.label}</span>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            </a>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

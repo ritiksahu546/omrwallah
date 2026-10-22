@@ -97,7 +97,7 @@ export const CtetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <a
-              href="https://omrwallah.in/omr-sheet-generator"
+              href="https://omrwallah.in/creator"
               onClick={(e) => {
                 if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                   e.preventDefault();
@@ -132,6 +132,69 @@ export const CtetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
           </p>
         </div>
 
+        {/* CTET 150-Question Structure Breakdown */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+            CTET Paper 1 &amp; Paper 2 OMR Sheet Structure (150 Questions)
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+              <span className="text-[11px] font-bold text-teal-700 uppercase">Q1 – Q30</span>
+              <h3 className="font-bold text-slate-900 text-sm">Child Development &amp; Pedagogy</h3>
+              <p className="text-xs text-slate-600">30 compulsory MCQs (+1 mark each, 0 negative marking).</p>
+            </div>
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+              <span className="text-[11px] font-bold text-teal-700 uppercase">Q31 – Q60</span>
+              <h3 className="font-bold text-slate-900 text-sm">Language I (Compulsory)</h3>
+              <p className="text-xs text-slate-600">30 questions testing proficiency in medium of instruction.</p>
+            </div>
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+              <span className="text-[11px] font-bold text-teal-700 uppercase">Q61 – Q90</span>
+              <h3 className="font-bold text-slate-900 text-sm">Language II (Chosen)</h3>
+              <p className="text-xs text-slate-600">30 questions on comprehension, grammar, and verbal ability.</p>
+            </div>
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+              <span className="text-[11px] font-bold text-teal-700 uppercase">Q91 – Q120</span>
+              <h3 className="font-bold text-slate-900 text-sm">Mathematics / Science</h3>
+              <p className="text-xs text-slate-600">30 questions for Paper 1 Mathematics or Paper 2 Math &amp; Science.</p>
+            </div>
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+              <span className="text-[11px] font-bold text-teal-700 uppercase">Q121 – Q150</span>
+              <h3 className="font-bold text-slate-900 text-sm">EVS / Social Studies</h3>
+              <p className="text-xs text-slate-600">30 questions for Paper 1 Environmental Studies or Paper 2 Social Science.</p>
+            </div>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            In offline pen-and-paper CTET and State TET exams (UPTET, REET, बिहार STET, MPTET), candidates often make mistakes on Q91–150 when switching between Language I/II booklet codes and subject electives. Practicing on a 150-question OMR sheet builds accuracy across all 5 blocks. Check our{' '}
+            <a
+              href="https://omrwallah.in/omr-practice"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-practice');
+                }
+              }}
+              className="text-teal-700 font-bold hover:underline"
+            >
+              OMR Speed Training Guide
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-for-schools"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-for-schools');
+                }
+              }}
+              className="text-teal-700 font-bold hover:underline"
+            >
+              OMR Sheet for Schools
+            </a>{' '}
+            for educator resources.
+          </p>
+        </div>
+
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-teal-600" />
@@ -163,7 +226,7 @@ export const CtetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
             Customize headers, subject sections, and candidate details in minutes.
           </p>
           <a
-            href="https://omrwallah.in/omr-sheet-generator"
+            href="https://omrwallah.in/creator"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();

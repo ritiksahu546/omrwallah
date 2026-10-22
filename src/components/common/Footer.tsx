@@ -13,19 +13,36 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           
           {/* Brand Col */}
           <div className="sm:col-span-2 lg:col-span-1 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white">
-                <FileText className="w-5 h-5" />
+            <a
+              href="/"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('home');
+                }
+              }}
+              aria-label="OMR Wallah Homepage"
+              className="inline-flex items-center gap-2.5 group cursor-pointer focus:outline-none"
+            >
+              <div className="rounded-full p-[1.5px] bg-gradient-to-tr from-sky-400 via-blue-500 to-amber-400 shadow-md shadow-blue-500/20 shrink-0 transition-transform duration-200 group-hover:scale-105">
+                <img
+                  src="/images/omrwallah-logo.png"
+                  alt="OMR Wallah logo"
+                  width={42}
+                  height={42}
+                  loading="lazy"
+                  className="w-9 h-9 sm:w-10 sm:h-10 object-contain rounded-full bg-[#0b132b] block"
+                />
               </div>
               <span className="font-extrabold text-xl text-white tracking-tight">
-                OMR<span className="text-blue-500">Wallah</span>
+                OMR<span className="bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent">Wallah</span>
               </span>
-            </div>
+            </a>
             <p className="text-slate-400 text-xs leading-relaxed">
               India's dedicated OMR platform. Design, print, practice, and evaluate A4 OMR sheets effortlessly for schools, institutes, and competitive exam aspirants.
             </p>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs text-blue-400 font-semibold">
-              <Sparkles className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/90 border border-amber-400/30 text-xs text-amber-300 font-semibold">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>Apni OMR, Apne Rules.</span>
             </div>
           </div>

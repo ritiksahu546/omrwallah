@@ -16,7 +16,7 @@ export interface SEOProps {
 }
 
 export const BASE_URL = 'https://omrwallah.in';
-export const DEFAULT_OG_IMAGE = `${BASE_URL}/pwa-512x512.png`;
+export const DEFAULT_OG_IMAGE = `${BASE_URL}/images/omrwallah-logo.png`;
 
 export function updatePageSEO(seo: SEOProps) {
   // Title
@@ -116,7 +116,7 @@ export function buildStructuredDataJson(seo: SEOProps, currentUrl: string): stri
       '@id': `${BASE_URL}/#organization`,
       name: 'OMRWallah',
       url: BASE_URL,
-      logo: `${BASE_URL}/icon.svg`,
+      logo: `${BASE_URL}/images/omrwallah-logo.png`,
       description: 'India’s premier online OMR sheet generator, maker, and practice platform.',
     },
     // WebSite schema

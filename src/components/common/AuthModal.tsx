@@ -179,11 +179,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         {/* Header Badge */}
         <div className="text-center mb-5">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 mb-2.5 border border-blue-500/20 shadow-inner">
-            <ShieldCheck className="w-6 h-6" />
+          <div className="inline-flex items-center justify-center mb-3 rounded-full p-[2px] bg-gradient-to-tr from-sky-400 via-blue-600 to-amber-400 shadow-lg shadow-blue-500/25">
+            <img
+              src="/images/omrwallah-logo.png"
+              alt="OMR Wallah logo"
+              width={56}
+              height={56}
+              className="w-13 h-13 sm:w-14 sm:h-14 object-contain rounded-full bg-[#0b132b] block"
+            />
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">
-            {activeMode === 'login' ? 'Welcome Back!' : 'Join OMRWallah Free'}
+            {activeMode === 'login' ? (
+              <>Welcome Back to OMR<span className="text-amber-400">Wallah</span></>
+            ) : (
+              <>Join OMR<span className="text-amber-400">Wallah</span> Free</>
+            )}
           </h3>
           <p className="text-xs text-slate-400 mt-1">
             {activeMode === 'login'

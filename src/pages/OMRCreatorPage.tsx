@@ -217,6 +217,22 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
             <span>{mobilePreviewOpen ? 'Editor' : 'Preview'}</span>
           </button>
 
+          {/* Templates Link */}
+          <a
+            href="https://omrwallah.in/templates"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                onNavigate('templates');
+              }
+            }}
+            title="Browse Ready OMR Templates"
+            className="px-2.5 sm:px-3 py-1.5 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors flex items-center gap-1 shrink-0 cursor-pointer whitespace-nowrap"
+          >
+            <Layout className="w-3.5 h-3.5 text-blue-600" />
+            <span className="hidden sm:inline">Templates</span>
+          </a>
+
           {/* Reset button */}
           <button
             type="button"
@@ -380,11 +396,108 @@ export const OMRCreatorPage: React.FC<OMRCreatorPageProps> = ({
           {/* Canvas Scroll Area */}
           <div
             ref={scrollContainerRef}
-            className="flex-1 overflow-auto p-2 sm:p-8 flex justify-center items-start"
+            className="flex-1 overflow-auto p-2 sm:p-8 flex flex-col items-center justify-start gap-8"
           >
             <div className="origin-top transition-transform duration-150">
               <OMRSheetRenderer config={config} scale={zoomLevel} />
             </div>
+
+            {/* Crawlable SEO Specifications & Internal Links (Hidden during Print) */}
+            <section
+              aria-label="Custom OMR Sheet Designer Guide & Related Tools"
+              className="no-print w-full max-w-4xl bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs space-y-5 text-slate-700"
+            >
+              <div className="space-y-2">
+                <h2 className="text-base sm:text-lg font-extrabold text-slate-900">
+                  How to Design &amp; Print Custom A4 OMR Answer Sheets
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  The OMRWallah Live OMR Sheet Creator renders print-calibrated A4 (210mm × 297mm) optical mark recognition sheets directly in your browser. Configure between 5 and 200 multiple-choice questions, select 2, 3, or 4 column layouts, customize option labels (A–D, A–E, 1–4, or अ–द), and add roll number grids, test booklet codes, and subject sections. Every exported PDF includes 4-corner black calibration markers compatible with our optical camera scanner.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                  <h3 className="font-bold text-slate-900">1. Choose Exam Preset or Custom Count</h3>
+                  <p className="text-slate-600">
+                    Start from a blank layout or load pre-built templates from our{' '}
+                    <a
+                      href="https://omrwallah.in/templates"
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                          e.preventDefault();
+                          onNavigate('templates');
+                        }
+                      }}
+                      className="text-blue-600 font-bold hover:underline"
+                    >
+                      OMR Template Gallery
+                    </a>
+                    .
+                  </p>
+                </div>
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                  <h3 className="font-bold text-slate-900">2. Customize Institute Branding</h3>
+                  <p className="text-slate-600">
+                    Add your school or coaching academy name, exam title, instructions, and watermark for professional test series papers.
+                  </p>
+                </div>
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                  <h3 className="font-bold text-slate-900">3. Export 100% Scale A4 PDF</h3>
+                  <p className="text-slate-600">
+                    Download high-resolution PDFs or practice digitally in our{' '}
+                    <a
+                      href="https://omrwallah.in/practice"
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                          e.preventDefault();
+                          onNavigate('practice');
+                        }
+                      }}
+                      className="text-blue-600 font-bold hover:underline"
+                    >
+                      Online OMR Practice Simulator
+                    </a>
+                    .
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-200 space-y-2">
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                  Popular Exam OMR Formats &amp; Resources
+                </h3>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {[
+                    { label: 'OMR Sheet Generator Guide', route: 'omr-sheet-generator' },
+                    { label: 'OMR Sheet Maker', route: 'omr-sheet-maker' },
+                    { label: 'OMR Sheet PDF Download', route: 'omr-sheet-pdf' },
+                    { label: 'OMR for Coaching Institutes', route: 'omr-sheet-for-coaching' },
+                    { label: 'OMR for Schools', route: 'omr-sheet-for-schools' },
+                    { label: 'Competitive Exam OMR Hub', route: 'omr-exams' },
+                    { label: 'NEET 200Q OMR Sheet', route: 'neet-omr-sheet' },
+                    { label: 'JEE Mock OMR Sheet', route: 'jee-omr-sheet' },
+                    { label: 'SSC 100Q OMR Sheet', route: 'ssc-omr-sheet' },
+                    { label: 'CUET 50Q OMR Sheet', route: 'cuet-omr-sheet' },
+                    { label: 'CTET 150Q OMR Sheet', route: 'ctet-omr-sheet' },
+                  ].map((item) => (
+                    <a
+                      key={item.route}
+                      href={`https://omrwallah.in/${item.route}`}
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                          e.preventDefault();
+                          onNavigate(item.route);
+                        }
+                      }}
+                      className="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold rounded-lg border border-slate-200 transition-colors"
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </section>
           </div>
 
           {/* Mobile Bottom Sticky Bar for easy action */}

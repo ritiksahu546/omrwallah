@@ -36,21 +36,23 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = user
     ? [
-        { label: 'Dashboard', route: 'dashboard' },
-        { label: 'Templates', route: 'templates' },
-        { label: 'Practice', route: 'practice' },
-        { label: 'Scan', route: 'scan' },
-        { label: 'Saved Sheets', route: 'saved' },
-        { label: 'Pricing', route: 'pricing' },
+        { label: 'Dashboard', route: 'dashboard', href: '/dashboard' },
+        { label: 'OMR Creator', route: 'creator', href: '/creator' },
+        { label: 'Templates', route: 'templates', href: '/templates' },
+        { label: 'Practice', route: 'practice', href: '/practice' },
+        { label: 'Scan', route: 'scan', href: '/scan' },
+        { label: 'Saved Sheets', route: 'saved', href: '/saved' },
+        { label: 'Pricing', route: 'pricing', href: '/pricing' },
       ]
     : [
-        { label: 'Home', route: 'home' },
-        { label: 'Templates', route: 'templates' },
-        { label: 'Practice', route: 'practice' },
-        { label: 'Scan', route: 'scan' },
-        { label: 'Pricing', route: 'pricing' },
-        { label: 'Blog', route: 'blog' },
-        { label: 'FAQ', route: 'faq' },
+        { label: 'Home', route: 'home', href: 'https://omrwallah.in/' },
+        { label: 'OMR Creator', route: 'creator', href: 'https://omrwallah.in/creator' },
+        { label: 'Templates', route: 'templates', href: 'https://omrwallah.in/templates' },
+        { label: 'Practice', route: 'practice', href: 'https://omrwallah.in/practice' },
+        { label: 'Exams', route: 'omr-exams', href: 'https://omrwallah.in/omr-exams' },
+        { label: 'Pricing', route: 'pricing', href: 'https://omrwallah.in/pricing' },
+        { label: 'Blog', route: 'blog', href: 'https://omrwallah.in/blog' },
+        { label: 'FAQ', route: 'faq', href: 'https://omrwallah.in/faq' },
       ];
 
   const handleLogOut = async () => {
@@ -60,50 +62,42 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
       <div className="w-full px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
           
           {/* Logo */}
-          <button
-            type="button"
-            onClick={() => onNavigate(user ? 'dashboard' : 'home')}
-            className="flex items-center gap-2 sm:gap-2.5 text-left group cursor-pointer focus:outline-none shrink-0"
+          <a
+            href="/"
+            onClick={(e) => {
+              if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                e.preventDefault();
+                onNavigate('home');
+              }
+            }}
+            aria-label="OMR Wallah Homepage"
+            className="flex items-center gap-2.5 sm:gap-3 text-left group cursor-pointer focus:outline-none shrink-0"
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-md shadow-blue-500/30 ring-1 ring-white/20 group-hover:scale-105 transition-all shrink-0">
-              {/* Authentic OMR Sheet with Bubble Matrix SVG */}
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Paper sheet outline */}
-                <rect x="3.5" y="2.5" width="17" height="19" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
-                {/* 4 Optical Corner Timing Marks */}
-                <rect x="5.5" y="4.5" width="2" height="2" rx="0.5" fill="currentColor" />
-                <rect x="16.5" y="4.5" width="2" height="2" rx="0.5" fill="currentColor" />
-                <rect x="5.5" y="17.5" width="2" height="2" rx="0.5" fill="currentColor" />
-                <rect x="16.5" y="17.5" width="2" height="2" rx="0.5" fill="currentColor" />
-                {/* Row 1 Bubbles: A filled, B & C outlined */}
-                <circle cx="9" cy="9.5" r="1.5" fill="currentColor" />
-                <circle cx="13" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="17" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.2" />
-                {/* Row 2 Bubbles: A outlined, B cyan-filled, C outlined */}
-                <circle cx="9" cy="14" r="1.5" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="13" cy="14" r="1.5" fill="#38bdf8" />
-                <circle cx="17" cy="14" r="1.5" stroke="currentColor" strokeWidth="1.2" />
-              </svg>
+            <div className="relative rounded-full p-[1.5px] bg-gradient-to-tr from-[#0b132b] via-blue-600 to-amber-400 shadow-sm shadow-blue-900/15 shrink-0 transition-transform duration-200 group-hover:scale-105">
+              <img
+                src="/images/omrwallah-logo.png"
+                alt="OMR Wallah logo"
+                width={44}
+                height={44}
+                className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 object-contain rounded-full block bg-[#0b132b]"
+              />
             </div>
             <div className="shrink-0">
               <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 whitespace-nowrap">
-                  OMR<span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Wallah</span>
-                </span>
-                <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 hidden xl:inline-block shrink-0">
-                  AI Suite
+                <span className="font-black text-lg sm:text-xl tracking-tight text-[#0b132b] whitespace-nowrap">
+                  OMR<span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-amber-500 bg-clip-text text-transparent">Wallah</span>
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium tracking-tight mt-0.5 hidden xl:block whitespace-nowrap">
+              <p className="text-[11px] text-slate-500 font-semibold tracking-tight mt-0.5 hidden xl:block whitespace-nowrap">
                 Create • Practice • Scan • Evaluate
               </p>
             </div>
-          </button>
+          </a>
 
           {/* Desktop Nav Links (Visible for visitors; authenticated workspace uses the sidebar to avoid redundant navigation) */}
           {!user && (
@@ -111,10 +105,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               {navLinks.map((link) => {
                 const isActive = currentRoute === link.route;
                 return (
-                  <button
+                  <a
                     key={link.route}
-                    type="button"
-                    onClick={() => onNavigate(link.route)}
+                    href={link.href}
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                        e.preventDefault();
+                        onNavigate(link.route);
+                      }
+                    }}
                     className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                       isActive
                         ? 'text-blue-600 bg-blue-50/90'
@@ -122,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }`}
                   >
                     {link.label}
-                  </button>
+                  </a>
                 );
               })}
             </nav>
@@ -300,12 +299,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             {navLinks
               .filter((link) => link.route !== 'home' && link.route !== 'practice')
               .map((link) => (
-                <button
+                <a
                   key={link.route}
-                  type="button"
-                  onClick={() => {
-                    onNavigate(link.route);
-                    setMobileMenuOpen(false);
+                  href={link.href}
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate(link.route);
+                      setMobileMenuOpen(false);
+                    }
                   }}
                   className={`w-full text-left py-2.5 text-xs font-bold flex items-center justify-between cursor-pointer transition-colors ${
                     currentRoute === link.route ? 'text-blue-600 font-extrabold' : 'text-slate-700 hover:text-blue-600'
@@ -313,7 +315,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <span>{link.label}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
-                </button>
+                </a>
               ))}
           </div>
 

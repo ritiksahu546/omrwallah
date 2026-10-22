@@ -98,10 +98,11 @@ export const HomePage: React.FC<HomePageProps> = ({
     <div className="bg-slate-50 min-h-screen">
       
       {/* ================= HERO SECTION (matching reference image #1) ================= */}
-      <section className="relative overflow-hidden pt-8 pb-16 lg:pt-14 lg:pb-24 border-b border-slate-200 bg-gradient-to-b from-blue-50/40 via-white to-slate-50">
+      <section className="relative overflow-hidden pt-8 pb-16 lg:pt-14 lg:pb-24 border-b border-slate-200 bg-gradient-to-b from-blue-50/60 via-white to-slate-50">
         
-        {/* Subtle background glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Subtle background glow harmonized with logo palette */}
+        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[380px] bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 right-1/4 w-[420px] h-[320px] bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -110,17 +111,17 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
               
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/70 border border-blue-200 text-blue-700 text-xs font-extrabold tracking-wide">
-                <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full uppercase font-black">
-                  NEW
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0b132b] border border-blue-500/30 text-white text-xs font-extrabold tracking-wide shadow-sm">
+                <span className="bg-gradient-to-r from-amber-400 to-amber-500 text-[#0b132b] text-[10px] px-2 py-0.5 rounded-full uppercase font-black">
+                  OMR WALLAH
                 </span>
-                <span>India's Most Advanced OMR Platform</span>
+                <span className="text-sky-200">India's Most Advanced OMR Platform</span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#0b132b] tracking-tight leading-[1.1]">
                 Create OMR Sheets Online <br />
-                <span className="text-blue-600">Design, Print &amp; Practice</span>
+                <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">Design, Print &amp; Practice</span>
               </h1>
 
               {/* Subheading with contextual internal links */}
@@ -203,23 +204,33 @@ export const HomePage: React.FC<HomePageProps> = ({
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start pt-2">
-                <button
-                  type="button"
-                  onClick={() => onNavigate('creator')}
-                  className="w-full sm:w-auto px-7 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-base rounded-xl shadow-lg shadow-blue-500/25 transition-all hover:translate-y-[-2px] flex items-center justify-center gap-2 cursor-pointer"
+                <a
+                  href="https://omrwallah.in/creator"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('creator');
+                    }
+                  }}
+                  className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-[#0b132b] via-blue-700 to-blue-600 hover:from-blue-700 hover:to-blue-600 text-white font-extrabold text-base rounded-xl shadow-lg shadow-blue-600/25 transition-all hover:translate-y-[-2px] flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Create OMR Now</span>
-                  <ArrowRight className="w-5 h-5" />
-                </button>
+                  <ArrowRight className="w-5 h-5 text-amber-300" />
+                </a>
 
-                <button
-                  type="button"
-                  onClick={() => onNavigate('templates')}
-                  className="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-slate-100 text-slate-800 font-bold text-base rounded-xl border border-slate-300 shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                <a
+                  href="https://omrwallah.in/templates"
+                  onClick={(e) => {
+                    if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                      e.preventDefault();
+                      onNavigate('templates');
+                    }
+                  }}
+                  className="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-slate-100 text-[#0b132b] font-bold text-base rounded-xl border border-slate-300 shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Play className="w-4 h-4 text-blue-600 fill-current" />
                   <span>Explore Templates</span>
-                </button>
+                </a>
               </div>
 
             </div>
@@ -442,13 +453,18 @@ export const HomePage: React.FC<HomePageProps> = ({
                       <span>Track improvement trends across all subjects</span>
                     </li>
                   </ul>
-                  <button
-                    type="button"
-                    onClick={() => onNavigate('practice')}
-                    className="mt-2 px-5 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-colors cursor-pointer"
+                  <a
+                    href="https://omrwallah.in/practice"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                        e.preventDefault();
+                        onNavigate('practice');
+                      }
+                    }}
+                    className="inline-block mt-2 px-5 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-colors cursor-pointer"
                   >
                     Start Practice Test →
-                  </button>
+                  </a>
                 </div>
 
                 <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
@@ -487,13 +503,18 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <p className="text-slate-600 text-sm leading-relaxed">
                     Stop manually checking piles of papers. Generate customized 25 or 50 question OMR sheets with your class details, print them out, and grade them via phone camera in minutes.
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => onNavigate('creator')}
-                    className="px-5 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-colors cursor-pointer"
+                  <a
+                    href="https://omrwallah.in/creator"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                        e.preventDefault();
+                        onNavigate('creator');
+                      }
+                    }}
+                    className="inline-block px-5 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-colors cursor-pointer"
                   >
                     Design Class OMR →
-                  </button>
+                  </a>
                 </div>
 
                 <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
@@ -516,13 +537,18 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <p className="text-slate-600 text-sm leading-relaxed">
                     Embed your academy logo, watermark, and set series codes. Print high-volume sheets on standard copier paper with 100% scanning reliability.
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => onNavigate('pricing')}
-                    className="px-5 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-colors cursor-pointer"
+                  <a
+                    href="https://omrwallah.in/pricing"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                        e.preventDefault();
+                        onNavigate('pricing');
+                      }
+                    }}
+                    className="inline-block px-5 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-700 transition-colors cursor-pointer"
                   >
                     View Institute Plans →
-                  </button>
+                  </a>
                 </div>
 
                 <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2">
@@ -555,14 +581,19 @@ export const HomePage: React.FC<HomePageProps> = ({
                 Choose a pre-built layout and customize questions, options, and branding.
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => onNavigate('templates')}
+            <a
+              href="https://omrwallah.in/templates"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('templates');
+                }
+              }}
               className="mt-4 md:mt-0 inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-700 cursor-pointer"
             >
               <span>View All 12+ Templates</span>
               <ChevronRight className="w-4 h-4" />
-            </button>
+            </a>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -682,8 +713,17 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <div className="bg-slate-950 rounded-[24px] p-3 text-white space-y-2.5 overflow-hidden border border-slate-800">
                     <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                       <div className="flex items-center gap-1.5">
-                        <div className="w-5 h-5 rounded-md bg-blue-600 flex items-center justify-center text-[10px] font-black">OW</div>
-                        <span className="text-[11px] font-bold">OMRWallah</span>
+                        <img
+                          src="/images/omrwallah-logo.png"
+                          alt="OMR Wallah logo"
+                          width={22}
+                          height={22}
+                          loading="lazy"
+                          className="w-5.5 h-5.5 rounded-full object-contain shrink-0"
+                        />
+                        <span className="text-[11px] font-bold">
+                          OMR<span className="text-amber-400">Wallah</span>
+                        </span>
                       </div>
                       <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-bold">Ready</span>
                     </div>
@@ -754,39 +794,54 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           <div className="text-center mt-8">
-            <button
-              type="button"
-              onClick={() => onNavigate('faq')}
+            <a
+              href="https://omrwallah.in/faq"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('faq');
+                }
+              }}
               className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
             >
               Browse Complete Help Center →
-            </button>
+            </a>
           </div>
         </div>
       </section>
 
       {/* ================= SEO HUBS & GUIDES NAVIGATION ================= */}
       <section className="py-12 bg-slate-100/70 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">
               Popular OMR Tools, Formats &amp; Exam Guides
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              Quick access to dedicated online tools, printable formats, and competitive exam guidelines.
+              Direct access to custom OMR builders, printable A4 templates, digital practice simulators, and exam-specific preparation guides.
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {[
+              { label: 'Live OMR Sheet Creator', route: 'creator', path: 'creator', desc: 'Interactive A4 visual designer (5-200 Qs)' },
               { label: 'OMR Sheet Generator', route: 'omr-sheet-generator', path: 'omr-sheet-generator', desc: 'Custom question & column builder' },
               { label: 'Free OMR Sheet Templates', route: 'templates', path: 'templates', desc: 'Pre-calibrated test layouts & formats' },
               { label: 'Online OMR Practice', route: 'practice', path: 'practice', desc: 'Timed mock bubbling simulator' },
-              { label: 'Competitive Exam Hub', route: 'omr-exams', path: 'omr-exams', desc: 'NEET, JEE, SSC, CUET guides' },
               { label: 'OMR Sheet Maker', route: 'omr-sheet-maker', path: 'omr-sheet-maker', desc: 'Design bubble grids & roll codes' },
               { label: 'OMR Sheet PDF Download', route: 'omr-sheet-pdf', path: 'omr-sheet-pdf', desc: 'Print-ready A4 vector downloads' },
+              { label: 'Online OMR Sheet Guide', route: 'online-omr-sheet', path: 'online-omr-sheet', desc: 'Digital bubbling & auto evaluation' },
+              { label: 'OMR Practice Speed Guide', route: 'omr-practice', path: 'omr-practice', desc: 'Time management & accuracy drills' },
               { label: 'OMR for Coaching', route: 'omr-sheet-for-coaching', path: 'omr-sheet-for-coaching', desc: 'Branded test series formats' },
               { label: 'OMR for Schools', route: 'omr-sheet-for-schools', path: 'omr-sheet-for-schools', desc: 'Classroom & term exam sheets' },
+              { label: 'Competitive Exam Hub', route: 'omr-exams', path: 'omr-exams', desc: 'All national entrance exam OMR formats' },
+              { label: 'NEET 200Q OMR Sheet', route: 'neet-omr-sheet', path: 'neet-omr-sheet', desc: 'Physics, Chemistry, Botany & Zoology' },
+              { label: 'JEE Mock OMR Sheet', route: 'jee-omr-sheet', path: 'jee-omr-sheet', desc: '75Q & 90Q PCM engineering layouts' },
+              { label: 'SSC & PSC 100Q OMR Sheet', route: 'ssc-omr-sheet', path: 'ssc-omr-sheet', desc: '4-column government exam format' },
+              { label: 'CUET 50Q OMR Sheet', route: 'cuet-omr-sheet', path: 'cuet-omr-sheet', desc: 'University domain subject practice' },
+              { label: 'CTET 150Q OMR Sheet', route: 'ctet-omr-sheet', path: 'ctet-omr-sheet', desc: 'Teacher eligibility Paper 1 & 2 layout' },
+              { label: 'OMR Knowledge Hub & Blog', route: 'blog', path: 'blog', desc: 'Printing, scanning & exam strategies' },
+              { label: 'Plans & Free Features', route: 'pricing', path: 'pricing', desc: '100% free creator, PDF & scanner plans' },
             ].map((item, idx) => (
               <a
                 key={idx}
@@ -828,20 +883,30 @@ export const HomePage: React.FC<HomePageProps> = ({
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => onNavigate('creator')}
+            <a
+              href="https://omrwallah.in/creator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('creator');
+                }
+              }}
               className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm rounded-xl shadow-xl shadow-blue-500/30 transition-all cursor-pointer"
             >
               Start Creating Free →
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('templates')}
+            </a>
+            <a
+              href="https://omrwallah.in/templates"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('templates');
+                }
+              }}
               className="w-full sm:w-auto px-6 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl border border-slate-700 transition-colors cursor-pointer"
             >
               Browse Templates
-            </button>
+            </a>
           </div>
         </div>
       </section>

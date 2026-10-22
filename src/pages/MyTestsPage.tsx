@@ -1,146 +1,239 @@
-import React, { useState } from 'react';
-import { Search, Filter, Calendar, Award, CheckCircle2, ChevronRight, PenTool } from 'lucide-react';
-import { MOCK_RECENT_TESTS } from '../data/mockData';
+import React, { useState, useMemo } from 'react';
+import {
+  CheckSquare,
+  Calendar,
+  Award,
+  ArrowRight,
+  Search,
+  PenTool,
+  Trash2,
+  ScanLine,
+} from 'lucide-react';
+import { TestResult } from '../types/omr';
 
 interface MyTestsPageProps {
   onViewResult: (testId: string) => void;
   onNavigate: (route: string) => void;
+  testResults?: TestResult[];
+  onDeleteResult?: (testId: string) => void;
 }
 
 export const MyTestsPage: React.FC<MyTestsPageProps> = ({
   onViewResult,
   onNavigate,
+  testResults = [],
+  onDeleteResult,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredTests = MOCK_RECENT_TESTS.filter((t) => {
-    const matchesSearch = t.testName.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  });
+  const filteredTests = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    if (!q) return testResults;
+    return testResults.filter(
+      (t) =>
+        t.testName.toLowerCase().includes(q) ||
+        t.date.toLowerCase().includes(q)
+    );
+  }, [testResults, searchTerm]);
+
+  const stats = useMemo(() => {
+    const total = testResults.length;
+    if (total === 0) {
+      return { total: 0, avgAccuracy: 0, bestPct: 0 };
+    }
+    const avgAccuracy = Math.round(
+      testResults.reduce((acc, t) => acc + (t.accuracy || 0), 0) / total
+    );
+    const bestPct = Math.max(
+      ...testResults.map((t) =>
+        Math.max(
+          0,
+          Math.round((t.score / (t.maxScore || t.totalQuestions * 4)) * 100)
+        )
+      )
+    );
+    return { total, avgAccuracy, bestPct };
+  }, [testResults]);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
-      
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            My Tests & Assessments
+            My Practice & Scanned Tests
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Complete archive of your physical and online practiced OMR tests
+          <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
+            Track all your attempted OMR sessions, scanned sheets, scores, and detailed reports
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 sm:gap-3 w-full lg:w-auto">
-          <div className="relative flex-1 lg:w-64 min-w-0">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
-              placeholder="Search tests..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 shadow-2xs"
-            />
-          </div>
-
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onNavigate('scan')}
+            className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
+          >
+            <ScanLine className="w-4 h-4" />
+            <span>Scan OMR</span>
+          </button>
           <button
             type="button"
             onClick={() => onNavigate('practice')}
-            className="px-3.5 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
+            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
           >
             <PenTool className="w-4 h-4" />
-            <span>New Practice</span>
+            <span>Take New Practice Test</span>
           </button>
         </div>
       </div>
 
-      {/* Tests Table */}
-      {filteredTests.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-3xl p-10 sm:p-14 text-center max-w-lg mx-auto space-y-4 shadow-xs">
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-100">
-            <Award className="w-7 h-7" />
+      {/* Summary Strip */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-2xs">
+          <div>
+            <div className="text-xs text-slate-500 font-semibold">Total Attempts</div>
+            <div className="text-2xl font-black text-slate-900 mt-0.5">
+              {stats.total} Tests
+            </div>
           </div>
-          <h3 className="font-extrabold text-lg sm:text-xl text-slate-900">No Tests Found</h3>
-          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-            {searchQuery
-              ? `No tests matching "${searchQuery}". Try a different keyword.`
-              : 'You have not taken or evaluated any practice tests yet. Start an interactive mock or scan your physical sheet!'}
-          </p>
-          <div className="pt-2">
-            <button
-              type="button"
-              onClick={() => onNavigate('practice')}
-              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
-            >
-              Start First Practice Test →
-            </button>
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <CheckSquare className="w-5 h-5" />
           </div>
         </div>
-      ) : (
-        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-2xs">
+          <div>
+            <div className="text-xs text-slate-500 font-semibold">Average Accuracy</div>
+            <div className="text-2xl font-black text-emerald-600 mt-0.5">
+              {stats.avgAccuracy}%
+            </div>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <Award className="w-5 h-5" />
+          </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-2xs">
+          <div>
+            <div className="text-xs text-slate-500 font-semibold">Highest Score %</div>
+            <div className="text-2xl font-black text-amber-600 mt-0.5">
+              {stats.bestPct}%
+            </div>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <Calendar className="w-5 h-5" />
+          </div>
+        </div>
+      </div>
+
+      {/* Tests Table */}
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+        <div className="p-4 sm:p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h3 className="font-extrabold text-base text-slate-900">
+            Attempted Tests History ({filteredTests.length})
+          </h3>
+          <div className="relative w-full sm:w-64">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Filter tests by name or date..."
+              className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        {filteredTests.length === 0 ? (
+          <div className="p-10 text-center space-y-3">
+            <p className="text-sm font-bold text-slate-800">
+              {testResults.length === 0
+                ? 'No practice or scanned tests recorded yet'
+                : 'No tests match your filter'}
+            </p>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              Start an interactive practice mock or scan an OMR sheet to build your evaluation history.
+            </p>
+          </div>
+        ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
+            <table className="w-full text-left text-xs sm:text-sm">
+              <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase">
                 <tr>
-                  <th className="px-5 py-3">Test Title</th>
-                  <th className="px-5 py-3">Questions</th>
-                  <th className="px-5 py-3">Score & Accuracy</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3">Date Completed</th>
-                  <th className="px-5 py-3 text-right">Action</th>
+                  <th className="px-5 py-3.5">Assessment Name</th>
+                  <th className="px-5 py-3.5">Questions</th>
+                  <th className="px-5 py-3.5">Attempted</th>
+                  <th className="px-5 py-3.5">Date</th>
+                  <th className="px-5 py-3.5">Score</th>
+                  <th className="px-5 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredTests.map((t) => (
-                  <tr key={t.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-5 py-4">
-                      <div className="font-extrabold text-slate-900 text-sm">{t.testName}</div>
-                      <div className="text-[11px] text-slate-400 font-medium">Standard A4 Sheet • Negative Marking (1/4th)</div>
-                    </td>
-                    <td className="px-5 py-4 text-xs font-bold text-slate-600">
-                      {t.questions} Qs
-                    </td>
-                    <td className="px-5 py-4">
-                      <span
-                        className={`text-xs font-black px-2.5 py-1 rounded-full border ${
-                          t.score >= 80
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : t.score >= 70
-                            ? 'bg-blue-50 text-blue-700 border-blue-200'
-                            : 'bg-amber-50 text-amber-700 border-amber-200'
-                        }`}
-                      >
-                        {t.score}% Score
-                      </span>
-                    </td>
-                    <td className="px-5 py-4">
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Evaluated</span>
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-xs font-medium text-slate-500">
-                      {t.date}
-                    </td>
-                    <td className="px-5 py-4 text-right">
-                      <button
-                        type="button"
-                        onClick={() => onViewResult(t.id)}
-                        className="px-3.5 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-bold text-xs rounded-xl border border-blue-200 hover:border-blue-600 transition-colors cursor-pointer"
-                      >
-                        View Report
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-slate-200">
+                {filteredTests.map((t) => {
+                  const pct = Math.max(
+                    0,
+                    Math.round((t.score / (t.maxScore || t.totalQuestions * 4)) * 100)
+                  );
+                  return (
+                    <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-4 font-bold text-slate-900">
+                        {t.testName}
+                      </td>
+                      <td className="px-5 py-4 text-slate-600">
+                        {t.totalQuestions} Questions
+                      </td>
+                      <td className="px-5 py-4 text-slate-600">
+                        {t.attempted}/{t.totalQuestions} ({t.accuracy}% Acc.)
+                      </td>
+                      <td className="px-5 py-4 text-slate-500 text-xs">{t.date}</td>
+                      <td className="px-5 py-4">
+                        <span
+                          className={`text-xs font-extrabold px-2.5 py-1 rounded-full ${
+                            pct >= 80
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : pct >= 60
+                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                              : 'bg-amber-50 text-amber-700 border border-amber-200'
+                          }`}
+                        >
+                          {t.score}/{t.maxScore} ({pct}%)
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <div className="inline-flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => onViewResult(t.id)}
+                            className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                          >
+                            <span>View Report</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                          {onDeleteResult && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (window.confirm('Delete this test result?')) {
+                                  onDeleteResult(t.id);
+                                }
+                              }}
+                              title="Delete Test Result"
+                              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-        </div>
-      )}
-
+        )}
+      </div>
     </div>
   );
 };

@@ -2,71 +2,136 @@ import { SEOProps } from './seo';
 
 export const SEO_CONFIG: Record<string, SEOProps> = {
   home: {
-    title: 'OMR Sheet Generator Online | Create, Print & Practice OMR Sheets - OMRWallah',
+    title: 'OMRWallah — Free Online OMR Sheet Creator, Templates, Scanner & Practice Portal',
     description:
-      "India's intuitive online OMR sheet generator and maker. Design custom answer sheets, download print-ready A4 PDFs, and practice OMR bubbling for schools, coaching institutes, and competitive exams.",
+      "India's complete OMR platform for students, schools, and coaching institutes. Create custom A4 OMR sheets, download print-ready PDFs, scan answer sheets, and practice online with timers.",
     canonicalPath: '/',
     type: 'website',
     breadcrumbs: [{ name: 'Home', path: '/' }],
   },
 
   creator: {
-    title: 'Custom OMR Sheet Designer | Interactive Visual Builder - OMRWallah',
+    title: 'Custom OMR Sheet Creator & Live A4 Designer Online - OMRWallah',
     description:
-      'Design customized A4 OMR answer sheets with real-time vector preview. Customize question count, option labels, roll number grids, and institute branding for free.',
+      'Design customized A4 OMR answer sheets with real-time live preview. Configure 5 to 200 questions, roll number grids, subject sections, and institute branding with instant PDF export.',
     canonicalPath: '/creator',
     type: 'website',
     breadcrumbs: [
       { name: 'Home', path: '/' },
-      { name: 'OMR Designer', path: '/creator' },
+      { name: 'OMR Creator', path: '/creator' },
+    ],
+    faqs: [
+      {
+        question: 'How do I create a custom OMR sheet in the OMRWallah Creator?',
+        answer:
+          'Select your total question count (from 5 to 200 questions), choose column layout and bubble labels (A-D, A-E, or 1-4), customize your school or coaching header, and click Download PDF to get a print-ready A4 sheet.',
+      },
+      {
+        question: 'Can I add Section A and Section B subjects in the OMR Creator?',
+        answer:
+          'Yes, enable the Sections toggle in the Basic tab to divide your OMR sheet into subject blocks such as Physics, Chemistry, Botany, Zoology, or Mathematics with custom question ranges.',
+      },
+      {
+        question: 'Does the OMR Creator include corner optical registration marks?',
+        answer:
+          'Yes, every OMR sheet generated includes 4-corner black calibration squares so completed sheets can be evaluated accurately with the OMRWallah Optical Camera Scanner.',
+      },
     ],
   },
 
   templates: {
-    title: 'Free OMR Sheet Templates PDF | 20, 50, 100, 180, 200 Questions - OMRWallah',
+    title: 'Free OMR Sheet Templates PDF | 20, 50, 100, 150, 180 & 200 Questions - OMRWallah',
     description:
-      'Download free print-ready A4 OMR sheet templates for NEET, JEE, SSC, UPSC, and classroom unit tests. Standard formats calibrated for laser and inkjet printing.',
+      'Browse and download free print-ready A4 OMR sheet templates for NEET UG (180Q & 200Q), JEE Main (75Q & 90Q), SSC/UPSC (100Q), CTET (150Q), CUET (50Q), and school unit tests.',
     canonicalPath: '/templates',
     type: 'website',
     breadcrumbs: [
       { name: 'Home', path: '/' },
       { name: 'Template Gallery', path: '/templates' },
     ],
+    faqs: [
+      {
+        question: 'Which OMR sheet templates are available for free download?',
+        answer:
+          'OMRWallah provides pre-configured templates for 20-question school quizzes, 50-question CUET/standard tests, 75-90 question JEE Main mocks, 100-question UPSC/SSC papers, 150-question CTET exams, and 180-200 question NEET UG mock tests.',
+      },
+      {
+        question: 'Can I customize a template before downloading the PDF?',
+        answer:
+          'Yes! Clicking "Use Template" opens the template directly in the live OMR Creator where you can edit the institute name, exam title, roll number digits, and instructions before exporting.',
+      },
+    ],
   },
 
   practice: {
-    title: 'Online OMR Sheet Practice Simulator | Timed Mock Bubbling - OMRWallah',
+    title: 'Online OMR Practice Portal | Interactive Timed Mock Test & Scorecard - OMRWallah',
     description:
-      'Practice bubbling OMR sheets online with active timer countdowns, negative marking calculation, and instant score analysis. Build exam speed and accuracy.',
+      'Practice filling OMR sheets online with live exam countdown timer, custom answer key evaluation, negative marking (+4/-1), keyboard shortcuts, and downloadable PDF scorecards.',
     canonicalPath: '/practice',
     type: 'website',
     breadcrumbs: [
       { name: 'Home', path: '/' },
       { name: 'Practice Online', path: '/practice' },
     ],
+    faqs: [
+      {
+        question: 'How does the interactive Online OMR Practice Simulator work?',
+        answer:
+          'Choose an exam preset (NEET 180Q/200Q, JEE 90Q, SSC 100Q, Police/CTET 150Q, or custom 5-200 questions), set your answer key, and fill bubbles using touch, mouse, or keyboard shortcuts while tracking time on the countdown clock.',
+      },
+      {
+        question: 'Can I download a scorecard PDF after submitting my online OMR practice test?',
+        answer:
+          'Yes, upon submitting your practice sheet, OMRWallah computes your net score, accuracy, and subject-wise breakdown and lets you download a complete vector PDF scorecard.',
+      },
+    ],
   },
 
   pricing: {
-    title: 'OMRWallah Pricing Plans | Free for Students, Pro for Institutes',
+    title: 'OMRWallah Plans & Pricing | 100% Free OMR Creator, PDF Export & Scanner',
     description:
-      'Explore simple, transparent pricing for OMRWallah. Free unlimited OMR sheet creation and PDF downloads, with Pro and Coaching plans for bulk camera scanning.',
+      'Transparent plans for students, teachers, and coaching institutes. All core OMR sheet creation (up to 200 questions), vector A4 PDF downloads, online practice, and camera scanning are free.',
     canonicalPath: '/pricing',
     type: 'website',
     breadcrumbs: [
       { name: 'Home', path: '/' },
       { name: 'Pricing Plans', path: '/pricing' },
     ],
+    faqs: [
+      {
+        question: 'Do I need a paid subscription to create 180 or 200 question NEET OMR PDFs?',
+        answer:
+          'No! High-density 180Q and 200Q A4 OMR sheet creation, custom institute branding, and high-resolution PDF exports are 100% free and unlocked.',
+      },
+      {
+        question: 'Can I print OMR sheets on regular A4 printer paper?',
+        answer:
+          'Yes! Every OMR sheet includes 4-corner optical registration marks and monochrome contrast modes optimized for standard 75–80 GSM A4 laser or inkjet paper.',
+      },
+    ],
   },
 
   blog: {
-    title: 'OMR Knowledge Hub & Guides | Tips, Tutorials & Exam Strategies - OMRWallah',
+    title: 'OMR Knowledge Hub & Exam Guides | Bubbling Tips, Printing & Evaluation - OMRWallah',
     description:
-      'Expert guides on OMR sheet generation, printing best practices, pen selection, scanning troubleshooting, and time-management strategies for competitive exams.',
+      'In-depth articles and technical guides on OMR sheet creation, A4 laser printing calibration, avoiding NEET/JEE bubbling mistakes, and optical answer sheet evaluation.',
     canonicalPath: '/blog',
     type: 'website',
     breadcrumbs: [
       { name: 'Home', path: '/' },
       { name: 'Knowledge Hub', path: '/blog' },
+    ],
+    faqs: [
+      {
+        question: 'What is the best pen for filling paper OMR answer sheets?',
+        answer:
+          'Always use a dark black or blue ballpoint pen with a 0.7mm to 1.0mm tip for rapid, opaque bubble darkening without ink smudge or paper bleed-through.',
+      },
+      {
+        question: 'How can students avoid row-shift bubbling mistakes in NEET and SSC exams?',
+        answer:
+          'Use the "Solve 10, Bubble 10" batching technique and verify the question number aloud before darkening each circle on your OMR sheet.',
+      },
     ],
   },
 
@@ -116,9 +181,9 @@ export const SEO_CONFIG: Record<string, SEOProps> = {
 
   // ================= High-Intent SEO Landing Pages =================
   'omr-sheet-generator': {
-    title: 'OMR Sheet Generator Online | Create, Print & Practice OMR Sheets - OMRWallah',
+    title: 'OMR Sheet Generator Online | Build Custom A4 Answer Sheets (10–200 Qs) - OMRWallah',
     description:
-      'Create custom OMR sheets online with OMRWallah. Design, print, download PDF and practice OMR answer sheets for exams, schools and coaching institutes.',
+      'Free online OMR sheet generator to build custom A4 answer sheets with 10 to 200 questions, roll number grids, subject sections, and print-ready vector PDF download.',
     canonicalPath: '/omr-sheet-generator',
     type: 'website',
     breadcrumbs: [

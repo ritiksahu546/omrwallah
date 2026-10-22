@@ -123,19 +123,189 @@ export const TemplatesPage: React.FC<TemplatesPageProps> = ({
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => onSelectTemplate(tmpl.id)}
+              <a
+                href="https://omrwallah.in/creator"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                    e.preventDefault();
+                    onSelectTemplate(tmpl.id);
+                  }
+                }}
                 className="w-full py-2.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-bold text-xs rounded-xl border border-blue-200 hover:border-blue-600 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <span>Use Template</span>
                 <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              </a>
             </div>
 
           </div>
         ))}
       </div>
+
+      {/* Crawlable Template Selection Guide & Exam Links */}
+      <section className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6 mt-8">
+        <div className="space-y-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+            Print-Ready A4 OMR Sheet Templates for Every Examination
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Every template in the OMRWallah library is formatted to exact A4 specifications (210mm × 297mm) with high-contrast bubbles and 4-corner optical registration markers. Select any pre-configured sheet above to open it in our{' '}
+            <a
+              href="https://omrwallah.in/creator"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                  e.preventDefault();
+                  onNavigate('creator');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              Custom OMR Sheet Creator
+            </a>
+            , where you can personalize institute headers, roll number digits, and instructions before exporting a clean PDF.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+            <h3 className="font-bold text-slate-900 text-sm">Competitive Entrance Templates</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Includes 180Q &amp; 200Q layouts for{' '}
+              <a
+                href="https://omrwallah.in/neet-omr-sheet"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                    e.preventDefault();
+                    onNavigate('neet-omr-sheet');
+                  }
+                }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                NEET UG
+              </a>
+              , 75Q–90Q PCM sheets for{' '}
+              <a
+                href="https://omrwallah.in/jee-omr-sheet"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                    e.preventDefault();
+                    onNavigate('jee-omr-sheet');
+                  }
+                }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                JEE Main
+              </a>
+              , 100Q 4-column sheets for{' '}
+              <a
+                href="https://omrwallah.in/ssc-omr-sheet"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                    e.preventDefault();
+                    onNavigate('ssc-omr-sheet');
+                  }
+                }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                SSC &amp; State PSC
+              </a>
+              , 150Q formats for{' '}
+              <a
+                href="https://omrwallah.in/ctet-omr-sheet"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                    e.preventDefault();
+                    onNavigate('ctet-omr-sheet');
+                  }
+                }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                CTET
+              </a>
+              , and 50Q sheets for{' '}
+              <a
+                href="https://omrwallah.in/cuet-omr-sheet"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                    e.preventDefault();
+                    onNavigate('cuet-omr-sheet');
+                  }
+                }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                CUET
+              </a>
+              .
+            </p>
+          </div>
+
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+            <h3 className="font-bold text-slate-900 text-sm">Schools &amp; Coaching Test Series</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Explore specialized formats in our{' '}
+              <a
+                href="https://omrwallah.in/omr-sheet-for-schools"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                    e.preventDefault();
+                    onNavigate('omr-sheet-for-schools');
+                  }
+                }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                OMR for Schools
+              </a>{' '}
+              and{' '}
+              <a
+                href="https://omrwallah.in/omr-sheet-for-coaching"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                    e.preventDefault();
+                    onNavigate('omr-sheet-for-coaching');
+                  }
+                }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                OMR for Coaching Institutes
+              </a>{' '}
+              guides, including 2-sheets-per-page classroom quiz layouts.
+            </p>
+          </div>
+
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+            <h3 className="font-bold text-slate-900 text-sm">Digital Practice &amp; PDF Printing</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Review A4 printing guidelines on our{' '}
+              <a
+                href="https://omrwallah.in/omr-sheet-pdf"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                    e.preventDefault();
+                    onNavigate('omr-sheet-pdf');
+                  }
+                }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                OMR Sheet PDF Download
+              </a>{' '}
+              page or practice timed bubbling directly on screen in our{' '}
+              <a
+                href="https://omrwallah.in/practice"
+                onClick={(e) => {
+                  if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                    e.preventDefault();
+                    onNavigate('practice');
+                  }
+                }}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                Online OMR Practice Portal
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+      </section>
 
     </div>
   );

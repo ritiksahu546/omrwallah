@@ -105,7 +105,7 @@ export const JeeOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <a
-              href="https://omrwallah.in/omr-sheet-generator"
+              href="https://omrwallah.in/creator"
               onClick={(e) => {
                 if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                   e.preventDefault();
@@ -140,12 +140,36 @@ export const JeeOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
           </p>
         </div>
 
+        {/* JEE PCM Pattern Breakdown */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+            JEE Coaching Mock OMR Pattern (75Q &amp; 90Q Formats)
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-blue-600 uppercase">Part I: Physics</span>
+              <h3 className="font-bold text-slate-900 text-base">25 to 30 Questions</h3>
+              <p className="text-xs text-slate-600">20 Single-Choice MCQs (+4 / -1) + 5 to 10 Numerical Value questions in coaching test series.</p>
+            </div>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-blue-600 uppercase">Part II: Chemistry</span>
+              <h3 className="font-bold text-slate-900 text-base">25 to 30 Questions</h3>
+              <p className="text-xs text-slate-600">Physical, Organic, and Inorganic Chemistry sections formatted for rapid 35–40 minute completion.</p>
+            </div>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-blue-600 uppercase">Part III: Mathematics</span>
+              <h3 className="font-bold text-slate-900 text-base">25 to 30 Questions</h3>
+              <p className="text-xs text-slate-600">High-weightage calculus, coordinate geometry, and algebra blocks with clear column separation.</p>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-4">
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
             Why Engineering Aspirants Practice with Paper OMRs
           </h2>
           <p className="text-sm text-slate-600 leading-relaxed">
-            Even though the official examination is computer-based, intense pencil-and-paper problem solving remains the gold standard for mastering deep mathematical and physics derivations. Practicing on physical answer sheets helps students maintain structured test-taking discipline without screen fatigue. You can also explore our{' '}
+            Even though the official examination is computer-based, intense pencil-and-paper problem solving remains the gold standard for mastering deep mathematical and physics derivations in coaching institutes across Kota, Hyderabad, and Delhi. Practicing on physical answer sheets helps students maintain structured test-taking discipline without screen fatigue. You can also explore our{' '}
             <a
               href="https://omrwallah.in/neet-omr-sheet"
               onClick={(e) => {
@@ -157,8 +181,8 @@ export const JeeOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
               className="text-blue-600 font-bold hover:underline"
             >
               NEET OMR Sheet Guide
-            </a>{' '}
-            and{' '}
+            </a>
+            ,{' '}
             <a
               href="https://omrwallah.in/cuet-omr-sheet"
               onClick={(e) => {
@@ -170,6 +194,19 @@ export const JeeOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
               className="text-blue-600 font-bold hover:underline"
             >
               CUET OMR Sheet Guide
+            </a>
+            , and{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-for-coaching"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-for-coaching');
+                }
+              }}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              OMR Sheet for Coaching Institutes
             </a>{' '}
             for cross-exam preparation.
           </p>
@@ -206,10 +243,11 @@ export const JeeOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
             Design your PCM question layout and download a vector A4 PDF in seconds.
           </p>
           <a
-            href="https://omrwallah.in/omr-sheet-generator"
+            href="https://omrwallah.in/creator"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();
+                if (onSelectTemplate) onSelectTemplate('jee-main');
                 onNavigate('creator');
               }
             }}

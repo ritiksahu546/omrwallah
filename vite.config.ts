@@ -51,19 +51,32 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg', 'sitemap.xml', 'robots.txt'],
+        includeAssets: [
+          'favicon.ico',
+          'favicon-32x32.png',
+          'apple-touch-icon.png',
+          'images/omrwallah-logo.png',
+          'sitemap.xml',
+          'robots.txt',
+        ],
         manifest: {
           id: '/',
           name: 'OMRWallah - OMR Sheet Maker & Scanner',
           short_name: 'OMRWallah',
           description: 'Design custom A4 OMR sheets, export PDFs, practice online, and scan with your phone camera.',
           theme_color: '#1d4ed8',
-          background_color: '#0f172a',
+          background_color: '#ffffff',
           display: 'standalone',
           orientation: 'portrait',
           start_url: '/',
           scope: '/',
           icons: [
+            {
+              src: '/favicon-32x32.png',
+              sizes: '32x32',
+              type: 'image/png',
+              purpose: 'any',
+            },
             {
               src: '/pwa-192x192.png',
               sizes: '192x192',
@@ -126,6 +139,18 @@ export default defineConfig(() => {
       }),
       omrSitemapPlugin(),
     ],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+            'vendor-pdf': ['jspdf', 'html2canvas-pro'],
+            'vendor-icons': ['lucide-react'],
+          },
+        },
+      },
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

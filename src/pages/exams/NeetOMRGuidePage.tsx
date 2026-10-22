@@ -125,7 +125,7 @@ export const NeetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <a
-              href="https://omrwallah.in/omr-sheet-generator"
+              href="https://omrwallah.in/creator"
               onClick={(e) => {
                 if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                   e.preventDefault();
@@ -248,7 +248,7 @@ export const NeetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
             Get an authentic A4 PDF format ready to print for your next full-length mock exam.
           </p>
           <a
-            href="https://omrwallah.in/omr-sheet-generator"
+            href="https://omrwallah.in/creator"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();

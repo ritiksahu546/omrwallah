@@ -21,17 +21,23 @@ export const MOCK_RECENT_TESTS: {
 
 export const MOCK_SAMPLE_RESULT: TestResult = {
   id: 'result-neet-bio-1',
+  sheetId: 'neet-180',
   testName: 'NEET Biology Mock',
   date: '12 Sep 2025',
+  totalQuestions: 50,
   score: 72,
+  maxScore: 200,
   totalMarks: 100,
   percentage: 72,
   attempted: 92,
   correct: 72,
   wrong: 20,
+  unattempted: 8,
   skipped: 8,
   timeTaken: '1h 42m',
   accuracy: 78,
+  answers: {},
+  answerKey: {},
   questions: Array.from({ length: 50 }, (_, i) => {
     const qNo = i + 1;
     // generate realistic distribution: mostly correct, some wrong, few skipped

@@ -97,7 +97,7 @@ export const SscOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <a
-              href="https://omrwallah.in/omr-sheet-generator"
+              href="https://omrwallah.in/creator"
               onClick={(e) => {
                 if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                   e.preventDefault();
@@ -132,6 +132,64 @@ export const SscOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
           </p>
         </div>
 
+        {/* 100-Question 4-Column Structure Breakdown */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+            Standard 100-Question 4-Column OMR Layout (SSC &amp; State PSC)
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-emerald-700 uppercase">Column 1 (Q1–25)</span>
+              <h3 className="font-bold text-slate-900 text-base">General Intelligence &amp; Reasoning</h3>
+              <p className="text-xs text-slate-600">25 multiple-choice questions (A, B, C, D) for verbal and non-verbal reasoning drills.</p>
+            </div>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-emerald-700 uppercase">Column 2 (Q26–50)</span>
+              <h3 className="font-bold text-slate-900 text-base">General Awareness &amp; GS</h3>
+              <p className="text-xs text-slate-600">25 questions for Polity, History, Geography, Economy, and Current Affairs.</p>
+            </div>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-emerald-700 uppercase">Column 3 (Q51–75)</span>
+              <h3 className="font-bold text-slate-900 text-base">Quantitative Aptitude</h3>
+              <p className="text-xs text-slate-600">25 arithmetic, data interpretation, and advanced mathematics problems.</p>
+            </div>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-emerald-700 uppercase">Column 4 (Q76–100)</span>
+              <h3 className="font-bold text-slate-900 text-base">English / State Language</h3>
+              <p className="text-xs text-slate-600">25 comprehension, grammar, and vocabulary items completing the 100-question grid.</p>
+            </div>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            State Civil Services (UPPSC, BPSC, MPPSC, RPSC) and offline police recruitment tests rely heavily on 100-question and 150-question paper OMR sheets. You can also explore our{' '}
+            <a
+              href="https://omrwallah.in/ctet-omr-sheet"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('ctet-omr-sheet');
+                }
+              }}
+              className="text-emerald-700 font-bold hover:underline"
+            >
+              CTET 150-Question OMR Sheet Guide
+            </a>{' '}
+            or download ready A4 layouts from the{' '}
+            <a
+              href="https://omrwallah.in/templates"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('templates');
+                }
+              }}
+              className="text-emerald-700 font-bold hover:underline"
+            >
+              Free OMR Templates Library
+            </a>
+            .
+          </p>
+        </div>
+
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-emerald-600" />
@@ -163,7 +221,7 @@ export const SscOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelectT
             100% free A4 vector PDF download without watermarks.
           </p>
           <a
-            href="https://omrwallah.in/omr-sheet-generator"
+            href="https://omrwallah.in/creator"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();

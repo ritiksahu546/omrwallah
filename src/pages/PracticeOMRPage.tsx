@@ -534,6 +534,10 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
               </span>
               <ChevronDown className="w-3 h-3 text-blue-500" />
             </button>
+
+            <h1 className="hidden lg:block text-xs font-extrabold text-slate-700 dark:text-slate-200 truncate">
+              Online OMR Practice Simulator
+            </h1>
           </div>
 
           {/* Center: Live Timer with Pulse */}
@@ -787,7 +791,7 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
         {/* Canvas Area with Centered Interactive OMR Sheet */}
         <div
           ref={containerRef}
-          className={`flex-1 overflow-auto p-1.5 sm:p-4 flex justify-center items-start min-w-0 ${
+          className={`flex-1 overflow-auto p-1.5 sm:p-4 flex flex-col items-center justify-start gap-8 min-w-0 ${
             paperTheme === 'paper' ? 'bg-slate-100' : 'bg-slate-950'
           }`}
         >
@@ -800,6 +804,126 @@ export const PracticeOMRPage: React.FC<PracticeOMRPageProps> = ({
               scale={zoomScale}
             />
           </div>
+
+          {/* Crawlable SEO Practice Guide, Exam Presets & Internal Links (Hidden during Print) */}
+          <section
+            aria-label="Online OMR Practice Guide & Competitive Exam Formats"
+            className="no-print w-full max-w-4xl bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs space-y-5 text-slate-700 mb-6"
+          >
+            <div className="space-y-2">
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900">
+                Interactive Online OMR Sheet Practice with Exam Timer &amp; Instant Evaluation
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Practice filling OMR bubbles digitally under realistic examination time limits. Select from pre-configured national entrance formats—including NEET UG (180 &amp; 200 questions), JEE Main (90 questions), UPSC &amp; SSC CGL (100 questions), CTET &amp; Police SI (150 questions), or CUET (50 questions)—or set any custom question count between 5 and 200. Enter your official answer key using the <strong>Key</strong> button above to evaluate net score (+4 / -1 negative marking), accuracy percentage, and subject-wise performance immediately upon submission.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                <h3 className="font-bold text-slate-900">Speed Keyboard Controls</h3>
+                <p className="text-slate-600">
+                  Press <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">A</kbd>–<kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">D</kbd> or <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">1</kbd>–<kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">4</kbd> to darken bubbles rapidly, arrow keys to navigate questions, and <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono">R</kbd> to flag items for review.
+                </p>
+              </div>
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                <h3 className="font-bold text-slate-900">Master Bubbling Strategy</h3>
+                <p className="text-slate-600">
+                  Prevent row-shift errors and last-minute panic with our{' '}
+                  <a
+                    href="https://omrwallah.in/omr-practice"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                        e.preventDefault();
+                        onNavigate('omr-practice');
+                      }
+                    }}
+                    className="text-blue-600 font-bold hover:underline"
+                  >
+                    OMR Speed Training Guide
+                  </a>{' '}
+                  and{' '}
+                  <a
+                    href="https://omrwallah.in/online-omr-sheet"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                        e.preventDefault();
+                        onNavigate('online-omr-sheet');
+                      }
+                    }}
+                    className="text-blue-600 font-bold hover:underline"
+                  >
+                    Online OMR Simulator Overview
+                  </a>
+                  .
+                </p>
+              </div>
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                <h3 className="font-bold text-slate-900">Prefer Physical Paper OMR?</h3>
+                <p className="text-slate-600">
+                  Download print-ready A4 PDFs from our{' '}
+                  <a
+                    href="https://omrwallah.in/templates"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                        e.preventDefault();
+                        onNavigate('templates');
+                      }
+                    }}
+                    className="text-blue-600 font-bold hover:underline"
+                  >
+                    OMR Template Library
+                  </a>{' '}
+                  or design a custom layout in the{' '}
+                  <a
+                    href="https://omrwallah.in/creator"
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                        e.preventDefault();
+                        onNavigate('creator');
+                      }
+                    }}
+                    className="text-blue-600 font-bold hover:underline"
+                  >
+                    OMR Sheet Creator
+                  </a>
+                  .
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-slate-200 space-y-2">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                Exam-Specific OMR Practice Guides &amp; Printable Sheets
+              </h3>
+              <div className="flex flex-wrap gap-2 text-xs">
+                {[
+                  { label: 'All Competitive Exam OMR Sheets', route: 'omr-exams' },
+                  { label: 'NEET 200Q OMR Sheet', route: 'neet-omr-sheet' },
+                  { label: 'JEE Mock OMR Sheet', route: 'jee-omr-sheet' },
+                  { label: 'SSC & PSC 100Q OMR Sheet', route: 'ssc-omr-sheet' },
+                  { label: 'CUET 50Q OMR Sheet', route: 'cuet-omr-sheet' },
+                  { label: 'CTET 150Q OMR Sheet', route: 'ctet-omr-sheet' },
+                  { label: 'OMR Sheet PDF Download', route: 'omr-sheet-pdf' },
+                  { label: 'OMR Sheet Generator', route: 'omr-sheet-generator' },
+                ].map((item) => (
+                  <a
+                    key={item.route}
+                    href={`https://omrwallah.in/${item.route}`}
+                    onClick={(e) => {
+                      if (!e.ctrlKey && !e.metaKey && e.button === 0 && onNavigate) {
+                        e.preventDefault();
+                        onNavigate(item.route);
+                      }
+                    }}
+                    className="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold rounded-lg border border-slate-200 transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
 
         {/* Question Palette Sidebar (Right Panel) */}

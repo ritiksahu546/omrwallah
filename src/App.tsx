@@ -5,6 +5,8 @@ import {
   deleteOMRSheetFromFirestore,
   subscribeToUserOMRSheets,
   saveTestResultToFirestore,
+  deleteTestResultFromFirestore,
+  subscribeToUserTestResults,
 } from './services/omrFirebaseService';
 
 import { Navbar } from './components/common/Navbar';
@@ -54,7 +56,7 @@ import { CtetOMRGuidePage } from './pages/exams/CtetOMRGuidePage';
 import { updatePageSEO } from './utils/seo';
 import { getRouteSEO } from './utils/seoConfig';
 
-import { OMRConfig, TestResult } from './types/omr';
+import { OMRConfig, TestResult, SectionPerformance } from './types/omr';
 import { DEFAULT_OMR_CONFIG, TEMPLATES_DATA } from './data/templates';
 
 const VALID_PUBLIC_ROUTES = [
@@ -94,18 +96,59 @@ const getInitialRoute = (overrideRoute?: string): string => {
   }
   if (typeof window === 'undefined') return 'home';
   const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
-  if (!rawPath) return 'home';
+  if (!rawPath || rawPath === 'index.html') return 'home';
   if (VALID_PUBLIC_ROUTES.includes(rawPath)) {
     return rawPath;
   }
-  return 'home';
+  return 'not-found';
 };
+
+// Normalize legacy TestResult records if any exist in localStorage/Firestore
+function normalizeTestResult(raw: any): TestResult {
+  const totalQ = Number(raw.totalQuestions) || 50;
+  const correct = Number(raw.correct) || 0;
+  const wrong = Number(raw.wrong) || 0;
+  const attempted = Number(raw.attempted) || correct + wrong;
+  const unattempted =
+    raw.unattempted !== undefined
+      ? Number(raw.unattempted)
+      : raw.skipped !== undefined
+      ? Number(raw.skipped)
+      : Math.max(0, totalQ - attempted);
+  const maxScore = Number(raw.maxScore || raw.totalMarks || totalQ * 4);
+  const score = Number(raw.score) || 0;
+  const accuracy =
+    raw.accuracy !== undefined
+      ? Number(raw.accuracy)
+      : attempted > 0
+      ? Math.round((correct / attempted) * 100)
+      : 0;
+
+  return {
+    id: raw.id || `test-${Date.now()}`,
+    sheetId: raw.sheetId || 'practice-sheet',
+    testName: raw.testName || 'Practice Assessment',
+    date: raw.date || new Date().toLocaleDateString('en-IN'),
+    totalQuestions: totalQ,
+    attempted,
+    correct,
+    wrong,
+    unattempted,
+    score,
+    maxScore,
+    accuracy,
+    timeTaken: raw.timeTaken || '00:00',
+    answers: raw.answers || {},
+    answerKey: raw.answerKey || {},
+    sectionPerformance: raw.sectionPerformance,
+  };
+}
 
 function AppMain({ initialRoute }: { initialRoute?: string }) {
   const { user, loading } = useAuth();
   const [currentRoute, setCurrentRoute] = useState<string>(() => getInitialRoute(initialRoute));
   const [activeEditorConfig, setActiveEditorConfig] = useState<OMRConfig>(DEFAULT_OMR_CONFIG);
-  
+
   const [savedSheets, setSavedSheets] = useState<OMRConfig[]>(() => {
     if (typeof window === 'undefined' || typeof localStorage === 'undefined') return [];
     const cached = localStorage.getItem('omrwallah_saved_sheets');
@@ -113,9 +156,9 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
       try {
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed)) {
-          // Exclude default demo templates so user starts with a clean slate
           return parsed.filter(
-            (s: OMRConfig) => s.id !== 'neet-200-full' && s.id !== 'jee-main-75' && s.id !== 'default-omr'
+            (s: OMRConfig) =>
+              s.id !== 'neet-200-full' && s.id !== 'jee-main-75' && s.id !== 'default-omr'
           );
         }
       } catch (e) {
@@ -125,7 +168,35 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
     return [];
   });
 
-  const [activeResult, setActiveResult] = useState<TestResult | null>(null);
+  const [testResults, setTestResults] = useState<TestResult[]>(() => {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') return [];
+    const cached = localStorage.getItem('omrwallah_test_results');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) {
+          return parsed.map(normalizeTestResult);
+        }
+      } catch (e) {
+        // fallback
+      }
+    }
+    return [];
+  });
+
+  const [activeResult, setActiveResult] = useState<TestResult | null>(() => {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') return null;
+    try {
+      const cached = localStorage.getItem('omrwallah_test_results');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return normalizeTestResult(parsed[0]);
+        }
+      }
+    } catch {}
+    return null;
+  });
 
   const [authModal, setAuthModal] = useState<{ open: boolean; mode: 'login' | 'signup' }>({
     open: false,
@@ -136,21 +207,16 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const [practiceZenMode, setPracticeZenMode] = useState<boolean>(false);
 
-  // Auto-redirect logged-in users to Dashboard (so mobile/desktop immediately show workspace)
-  useEffect(() => {
-    if (!loading && user && currentRoute === 'home') {
-      setCurrentRoute('dashboard');
-    }
-  }, [user, loading, currentRoute]);
+  // Keep '/' accessible when users click the brand logo; AuthModal onSuccess handles post-login redirect to dashboard
 
-  // When user logs out, redirect to marketing Home page
+  // When user logs out, redirect protected workspace routes to marketing Home page
   useEffect(() => {
     if (!loading && !user && ['dashboard', 'settings', 'tests'].includes(currentRoute)) {
       setCurrentRoute('home');
     }
   }, [user, loading, currentRoute]);
 
-  // Sync to local storage
+  // Sync savedSheets to local storage
   useEffect(() => {
     try {
       localStorage.setItem('omrwallah_saved_sheets', JSON.stringify(savedSheets));
@@ -159,17 +225,47 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
     }
   }, [savedSheets]);
 
-  // Sync with Firestore when user is logged in
+  // Sync testResults to local storage
+  useEffect(() => {
+    try {
+      localStorage.setItem('omrwallah_test_results', JSON.stringify(testResults));
+    } catch (e) {
+      console.warn('Storage quota or disabled', e);
+    }
+  }, [testResults]);
+
+  // Sync savedSheets with Firestore when user is logged in
   useEffect(() => {
     if (!user) return;
 
     const unsubscribe = subscribeToUserOMRSheets(user.uid, (firestoreSheets) => {
       if (firestoreSheets && firestoreSheets.length > 0) {
         setSavedSheets((prev) => {
-          // Merge firestore sheets with local defaults if needed
           const firestoreIds = new Set(firestoreSheets.map((s) => s.id));
           const localOnly = prev.filter((s) => !firestoreIds.has(s.id));
           return [...firestoreSheets, ...localOnly];
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Sync testResults with Firestore when user is logged in
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = subscribeToUserTestResults(user.uid, (firestoreResults) => {
+      if (firestoreResults && firestoreResults.length > 0) {
+        const normalized = firestoreResults.map(normalizeTestResult);
+        setTestResults((prev) => {
+          const firestoreIds = new Set(normalized.map((r) => r.id));
+          const localOnly = prev.filter((r) => !firestoreIds.has(r.id));
+          const merged = [...normalized, ...localOnly];
+          if (!activeResult && merged.length > 0) {
+            setActiveResult(merged[0]);
+          }
+          return merged;
         });
       }
     });
@@ -221,7 +317,7 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
         id: `sheet-${Date.now()}`,
         updatedAt: new Date().toISOString(),
       });
-      setCurrentRoute('creator');
+      handleNavigate('creator');
       showToast(`Loaded ${tmpl.name} into editor`, 'info');
     }
   };
@@ -237,7 +333,6 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
       return [config, ...prev];
     });
 
-    // Save to Firestore if user is authenticated
     if (user) {
       try {
         await saveOMRSheetToFirestore(config, user.uid);
@@ -281,6 +376,57 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
     showToast('Sheet duplicated successfully', 'success');
   };
 
+  const recordTestResult = async (result: TestResult) => {
+    setActiveResult(result);
+    setTestResults((prev) => [result, ...prev.filter((r) => r.id !== result.id)]);
+
+    if (user) {
+      try {
+        await saveTestResultToFirestore(result, user.uid);
+      } catch (err) {
+        console.error('Error saving test result to firestore:', err);
+      }
+    }
+  };
+
+  const handleUpdateTestResult = async (updated: TestResult) => {
+    setActiveResult(updated);
+    setTestResults((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+    if (user) {
+      try {
+        await saveTestResultToFirestore(updated, user.uid);
+      } catch (err) {
+        console.error('Error updating test result in firestore:', err);
+      }
+    }
+  };
+
+  const handleDeleteTestResult = async (id: string) => {
+    setTestResults((prev) => {
+      const remaining = prev.filter((r) => r.id !== id);
+      if (activeResult?.id === id) {
+        setActiveResult(remaining[0] || null);
+      }
+      return remaining;
+    });
+    if (user) {
+      try {
+        await deleteTestResultFromFirestore(id);
+      } catch (err) {
+        console.error('Error deleting test result from firestore:', err);
+      }
+    }
+    showToast('Test result deleted.', 'info');
+  };
+
+  const handleViewResult = (testId: string) => {
+    const found = testResults.find((r) => r.id === testId);
+    if (found) {
+      setActiveResult(found);
+    }
+    handleNavigate('results');
+  };
+
   const handlePracticeComplete = async (
     marked: Record<number, string>,
     customKey?: Record<number, string>,
@@ -291,8 +437,8 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
       sections?: { name: string; startQ: number; endQ: number }[];
     }
   ) => {
-    // Check if customKey exists in parameter or localStorage
-    let activeKey: Record<number, string> = customKey && Object.keys(customKey).length > 0 ? customKey : {};
+    let activeKey: Record<number, string> =
+      customKey && Object.keys(customKey).length > 0 ? { ...customKey } : {};
     if (Object.keys(activeKey).length === 0) {
       try {
         const cached = localStorage.getItem('omrwallah_custom_answer_key');
@@ -302,128 +448,92 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
       }
     }
 
+    const totalQuestions = testMeta?.totalQuestions || 50;
+    const finalAnswerKey: Record<number, string> = {};
     let correctCount = 0;
     let wrongCount = 0;
-    const totalQuestions = testMeta?.totalQuestions || 50;
+    let unattemptedCount = 0;
 
-    const evaluatedQuestions = Array.from({ length: totalQuestions }, (_, i) => {
-      const qNum = i + 1;
+    for (let qNum = 1; qNum <= totalQuestions; qNum++) {
       const studentAns = marked[qNum];
-      const correctAns = activeKey[qNum] || null;
+      const keyAns = activeKey[qNum] || ['A', 'B', 'C', 'D'][(qNum * 3) % 4];
+      finalAnswerKey[qNum] = keyAns;
 
-      let status: 'correct' | 'wrong' | 'skipped' = 'skipped';
-      if (studentAns) {
-        if (correctAns) {
-          if (studentAns === correctAns) {
-            status = 'correct';
-            correctCount++;
-          } else {
-            status = 'wrong';
-            wrongCount++;
-          }
-        } else {
-          // If no key was configured, mark as attempted
-          status = 'correct';
-          correctCount++;
-        }
-      }
-
-      // Subject determination from sections if provided
-      let subject = 'General';
-      if (testMeta?.sections && testMeta.sections.length > 0) {
-        const matchingSection = testMeta.sections.find((s) => qNum >= s.startQ && qNum <= s.endQ);
-        if (matchingSection) {
-          subject = matchingSection.name;
-        }
+      if (!studentAns) {
+        unattemptedCount++;
+      } else if (studentAns === keyAns) {
+        correctCount++;
       } else {
-        subject =
-          qNum <= Math.round(totalQuestions * 0.3)
-            ? 'Physics'
-            : qNum <= Math.round(totalQuestions * 0.6)
-            ? 'Chemistry'
-            : 'Biology';
+        wrongCount++;
       }
+    }
 
-      return {
-        questionNo: qNum,
-        studentAnswer: studentAns || null,
-        correctAnswer: correctAns || (studentAns || 'A'),
-        status,
-        subject,
-      };
-    });
-
-    const calculatedScore = Math.max(0, correctCount * 4 - wrongCount * 1);
     const attemptedCount = correctCount + wrongCount;
-    const totalMarks = totalQuestions * 4;
+    const calculatedScore = correctCount * 4 - wrongCount * 1;
+    const maxScore = totalQuestions * 4;
+    const accuracy =
+      attemptedCount > 0 ? Math.round((correctCount / attemptedCount) * 100) : 0;
 
-    // Build subjectWise summary
-    let subjectWiseList: { subject: string; score: number; total: number; percentage: number }[] = [];
+    // Build sectionPerformance matching SectionPerformance[]
+    let sectionPerformance: SectionPerformance[] | undefined = undefined;
     if (testMeta?.sections && testMeta.sections.length > 0) {
-      subjectWiseList = testMeta.sections.map((sec) => {
-        const secQuestions = evaluatedQuestions.filter(
-          (q) => q.questionNo >= sec.startQ && q.questionNo <= sec.endQ
-        );
-        const secCorrect = secQuestions.filter(
-          (q) => q.status === 'correct' && q.studentAnswer !== null
-        ).length;
-        const secWrong = secQuestions.filter((q) => q.status === 'wrong').length;
-        const secScore = Math.max(0, secCorrect * 4 - secWrong * 1);
-        const secTotalMarks = (sec.endQ - sec.startQ + 1) * 4;
-        const secPercentage = secTotalMarks > 0 ? Math.round((secScore / secTotalMarks) * 100) : 0;
+      sectionPerformance = testMeta.sections.map((sec) => {
+        let sCorrect = 0;
+        let sWrong = 0;
+        let sUnattempted = 0;
+        for (let q = sec.startQ; q <= Math.min(totalQuestions, sec.endQ); q++) {
+          const sAns = marked[q];
+          const kAns = finalAnswerKey[q];
+          if (!sAns) sUnattempted++;
+          else if (sAns === kAns) sCorrect++;
+          else sWrong++;
+        }
+        const sTotalQ = Math.max(1, Math.min(totalQuestions, sec.endQ) - sec.startQ + 1);
+        const sScore = sCorrect * 4 - sWrong * 1;
+        const sMax = sTotalQ * 4;
+        const sAcc =
+          sCorrect + sWrong > 0
+            ? Math.round((sCorrect / (sCorrect + sWrong)) * 100)
+            : 0;
         return {
-          subject: sec.name,
-          score: secScore,
-          total: secTotalMarks,
-          percentage: secPercentage,
+          sectionName: sec.name,
+          totalQuestions: sTotalQ,
+          correct: sCorrect,
+          wrong: sWrong,
+          unattempted: sUnattempted,
+          score: sScore,
+          maxScore: sMax,
+          accuracy: sAcc,
         };
       });
-    } else {
-      const pCount = Math.round(totalQuestions * 0.3);
-      const cCount = Math.round(totalQuestions * 0.3);
-      const bCount = totalQuestions - pCount - cCount;
-
-      const pCorrect = evaluatedQuestions.filter((q) => q.subject === 'Physics' && q.status === 'correct').length;
-      const cCorrect = evaluatedQuestions.filter((q) => q.subject === 'Chemistry' && q.status === 'correct').length;
-      const bCorrect = evaluatedQuestions.filter((q) => q.subject === 'Biology' && q.status === 'correct').length;
-
-      subjectWiseList = [
-        { subject: 'Physics', score: pCorrect * 4, total: pCount * 4, percentage: pCount > 0 ? Math.round((pCorrect / pCount) * 100) : 0 },
-        { subject: 'Chemistry', score: cCorrect * 4, total: cCount * 4, percentage: cCount > 0 ? Math.round((cCorrect / cCount) * 100) : 0 },
-        { subject: 'Biology', score: bCorrect * 4, total: bCount * 4, percentage: bCount > 0 ? Math.round((bCorrect / bCount) * 100) : 0 },
-      ];
     }
 
     const newResult: TestResult = {
       id: `test-${Date.now()}`,
-      testName: testMeta?.testName || `Interactive Practice Test (${totalQuestions} Questions)`,
-      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      sheetId: 'practice-omr',
+      testName:
+        testMeta?.testName || `Interactive Practice Test (${totalQuestions} Questions)`,
+      date: new Date().toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }),
       totalQuestions,
       attempted: attemptedCount,
       correct: correctCount,
       wrong: wrongCount,
-      skipped: totalQuestions - attemptedCount,
+      unattempted: unattemptedCount,
       score: calculatedScore,
-      totalMarks,
-      percentage: totalMarks > 0 ? Math.round((calculatedScore / totalMarks) * 100) : 0,
-      timeTaken: testMeta?.timeTaken || '38m 20s',
-      accuracy: attemptedCount > 0 ? Math.round((correctCount / attemptedCount) * 100) : 0,
-      subjectWise: subjectWiseList,
-      questions: evaluatedQuestions,
+      maxScore,
+      accuracy,
+      timeTaken: testMeta?.timeTaken || '00:00',
+      answers: { ...marked },
+      answerKey: finalAnswerKey,
+      sectionPerformance,
     };
 
-    setActiveResult(newResult);
-
-    // Save test result to Firestore if user logged in
-    if (user) {
-      try {
-        await saveTestResultToFirestore(newResult, user.uid);
-      } catch (err) {
-        console.error('Error saving test result to firestore:', err);
-      }
-    }
-
-    setCurrentRoute('results');
+    await recordTestResult(newResult);
+    handleNavigate('results');
   };
 
   const isAppWorkspaceRoute = [
@@ -442,7 +552,6 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-blue-500 selection:text-white w-full max-w-full overflow-x-hidden">
-      
       {/* Top Header Navbar */}
       {(!practiceZenMode || currentRoute !== 'practice') && (
         <Navbar
@@ -455,7 +564,6 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
 
       {/* Main Container */}
       <div className="flex-1 flex w-full max-w-full overflow-x-hidden min-w-0">
-        
         {/* Workspace Sidebar (visible in app modes on desktop) */}
         {isAppWorkspaceRoute && (!practiceZenMode || currentRoute !== 'practice') && (
           <Sidebar
@@ -468,9 +576,11 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
         )}
 
         {/* Dynamic Page Content */}
-        <main className={`flex-1 min-w-0 w-full max-w-full overflow-x-hidden bg-slate-50 flex flex-col ${
-          currentRoute === 'practice' ? 'pb-0' : 'pb-28 sm:pb-32 md:pb-8'
-        }`}>
+        <main
+          className={`flex-1 min-w-0 w-full max-w-full overflow-x-hidden bg-slate-50 flex flex-col ${
+            currentRoute === 'practice' ? 'pb-0' : 'pb-28 sm:pb-32 md:pb-8'
+          }`}
+        >
           {currentRoute === 'home' && (
             <HomePage
               onNavigate={handleNavigate}
@@ -498,28 +608,31 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
           {currentRoute === 'dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
-              onViewResult={() => setCurrentRoute('results')}
+              onViewResult={handleViewResult}
+              testResults={testResults}
+              savedSheetsCount={savedSheets.length}
             />
           )}
 
           {currentRoute === 'saved' && (
             <SavedSheetsPage
               savedSheets={savedSheets}
-              onSelectSheet={(s) => {
+              onLoadSheet={(s) => {
                 setActiveEditorConfig(s);
-                setCurrentRoute('creator');
+                handleNavigate('creator');
               }}
               onDeleteSheet={handleDeleteSheet}
               onDuplicateSheet={handleDuplicateSheet}
               onNavigate={handleNavigate}
-              showToast={showToast}
             />
           )}
 
           {currentRoute === 'tests' && (
             <MyTestsPage
-              onViewResult={() => setCurrentRoute('results')}
+              onViewResult={handleViewResult}
               onNavigate={handleNavigate}
+              testResults={testResults}
+              onDeleteResult={handleDeleteTestResult}
             />
           )}
 
@@ -535,11 +648,11 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
 
           {currentRoute === 'scan' && (
             <ScanOMRPage
-              onScanComplete={(result) => {
+              onScanComplete={async (result) => {
                 if (result) {
-                  setActiveResult(result);
+                  await recordTestResult(result);
                 }
-                setCurrentRoute('results');
+                handleNavigate('results');
               }}
               showToast={showToast}
             />
@@ -548,21 +661,33 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
           {currentRoute === 'results' && (
             <ResultsPage
               result={activeResult}
+              testResults={testResults}
+              onSelectResult={(res) => setActiveResult(res)}
+              onUpdateResult={handleUpdateTestResult}
+              onDeleteResult={handleDeleteTestResult}
+              onRetake={() => handleNavigate('practice')}
               onNavigate={handleNavigate}
               showToast={showToast}
             />
           )}
 
-          {currentRoute === 'analytics' && <AnalyticsPage />}
+          {currentRoute === 'analytics' && (
+            <AnalyticsPage
+              onNavigate={handleNavigate}
+              testResults={testResults}
+            />
+          )}
 
           {currentRoute === 'pricing' && (
             <PricingPage
-              onUpgradePro={() => setProModalOpen(true)}
+              onUpgradeClick={() => setProModalOpen(true)}
               onNavigate={handleNavigate}
             />
           )}
 
-          {currentRoute === 'blog' && <BlogPage showToast={showToast} onNavigate={handleNavigate} />}
+          {currentRoute === 'blog' && (
+            <BlogPage showToast={showToast} onNavigate={handleNavigate} />
+          )}
 
           {currentRoute === 'faq' && <FAQPage showToast={showToast} />}
 
@@ -668,7 +793,54 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
 
           {currentRoute === 'settings' && <SettingsPage showToast={showToast} />}
 
-          {/* Marketing Footer (for Home, Pricing, Blog, FAQ, Templates) */}
+          {/* 404 Not Found Page */}
+          {currentRoute === 'not-found' && (
+            <div className="p-8 max-w-2xl mx-auto my-12 bg-white border border-slate-200 rounded-3xl shadow-xs text-center space-y-5">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 font-black text-2xl">
+                404
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  Page Not Found
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                  The URL you requested does not match any OMRWallah page. Choose one of the workspaces below to continue:
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => handleNavigate(user ? 'dashboard' : 'home')}
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer"
+                >
+                  {user ? 'Go to Dashboard' : 'Go to Home'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('creator')}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl cursor-pointer"
+                >
+                  Create OMR Sheet
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('practice')}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl cursor-pointer"
+                >
+                  Practice OMR Online
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('templates')}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl cursor-pointer"
+                >
+                  Browse Templates
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Marketing Footer */}
           {!['creator', 'practice'].includes(currentRoute) && (
             <Footer onNavigate={handleNavigate} />
           )}
@@ -683,7 +855,7 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
         onSwitchMode={(mode) => setAuthModal({ open: true, mode })}
         onSuccess={() => {
           setAuthModal({ open: false, mode: 'login' });
-          setCurrentRoute('dashboard');
+          handleNavigate('dashboard');
           showToast('Welcome to OMRWallah!', 'success');
         }}
       />
@@ -691,13 +863,12 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
       <ProUpgradeModal
         isOpen={proModalOpen}
         onClose={() => setProModalOpen(false)}
-        onUpgrade={() => {
-          setProModalOpen(false);
-          showToast('Upgraded to Pro Plan successfully!', 'success');
-        }}
         onSelectPlan={(plan) => {
           setProModalOpen(false);
-          showToast(`Subscribed to ${plan} Plan successfully!`, 'success');
+          showToast(
+            `You're on the early-access notification list for ${plan}! All core OMR Creator, PDF & Scanner features are unlocked for free.`,
+            'info'
+          );
         }}
       />
 
@@ -718,21 +889,23 @@ function AppMain({ initialRoute }: { initialRoute?: string }) {
         onInstalled={() => showToast('OMRWallah App added to device!', 'success')}
       />
 
-      {/* Mobile Bottom Navigation Bar (Home, Create, Practice, Results, Profile / Sign In) */}
-      <MobileBottomNav
-        currentRoute={currentRoute}
-        onNavigate={handleNavigate}
-        onOpenAuth={(mode) => setAuthModal({ open: true, mode })}
-      />
-
+      {/* Mobile Bottom Navigation Bar */}
+      {(!practiceZenMode || currentRoute !== 'practice') && (
+        <MobileBottomNav
+          currentRoute={currentRoute}
+          onNavigate={handleNavigate}
+        />
+      )}
     </div>
   );
 }
 
-export default function App({ initialRoute }: { initialRoute?: string } = {}) {
+export function App({ initialRoute }: { initialRoute?: string } = {}) {
   return (
     <AuthProvider>
       <AppMain initialRoute={initialRoute} />
     </AuthProvider>
   );
 }
+
+export default App;

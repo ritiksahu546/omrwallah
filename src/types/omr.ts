@@ -152,28 +152,46 @@ export interface OMRTemplate {
   config: OMRConfig;
 }
 
+export interface SectionPerformance {
+  sectionName: string;
+  totalQuestions: number;
+  correct: number;
+  wrong: number;
+  unattempted: number;
+  score: number;
+  maxScore: number;
+  accuracy: number;
+}
+
 export interface TestResult {
   id: string;
+  sheetId?: string;
   testName: string;
   date: string;
-  totalQuestions?: number;
-  score: number;
-  totalMarks: number;
-  percentage: number;
+  totalQuestions: number;
   attempted: number;
   correct: number;
   wrong: number;
-  skipped: number;
-  timeTaken: string;
+  unattempted: number;
+  score: number;
+  maxScore: number;
   accuracy: number;
-  questions: {
+  timeTaken: string;
+  answers: Record<number, string>;
+  answerKey: Record<number, string>;
+  sectionPerformance?: SectionPerformance[];
+  // Optional legacy compatibility fields
+  totalMarks?: number;
+  percentage?: number;
+  skipped?: number;
+  questions?: {
     questionNo: number;
-    studentAnswer?: string;
+    studentAnswer?: string | null;
     correctAnswer: string;
     status: 'correct' | 'wrong' | 'skipped';
     subject?: string;
   }[];
-  subjectWise: {
+  subjectWise?: {
     subject: string;
     score: number;
     total: number;

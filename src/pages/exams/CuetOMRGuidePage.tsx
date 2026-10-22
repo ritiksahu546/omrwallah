@@ -104,7 +104,7 @@ export const CuetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <a
-              href="https://omrwallah.in/omr-sheet-generator"
+              href="https://omrwallah.in/creator"
               onClick={(e) => {
                 if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                   e.preventDefault();
@@ -139,6 +139,46 @@ export const CuetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
           </p>
         </div>
 
+        {/* CUET Domain & General Test Pattern Breakdown */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+            CUET Mock OMR Sheet Formats (Domain Subjects &amp; General Test)
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-violet-700 uppercase">Section IA / IB: Languages</span>
+              <h3 className="font-bold text-slate-900 text-base">50 Questions (Attempt 40)</h3>
+              <p className="text-xs text-slate-600">Reading comprehension, literary aptitude, and vocabulary tested in a 45-minute window (+5 / -1 marking).</p>
+            </div>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-violet-700 uppercase">Section II: Domain Subjects</span>
+              <h3 className="font-bold text-slate-900 text-base">50 Questions (Attempt 40)</h3>
+              <p className="text-xs text-slate-600">NCERT Class 12 syllabus subjects (Physics, Economics, Accountancy, History, Biology) in 45–60 minutes.</p>
+            </div>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-violet-700 uppercase">Section III: General Test</span>
+              <h3 className="font-bold text-slate-900 text-base">60 Questions (Attempt 50)</h3>
+              <p className="text-xs text-slate-600">Quantitative reasoning, logical &amp; analytical reasoning, general knowledge, and current affairs in 60 minutes.</p>
+            </div>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Because CUET hybrid offline sessions require rapid selection of 40 out of 50 questions on physical OMR sheets, practicing on a 50-question double-column A4 sheet prevents accidental extra attempts and row-shift errors. Teachers can also generate classroom test sheets via our{' '}
+            <a
+              href="https://omrwallah.in/omr-sheet-for-schools"
+              onClick={(e) => {
+                if (!e.ctrlKey && !e.metaKey && e.button === 0) {
+                  e.preventDefault();
+                  onNavigate('omr-sheet-for-schools');
+                }
+              }}
+              className="text-violet-700 font-bold hover:underline"
+            >
+              OMR Sheet for Schools
+            </a>{' '}
+            guide.
+          </p>
+        </div>
+
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-violet-600" />
@@ -170,7 +210,7 @@ export const CuetOMRGuidePage: React.FC<ExamPageProps> = ({ onNavigate, onSelect
             Get instant print-ready A4 PDFs for your domain mock tests.
           </p>
           <a
-            href="https://omrwallah.in/omr-sheet-generator"
+            href="https://omrwallah.in/creator"
             onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && e.button === 0) {
                 e.preventDefault();
